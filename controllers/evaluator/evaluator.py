@@ -1,23 +1,9 @@
 import math
 
-from controllers.conductor import Conductor
+from conductor import Conductor
+from config.simulation import *
+from config.network import *
 from epuck import EPuck
-from nanowire_network_simulator import backup
-
-################################################################################
-# LOAD TESTED NETWORK
-
-# load the memristive network
-# it is created once and then exploited by the different robots
-graph, datasheet, wires_dict = backup.read()
-
-# todo find input & output node from tag/label
-
-################################################################################
-# SETUP SIMULATION
-
-epoch_duration = 100    # in steps
-delta_time = 0.2        # discrete evaluation time; in seconds
 
 # crate robot controller
 conductor = Conductor(graph, datasheet)
