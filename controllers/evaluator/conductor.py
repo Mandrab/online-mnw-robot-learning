@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from nanowire_network_simulator import stimulate
+from nanowire_network_simulator import *
 from nanowire_network_simulator.model.device import Datasheet
 from networkx import Graph
 from typing import Set, Dict
@@ -47,6 +47,17 @@ class Conductor:
         self.actuators = actuators
         self.mapping |= mapping
 
+    def initialize(self):
+        """Initialize network"""
+        sources = {self.mapping[s] for s in self.sensors}
+        initialize_graph_attributes(
+            graph=self.network,
+            sources=sources,
+            grounds=set(),
+            y_in=self.datasheet.Y_min
+        )
+        voltage_initialization(self.network, sources, set())
+
     def evaluate(
             self,
             update_time: float,
@@ -58,7 +69,9 @@ class Conductor:
         Evaluate its response and return it.
         """
 
-        inputs = [(self.mapping[pin], value) for pin, value in stimulus.items()]
+        stimulus = filter(lambda p: p[0] in self.actuators, stimulus.items())
+
+        inputs = [(self.mapping[pin], value) for pin, value in stimulus]
         outputs = [
             (self.mapping[pin], actuators_resistance)
             for pin in self.actuators
@@ -75,5 +88,5 @@ class Conductor:
 
         return dict([
             (a, self.network.nodes[self.mapping[a]]['V'])
-            for a in self.actuators]
-        )
+            for a in self.actuators
+        ])
