@@ -1,68 +1,47 @@
 from conductor import Conductor
-from controller import Robot
-from enum import Enum
+from controller import Supervisor
+from controllers.evaluator.components import motors, sensors
 
 
-class Sensor(Enum):
-    """
-    Map the sensor angle to its string name.
-    The angle is clock wise from the front of the robot.
-    """
-    A25 = 'ps0'     # ~front
-    A45 = 'ps1'     # front right
-    A90 = 'ps2'     # right
-    A155 = 'ps3'    # back right
-    A205 = 'ps4'    # back left
-    A270 = 'ps5'    # left
-    A315 = 'ps6'    # front left
-    A335 = 'ps7'    # ~front
-
-
-__sensors = [s.value for s in Sensor]
-
-
-class EPuck(Robot):
-
+class EPuck(Supervisor):
     # robot wheels max speed
     MAX_SPEED = 6.28
 
+    # specify update time for robot modules (in ms)
+    run_frequency = 100
+
     def __init__(self, conductor: Conductor):
         # get the time step of the current world
-        super(Robot, self).__init__()
+        super().__init__()
 
-        # get left motors and initialize it
-        self.leftMotor = self.getDevice('left wheel motor')
-        self.leftMotor.setPosition(float('inf'))
-        self.leftMotor.setVelocity(0.0)
+        # initialize left and right motors
+        for _, motor in motors.items():
+            motor.robot = self
 
-        # get right motors and initialize it
-        self.rightMotor = self.getDevice('right wheel motor')
-        self.rightMotor.setPosition(float('inf'))
-        self.rightMotor.setVelocity(0.0)
-
-        # enable the distance sensors
-        for i in range(8): self.sensor(i).enable(self.timestep)
+        # initialize distance sensors
+        for _, sensor in sensors.items():
+            sensor.init(self, self.run_frequency)
 
         # set the network controller
         self.conductor = conductor
 
-    def run(self, delta_time: float):
+    def run(self):
         """Execute a step and notify success"""
 
         # webots has stopped/paused the simulation
-        if self.step(delta_time) == -1:
+        if self.step(self.run_frequency) == -1:
             return False
 
         # get sensors readings
-        stimulus = dict((s, self.getDevice(s).getValue()) for s in __sensors)
+        stimulus = dict([(v, v.read) for _, v in sensors.items()])
 
         # run the controller
-        outputs = self.conductor.evaluate(delta_time, stimulus)
+        outputs = self.conductor.evaluate(self.run_frequency, stimulus)
 
         # todo remap to range stimulus and outputs ?
 
         # set the outputs
-        self.leftMotor.setVelocity(outputs['left wheel motor'])
-        self.rightMotor.setVelocity(outputs['right wheel motor'])
+        motors['LEFT'].speed = outputs[motors['LEFT']]
+        motors['RIGHT'].speed = outputs[motors['RIGHT']]
 
         return True
