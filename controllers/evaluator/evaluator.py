@@ -3,30 +3,64 @@ import math
 from conductor import Conductor
 from config.simulation import *
 from config.network import *
+from config.robot import *
 from epuck import EPuck
 
 # crate robot controller
 conductor = Conductor(graph, datasheet)
-# todo add mapping
 
 # create the Robot instance
 robot = EPuck(conductor)
 
-# get robot supervisor
-supervisor = robot.getSupervisor()
-
 # get measure function
 # https://cyberbotics.com/doc/guide/supervisor-programming?tab-language=python
-robot_node = supervisor.getFromDef("MY_ROBOT")
-trans_field = robot_node.getField("translation")
+node = robot.getFromDef('evolvable')
+trans_field = node.getField('translation')
 
 # reset the simulation
-supervisor.simulationReset()
-supervisor.simulationSetMode(supervisor.SIMULATION_MODE_FAST)
+robot.simulationReset()
+robot.simulationSetMode(robot.SIMULATION_MODE_FAST)
 
-# perform simulation steps until a epoch is completed
-for _ in range(epoch_duration):
-    robot.run(delta_time)
+# randomly connect the actuators to the network
+output_nodes = random_nodes(conductor.network, avoid=set(), count=2)
+mapping = dict(zip(used_actuators, output_nodes))
+conductor.set_actuators(used_actuators, mapping)
+
+# get nodes distant 2 step from outputs nodes
+source_selector = minimum_distance_selection([*output_nodes], distance=2)
+viable_nodes = [*source_selector(conductor.network, [], -1)]
+
+# randomly select input nodes between the ones that are suitable for the
+# selection
+input_nodes = [
+    viable_nodes[random.randrange(len(viable_nodes))] for _ in used_sensors
+]
+mapping = dict(zip(used_sensors, input_nodes))
+conductor.set_sensors(used_sensors, mapping)
+
+conductor.initialize()
+
+# simulate count epochs run
+for _ in range(epoch_count):
+
+    # perform simulation steps until a epoch is completed
+    for _ in range(epoch_duration):
+
+        # run a simulation step
+        robot.run()
+
+    # randomly connect the sensors to the network
+    input_nodes = mutate(
+        conductor.network,
+        input_nodes,
+        ground=-1,
+        probability=0.3,
+        minimum_mutants=1,
+        maximum_mutants=4,
+        viable_node_selection=source_selector
+    )
+    mapping = dict(zip(used_sensors, input_nodes))
+    conductor.set_sensors(used_sensors, mapping)
 
 ################################################################################
 # EVALUATE RUN
