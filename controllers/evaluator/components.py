@@ -35,7 +35,6 @@ class Motor(str):
     def robot(self, robot: Robot):
         self.__robot = robot
         self.__device = robot.getDevice(self)
-        self.__device.setPosition(float('inf'))
         self.__device.setVelocity(0.0)
 
     @property
