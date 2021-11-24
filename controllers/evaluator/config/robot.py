@@ -1,6 +1,6 @@
 """ CONFIGURATION OF ROBOT MODULES """
 
-from controllers.evaluator.components import sensors, motors
+from components import sensors, motors
 
 used_sensors = [
     # front
