@@ -1,8 +1,15 @@
+import operator
+
 from dataclasses import dataclass, field
+from functools import reduce
 from nanowire_network_simulator import *
 from nanowire_network_simulator.model.device import Datasheet
 from networkx import Graph
-from typing import Set, Dict
+from typing import Set, Dict, Tuple
+
+# todo in reality (0.0, 4095.0), but it basically never reach those values
+SENSOR_RANGE: Tuple[float, float] = (0.0, 1500)
+MOTOR_RANGE: Tuple[float, float] = (-6.28, 6.28)
 
 
 @dataclass
@@ -69,24 +76,54 @@ class Conductor:
         Evaluate its response and return it.
         """
 
-        stimulus = filter(lambda p: p[0] in self.actuators, stimulus.items())
+        # get used sensors
+        stimulus = filter(lambda p: p[0] in self.sensors, stimulus.items())
 
-        inputs = [(self.mapping[pin], value) for pin, value in stimulus]
+        # get sensors readings
+        stimulus = [(self.mapping[sensor], value) for sensor, value in stimulus]
+
+        # remap sensors readings from their range to 0, 10 (voltages)
+        stimulus = [(k, adapt(v, SENSOR_RANGE, (0, 10))) for k, v in stimulus]
+
+        # define the pin-resistance/load pairs for the motors
         outputs = [
             (self.mapping[pin], actuators_resistance)
             for pin in self.actuators
         ]
 
+        # stimulate the network with the sensors inputs
         stimulate(
-            self.network,
-            self.datasheet,
-            update_time,
-            inputs,
-            outputs,
-            set()
+            graph=self.network,
+            datasheet=self.datasheet,
+            delta_time=update_time,
+            inputs=stimulus,
+            outputs=outputs,
+            grounds=set()
         )
 
-        return dict([
+        # extract outputs from network
+        outputs = [
             (a, self.network.nodes[self.mapping[a]]['V'])
             for a in self.actuators
-        ])
+        ]
+
+        # remap output value from 0, 10 to -6.28, 6.28
+        return {k: -adapt(v, (0, 10), MOTOR_RANGE) for k, v in outputs}
+
+
+def adapt(
+        value: float,
+        in_range: Tuple[float, float],
+        out_range: Tuple[float, float]
+) -> float:
+    """Adapt a value to a different range"""
+
+    in_delta = reduce(operator.__sub__, reversed(in_range))
+    out_delta = reduce(operator.__sub__, reversed(out_range))
+    value = out_range[0] + (value - in_range[0]) * out_delta / in_delta
+
+    # force bounds to the value
+    value = min(value, out_range[1])
+    value = max(value, out_range[0])
+
+    return value
