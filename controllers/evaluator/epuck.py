@@ -1,26 +1,24 @@
 from conductor import Conductor
 from controller import Supervisor
-from controllers.evaluator.components import motors, sensors
 
 
 class EPuck(Supervisor):
-    # robot wheels max speed
-    MAX_SPEED = 6.28
+    """Represent the robot in the simulation"""
 
     # specify update time for robot modules (in ms)
     run_frequency = 100
+
+    # names of the sensors and actuators actually used
+    sensors = [f'ps{idx}' for idx in [0, 2, 5, 7]]
+    motors = [f'{side} wheel motor' for side in ['left', 'right']]
 
     def __init__(self, conductor: Conductor):
         # get the time step of the current world
         super().__init__()
 
-        # initialize left and right motors
-        for _, motor in motors.items():
-            motor.robot = self
-
         # initialize distance sensors
-        for _, sensor in sensors.items():
-            sensor.init(self, self.run_frequency)
+        for key in self.sensors:
+            self.getDevice(key).enable(self.run_frequency)
 
         # set the network controller
         self.conductor = conductor
@@ -33,15 +31,25 @@ class EPuck(Supervisor):
             return False
 
         # get sensors readings
-        stimulus = dict([(v, v.read) for _, v in sensors.items()])
+        stimulus = {k: self.read(k) for k in self.sensors}
 
         # run the controller
-        outputs = self.conductor.evaluate(self.run_frequency, stimulus)
+        outputs = self.conductor.evaluate(
+            update_time=self.run_frequency,
+            stimulus=stimulus,
+            actuators_resistance=100
+        )
 
-        # todo remap to range stimulus and outputs ?
-
-        # set the outputs
-        motors['LEFT'].speed = outputs[motors['LEFT']]
-        motors['RIGHT'].speed = outputs[motors['RIGHT']]
+        # set the motors
+        self.move(*map(outputs.get, self.motors))
 
         return True
+
+    def move(self, left_speed: float, right_speed: float):
+        for key, value in zip(self.motors, [left_speed, right_speed]):
+            device = self.getDevice(key)
+            device.setPosition(float('inf'))
+            device.setVelocity(value)
+
+    def read(self, key) -> float:
+        return self.getDevice(key).getValue()
