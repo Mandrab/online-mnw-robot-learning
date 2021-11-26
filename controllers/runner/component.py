@@ -1,5 +1,5 @@
 from controller import Robot
-from typing import Dict
+from typing import Dict, Tuple
 
 
 class Sensor(str):
@@ -19,13 +19,22 @@ class Sensor(str):
         4095: 0.0
     }
 
+    def range(self, raw: bool = True) -> Tuple[float, float]:
+        """
+        Return range of read values.
+        If raw is true: return [min, max] signal's range (i.e. far, near).
+        If raw is false: return [min, max] distance's range (i.e. near, far).
+        """
+        if not raw:
+            return min(self.lookup_table), max(self.lookup_table)
+        return min(self.lookup_table.values()), max(self.lookup_table.values())
+
     def read(self, raw: bool = True) -> float:
         """
         Returns the sensor reading.
         If raw is true, the function returns the raw signal given by the robot.
         If raw is false, the function returns a distance reading.
         """
-
         value = self.robot.getDevice(self).getValue()
 
         if raw:
@@ -63,6 +72,8 @@ class Motor(str):
 
     # the robot that it is working for/in
     robot: Robot
+
+    range: Tuple[float, float] = -6.28, 6.28
 
     @property
     def speed(self) -> float:
