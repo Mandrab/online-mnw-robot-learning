@@ -1,7 +1,6 @@
 from component import Sensor, Motor
 from conductor import Conductor
 from controller import Supervisor
-from typing import List
 
 
 class EPuck(Supervisor):
@@ -11,7 +10,7 @@ class EPuck(Supervisor):
     run_frequency: int = 100
 
     # names of the sensors and actuators actually used
-    sensors: List[Sensor] = [Sensor(f'ps{idx}') for idx in [0, 2, 5, 7]]
+    sensors = [Sensor(f'ps{idx}') for idx in [0, 2, 5, 7]]
     motors = [Motor(f'{side} wheel motor') for side in ['left', 'right']]
 
     def __init__(self, conductor: Conductor):
@@ -39,7 +38,7 @@ class EPuck(Supervisor):
 
         # get sensors readings todo
         stimulus = {sensor: sensor.read() for sensor in self.sensors}
-        print('distances:\t', stimulus)
+        # print('distances:\t', stimulus)
 
         # run the controller
         outputs = self.conductor.evaluate(
@@ -47,7 +46,7 @@ class EPuck(Supervisor):
             stimulus=stimulus,
             actuators_resistance=100
         )
-        print('motors:\t\t', outputs)
+        # print('motors:\t\t', outputs)
 
         # set the motors speed
         for motor, value in zip(self.motors, map(outputs.get, self.motors)):

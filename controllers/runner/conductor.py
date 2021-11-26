@@ -8,8 +8,8 @@ from networkx import Graph
 from typing import Set, Dict, Tuple
 
 # todo in reality (0.0, 4095.0), but it basically never reach those values
-SENSOR_RANGE: Tuple[float, float] = (0.0, 1500)
-MOTOR_RANGE: Tuple[float, float] = (-6.28, 6.28)
+SENSOR_RANGE: Tuple[float, float] = (0.0, 1500)  # (0.0, 7.0)
+MOTOR_RANGE: Tuple[float, float] = (-6.28, 6.28) # (-6.28, 6.28)
 
 
 @dataclass
@@ -84,6 +84,7 @@ class Conductor:
 
         # remap sensors readings from their range to 0, 10 (voltages)
         stimulus = [(k, adapt(v, SENSOR_RANGE, (0, 10))) for k, v in stimulus]
+        # print('in voltages:\t', stimulus)
 
         # define the pin-resistance/load pairs for the motors
         outputs = [
@@ -106,9 +107,9 @@ class Conductor:
             (a, self.network.nodes[self.mapping[a]]['V'])
             for a in self.actuators
         ]
-
+        # print('out voltages:\t', {s: v for s,(k,v) in zip(['l', 'r'], outputs)})
         # remap output value from 0, 10 to -6.28, 6.28
-        return {k: -adapt(v, (0, 10), MOTOR_RANGE) for k, v in outputs}
+        return {k: -adapt(v, (0, 10), MOTOR_RANGE) for k, v in outputs}  # todo
 
 
 def adapt(

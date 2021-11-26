@@ -1,9 +1,8 @@
-import math
-
 from conductor import Conductor
 from config.simulation import *
 from config.network import *
 from epuck import EPuck
+from evaluators import Distance, Fitness
 
 ################################################################################
 # ROBOT SETUP
@@ -38,27 +37,52 @@ conductor.initialize()
 ################################################################################
 # DEFINE SIMULATIONS UTILITIES
 
-# get measure function
-# https://cyberbotics.com/doc/guide/supervisor-programming?tab-language=python
-node = robot.getFromDef('evolvable')
-trans_field = node.getField('translation')
-
-# reset the simulation
-robot.simulationReset()
-robot.simulationSetMode(robot.SIMULATION_MODE_FAST)
+# contains graphs and distance obtained by the robot todo
+results = []
 
 ################################################################################
 # RUN THE SIMULATION
 
+max_fitness = 0
+connections = input_nodes
+
 # simulate count epochs run
 for epoch in range(epoch_count):
-
     print(f'Start of {epoch} simulation')
+
+    # reset simulation to start point
+    robot.simulationReset()
+    robot.simulationSetMode(robot.SIMULATION_MODE_FAST)
+
+    # used to accumulate performance in steps
+    fitness = Fitness(robot)
+
+    # used to compute travelled distance
+    distance_evaluator = Distance(robot)
+
     # perform simulation steps until a epoch is completed
     for _ in range(epoch_duration):
 
         # run a simulation step
         robot.run()
+
+        # update travelled distance
+        distance_evaluator.update()
+
+        # update fitness value
+        fitness.update()
+
+        # debugging plotting - to understand behaviour
+        # e = Evolution(datasheet, {}, 0.5, set(), set(), [(graph, list())])
+        # plot.plot(e, plot.voltage_distribution_map)
+
+    # compute fitness
+    print('fitness:', fitness.fitness())
+    print('distance:', distance_evaluator.distance * 100)
+
+    if fitness.fitness() > max_fitness:
+        max_fitness = fitness.fitness()
+        connections = input_nodes
 
     # randomly connect the sensors to the network
     input_nodes = mutate(
@@ -70,16 +94,16 @@ for epoch in range(epoch_count):
         maximum_mutants=4,
         viable_node_selection=source_selector
     )
-
     mapping = dict(zip(robot.sensors, input_nodes))
     conductor.set_sensors(robot.sensors, mapping)
 
-################################################################################
-# EVALUATE RUN
+print("Running the best scoring controller")
 
-# compute travelled distance
-values = trans_field.getSFVec3f()
-dist = math.sqrt(values[0] * values[0] + values[2] * values[2])
+mapping = dict(zip(robot.sensors, input_nodes))
+conductor.set_sensors(robot.sensors, mapping)
+
+while True:
+    robot.run()
 
 ################################################################################
 # RESULT SAVE
