@@ -1,24 +1,31 @@
+from component import Sensor, Motor
 from conductor import Conductor
 from controller import Supervisor
+from typing import List
 
 
 class EPuck(Supervisor):
     """Represent the robot in the simulation"""
 
     # specify update time for robot modules (in ms)
-    run_frequency = 100
+    run_frequency: int = 100
 
     # names of the sensors and actuators actually used
-    sensors = [f'ps{idx}' for idx in [0, 2, 5, 7]]
-    motors = [f'{side} wheel motor' for side in ['left', 'right']]
+    sensors: List[Sensor] = [Sensor(f'ps{idx}') for idx in [0, 2, 5, 7]]
+    motors = [Motor(f'{side} wheel motor') for side in ['left', 'right']]
 
     def __init__(self, conductor: Conductor):
         # get the time step of the current world
         super().__init__()
 
         # initialize distance sensors
-        for key in self.sensors:
-            self.getDevice(key).enable(self.run_frequency)
+        for sensor in self.sensors:
+            sensor.robot = self
+            sensor.enable(self.run_frequency)
+
+        # initialize motors
+        for motor in self.motors:
+            motor.robot = self
 
         # set the network controller
         self.conductor = conductor
@@ -30,8 +37,9 @@ class EPuck(Supervisor):
         if self.step(self.run_frequency) == -1:
             return False
 
-        # get sensors readings
-        stimulus = {k: self.read(k) for k in self.sensors}
+        # get sensors readings todo
+        stimulus = {sensor: sensor.read() for sensor in self.sensors}
+        print('distances:\t', stimulus)
 
         # run the controller
         outputs = self.conductor.evaluate(
@@ -39,17 +47,10 @@ class EPuck(Supervisor):
             stimulus=stimulus,
             actuators_resistance=100
         )
+        print('motors:\t\t', outputs)
 
-        # set the motors
-        self.move(*map(outputs.get, self.motors))
+        # set the motors speed
+        for motor, value in zip(self.motors, map(outputs.get, self.motors)):
+            motor.speed = value
 
         return True
-
-    def move(self, left_speed: float, right_speed: float):
-        for key, value in zip(self.motors, [left_speed, right_speed]):
-            device = self.getDevice(key)
-            device.setPosition(float('inf'))
-            device.setVelocity(value)
-
-    def read(self, key) -> float:
-        return self.getDevice(key).getValue()
