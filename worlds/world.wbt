@@ -3,8 +3,8 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation 1 0 0 4.71238898038469
-  position 0.0006008421781233667 1.8159804788383866 1.3100151018780258e-05
+  orientation 1 2.6106661940414505e-16 3.172684610814263e-16 4.682388980384683
+  position -0.008233023268433767 1.642557489889343 -0.027086317483275953
   follow "e-puck"
   followType "None"
 }
@@ -16,69 +16,37 @@ Background {
 RectangleArena {
 }
 SolidBox {
-  translation 0.356764 0 0.217221
-  rotation 0 -1 0 4.692820414042842e-06
-  name "box(7)"
-  size 0.08 0.13 0.01
-}
-SolidBox {
-  translation 0.096764 0 0.157221
-  rotation 0 -1 0 4.692820414042842e-06
-  name "box(10)"
-  size 0.32 0.13 0.01
-}
-SolidBox {
-  translation -0.37 0 0.1
+  translation -0.21 0 -0.06
+  name "box(6)"
   size 0.13 0.13 0.13
 }
 SolidBox {
-  translation -0.22464 0 0.40732
-  rotation 0 1 0 -0.523595307179586
+  translation 0.01 0 0.2
   name "box(1)"
-  size 0.01 0.13 0.22
+  size 0.13 0.13 0.13
 }
 SolidBox {
-  translation -0.07 0 0.21
-  name "box(11)"
-  size 0.01 0.13 0.11
-}
-SolidBox {
-  translation 0 0 -0.42
-  name "box(3)"
-  size 0.42 0.13 0.13
-}
-SolidBox {
-  translation -0.122679 0 0.28804
-  rotation 0 1 0 0.523599
+  translation -0.26 0 0.21
   name "box(2)"
-  size 0.13 0.13 0.01
+  size 0.13 0.13 0.13
 }
 SolidBox {
-  translation -0.192519 0 -0.35292
-  rotation 0 1 0 0.523599
+  translation 0.29 0 -0.04
+  name "box(3)"
+  size 0.13 0.13 0.13
+}
+SolidBox {
+  translation 0.29 0 -0.27
+  name "box(4)"
+  size 0.13 0.13 0.13
+}
+SolidBox {
+  translation 0.01 0 -0.26
   name "box(5)"
-  size 0.26 0.13 0.13
-}
-SolidBox {
-  translation 0.416537 0 0.192332
-  rotation 0 1 0 0.785398
-  name "box(6)"
-  size 0.07 0.13 0.01
-}
-SolidBox {
-  translation 0.471602 0 0.0545445
-  rotation 0 1 0 1.309
-  name "box(9)"
-  size 0.25 0.13 0.01
-}
-SolidBox {
-  translation 0.284656 0 0.185891
-  rotation 0 -1 0 -0.7854053071795866
-  name "box(8)"
-  size 0.01 0.13 0.1
+  size 0.13 0.13 0.13
 }
 DEF evolvable E-puck {
-  translation -0.38 0 0.38
+  rotation 0 1 0 1.5708
   controller "runner"
   supervisor TRUE
 }
