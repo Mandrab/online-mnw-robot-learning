@@ -38,12 +38,14 @@ class EPuck(Supervisor):
 
         # get sensors readings todo
         stimulus = {sensor: sensor.read() for sensor in self.sensors}
-        # print('distances:\t', stimulus)
+        print('distances:\t', stimulus)
 
         # run the controller
         outputs = self.conductor.evaluate(
             update_time=self.run_frequency,
             stimulus=stimulus,
+            stimulus_range=self.sensors[0].range(),
+            outputs_range=self.motors[0].range(),
             actuators_resistance=100
         )
         # print('motors:\t\t', outputs)
