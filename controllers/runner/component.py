@@ -73,7 +73,9 @@ class Motor(str):
     # the robot that it is working for/in
     robot: Robot
 
-    range: Tuple[float, float] = -6.28, 6.28
+    @staticmethod
+    def range() -> Tuple[float, float]:
+        return -6.28, 6.28
 
     @property
     def speed(self) -> float:
