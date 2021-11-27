@@ -15,8 +15,7 @@ robot = EPuck(conductor)
 
 # randomly connect the actuators(motors) to the network
 output_nodes = random_nodes(conductor.network, avoid=set(), count=2)
-mapping = dict(zip(robot.motors, output_nodes))
-conductor.set_actuators(robot.motors, mapping)
+conductor.set_actuators(dict(zip(robot.motors, output_nodes)))
 
 # get nodes distant 2 step from outputs nodes
 source_selector = minimum_distance_selection([*output_nodes], distance=2)
@@ -28,8 +27,7 @@ viable_nodes = [*source_selector(conductor.network, [], -1)]
 input_nodes = [
     viable_nodes[random.randrange(len(viable_nodes))] for _ in robot.sensors
 ]
-mapping = dict(zip(robot.sensors, input_nodes))
-conductor.set_sensors(robot.sensors, mapping)
+conductor.set_sensors(dict(zip(robot.sensors, input_nodes)))
 
 # initialize the network with the given setting
 conductor.initialize()
@@ -94,13 +92,11 @@ for epoch in range(epoch_count):
         maximum_mutants=4,
         viable_node_selection=source_selector
     )
-    mapping = dict(zip(robot.sensors, input_nodes))
-    conductor.set_sensors(robot.sensors, mapping)
+    conductor.set_sensors(dict(zip(robot.sensors, input_nodes)))
 
 print("Running the best scoring controller")
 
-mapping = dict(zip(robot.sensors, input_nodes))
-conductor.set_sensors(robot.sensors, mapping)
+conductor.set_sensors(dict(zip(robot.sensors, input_nodes)))
 
 while True:
     robot.run()
