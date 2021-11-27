@@ -25,7 +25,7 @@ class Sensor(str):
         If raw is true: return [min, max] signal's range (i.e. far, near).
         If raw is false: return [min, max] distance's range (i.e. near, far).
         """
-        if not raw:
+        if raw:
             return min(self.lookup_table), max(self.lookup_table)
         return min(self.lookup_table.values()), max(self.lookup_table.values())
 
