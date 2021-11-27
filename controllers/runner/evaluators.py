@@ -31,7 +31,7 @@ class Fitness:
 
         max_proximity = adapt(value, (min_value, max_value), (0, 1))
         average_speed = sum(speeds) / 2.0
-        directions = sqrt(abs(reduce(sub, speeds)))  # todo ?
+        directions = sqrt(abs(reduce(sub, speeds)))
 
         self.__fitness += (1 - max_proximity) * (1 - directions) * average_speed
         self.__counter += 1
