@@ -5,8 +5,6 @@ from networkx import Graph
 from typing import Dict, Tuple
 from utils import adapt
 
-NETWORK_RANGE: Tuple[float, float] = (0, 10.0)
-
 
 @dataclass
 class Conductor:
@@ -16,24 +14,16 @@ class Conductor:
     creating a graceful interface for their interaction.
     """
 
+    # graphs information and instance
     network: Graph
     datasheet: Datasheet
+
+    # accepted stimulus range of the network
+    stimulus_range: Tuple[float, float] = (0.0, 10.0)
+
+    # mappings that represent the sensor/actuator -> network-node relation
     sensors: Dict[str, int] = field(default_factory=set)
     actuators: Dict[str, int] = field(default_factory=set)
-
-    def set_sensors(self, sensors: Dict[str, int]):
-        """
-        Connect sensors to the network.
-        The mapping represent the sensor/network-node mapping.
-        """
-        self.sensors = sensors
-
-    def set_actuators(self, actuators: Dict[str, int]):
-        """
-        Connect actuators to the network
-        The mapping represent the sensor/network-node mapping.
-        """
-        self.actuators = actuators
 
     def initialize(self):
         """Initialize network"""
@@ -48,51 +38,48 @@ class Conductor:
     def evaluate(
             self,
             update_time: float,
-            stimulus: Dict[str, float],
-            stimulus_range: Tuple[float, float],
+            inputs: Dict[str, float],
+            inputs_range: Tuple[float, float],
             outputs_range: Tuple[float, float],
-            actuators_resistance: float = 1
+            actuators_load: float = 1
     ) -> dict[str, float]:
         """
         Stimulate the network with the sensors signals.
         Evaluate its response and return it.
         """
-
-        # get used sensors
-        stimulus = filter(lambda p: p[0] in self.sensors, stimulus.items())
+        # filter to get used sensors
+        inputs = [(k, v) for k, v in inputs.items() if k in self.sensors]
 
         # get sensors readings
-        stimulus = [(self.sensors[sensor], value) for sensor, value in stimulus]
+        inputs = [(self.sensors[k], v) for k, v in inputs]
 
-        # remap sensors readings from their range to 0, 10 (voltages)
-        stimulus = [
-            (k, adapt(v, stimulus_range, NETWORK_RANGE))
-            for k, v in stimulus
+        # remap sensors readings from their range to network range (voltages)
+        inputs = [
+            (k, adapt(v, inputs_range, self.stimulus_range))
+            for k, v in inputs
         ]
         # print('in voltages:\t', stimulus)
 
         # define the pin-resistance/load pairs for the motors
-        outputs = [
-            (self.actuators[pin], actuators_resistance)
-            for pin in self.actuators
-        ]
+        outputs = [(pin, actuators_load) for pin in self.actuators.values()]
 
+        # print(inputs_range, outputs_range, self.stimulus_range)
         # stimulate the network with the sensors inputs
         stimulate(
             graph=self.network,
             datasheet=self.datasheet,
             delta_time=update_time,
-            inputs=stimulus,
+            inputs=inputs,
             outputs=outputs,
             grounds=set()
         )
 
         # extract outputs from network
         outputs = [
-            (a, self.network.nodes[self.actuators[a]]['V'])
-            for a in self.actuators
+            (actuator, self.network.nodes[pin]['V'])
+            for actuator, pin in self.actuators.items()
         ]
-        print('out voltages:\t', {s: p[0] for s, p in zip(['l', 'r'], outputs)})
+        # print('out voltages:\t', {s: p[0] for s, p in zip(['l', 'r'], outputs)})
 
         # remap output value from 0, 10 to -6.28, 6.28 todo
-        return {k: -adapt(v, NETWORK_RANGE, outputs_range) for k, v in outputs}
+        return {k: adapt(v, self.stimulus_range, outputs_range) for k, v in outputs}
