@@ -13,7 +13,7 @@ class EPuck(Supervisor):
     sensors = [Sensor(f'ps{idx}') for idx in [0, 2, 5, 7]]
     motors = [Motor(f'{side} wheel motor') for side in ['left', 'right']]
 
-    def __init__(self, conductor: Conductor):
+    def __init__(self, conductor: Conductor = None):
         # get the time step of the current world
         super().__init__()
 
@@ -29,7 +29,7 @@ class EPuck(Supervisor):
         # set the network controller
         self.conductor = conductor
 
-    def run(self):
+    def run(self,  raw_signal: bool = True):
         """Execute a step and notify success"""
 
         # webots has stopped/paused the simulation
@@ -37,16 +37,16 @@ class EPuck(Supervisor):
             return False
 
         # get sensors readings todo
-        stimulus = {sensor: sensor.read() for sensor in self.sensors}
-        print('distances:\t', stimulus)
+        stimulus = {s: s.read(raw_signal) for s in self.sensors}
+        # print('distances:\t', stimulus)
 
         # run the controller
         outputs = self.conductor.evaluate(
             update_time=self.run_frequency,
-            stimulus=stimulus,
-            stimulus_range=self.sensors[0].range(),
+            inputs=stimulus,
+            inputs_range=self.sensors[0].range(raw_signal),
             outputs_range=self.motors[0].range(),
-            actuators_resistance=100
+            actuators_load=100
         )
         # print('motors:\t\t', outputs)
 
