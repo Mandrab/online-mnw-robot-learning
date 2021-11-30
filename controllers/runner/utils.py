@@ -20,3 +20,14 @@ def adapt(
     value = max(value, out_range[0])
 
     return value
+
+
+class Frequency:
+    """
+    Represents the working frequency of the robot.
+    Being a class, it avoids usage of different measure units for error.
+    """
+    def __init__(self, hz_value: float):
+        self.Hz = 0.5
+        self.s = 1.0 / self.Hz
+        self.ms = self.s * 1000.0
