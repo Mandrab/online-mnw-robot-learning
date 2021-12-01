@@ -34,7 +34,7 @@ class EPuck(Supervisor):
         # set the network controller
         self.conductor = conductor
 
-    def run(self,  raw_signal: bool = True):
+    def run(self, raw_signal: bool = True):
         """Execute a step and notify success"""
 
         # webots has stopped/paused the simulation
@@ -50,7 +50,7 @@ class EPuck(Supervisor):
             update_time=self.run_frequency.s,
             inputs=stimulus,
             inputs_range=self.sensors_range(raw_signal),
-            outputs_range=self.motors_range(not raw_signal),
+            outputs_range=self.motors_range(raw_signal),
             actuators_load=100
         )
         # print('motors:\t\t', [(k, round(v, 3)) for k, v in outputs.items()])
