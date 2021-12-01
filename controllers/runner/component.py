@@ -10,13 +10,8 @@ class Sensor(str):
 
     # distance sensors lookup table (signal-distance)
     lookup_table: Dict[float, float] = {
-        0: 7.0,
-        34: 4.0,
-        306: 3.0,
-        676: 2.0,
-        2211: 1.0,
-        3474: 0.5,
-        4095: 0.0
+        65: 7.0,
+        1550: 0.0
     }
 
     def range(self, raw: bool = True) -> Tuple[float, float]:
@@ -37,18 +32,32 @@ class Sensor(str):
         """
         value = self.robot.getDevice(self).getValue()
 
+        # return raw sensor reading
         if raw:
             return value
 
+        # get adapted value directly from the lookup table
         if value in self.lookup_table:
             return self.lookup_table[value]
 
+        # to avoid ranges errors, if the value is out of the raw-range, return
+        # the boundaries
+        upper_bound = max(self.lookup_table)
+        if value > upper_bound:
+            return self.lookup_table[upper_bound]
+        lower_bound = min(self.lookup_table)
+        if value < lower_bound:
+            return self.lookup_table[lower_bound]
+
+        # get the nearest values in the table
         lower_bound = max(key for key in self.lookup_table if key < value)
         upper_bound = min(key for key in self.lookup_table if key > value)
 
+        # get the distance value of the raw signals
         lower_value = self.lookup_table[lower_bound]
         upper_value = self.lookup_table[upper_bound]
 
+        # return the average of them
         return (lower_value + upper_value) / 2.0
 
     def upper_bound(self, raw: bool = True) -> float:
@@ -74,8 +83,8 @@ class Motor(str):
     robot: Robot
 
     @staticmethod
-    def range() -> Tuple[float, float]:
-        return -6.28, 6.28
+    def range(reverse: bool = False) -> Tuple[float, float]:
+        return (6.28, -6.28) if reverse else (-6.28, 6.28)
 
     @property
     def speed(self) -> float:
