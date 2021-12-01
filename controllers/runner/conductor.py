@@ -22,8 +22,8 @@ class Conductor:
     stimulus_range: Tuple[float, float] = (0.0, 10.0)
 
     # mappings that represent the sensor/actuator -> network-node relation
-    sensors: Dict[str, int] = field(default_factory=set)
-    actuators: Dict[str, int] = field(default_factory=set)
+    sensors: Dict[str, int] = field(default_factory=dict)
+    actuators: Dict[str, int] = field(default_factory=dict)
 
     def initialize(self):
         """Initialize network"""
@@ -58,12 +58,11 @@ class Conductor:
             (k, adapt(v, inputs_range, self.stimulus_range))
             for k, v in inputs
         ]
-        # print('in voltages:\t', stimulus)
+        # print('in voltages:\t', inputs)
 
         # define the pin-resistance/load pairs for the motors
         outputs = [(pin, actuators_load) for pin in self.actuators.values()]
 
-        # print(inputs_range, outputs_range, self.stimulus_range)
         # stimulate the network with the sensors inputs
         stimulate(
             graph=self.network,
@@ -79,7 +78,12 @@ class Conductor:
             (actuator, self.network.nodes[pin]['V'])
             for actuator, pin in self.actuators.items()
         ]
-        # print('out voltages:\t', {s: p[0] for s, p in zip(['l', 'r'], outputs)})
+        # print('out voltages:\t', {s: p[1] for s, p in zip(['l', 'r'], outputs)})
 
-        # remap output value from 0, 10 to -6.28, 6.28 todo
-        return {k: adapt(v, self.stimulus_range, outputs_range) for k, v in outputs}
+        # remap output values from 0, 10 to:
+        #   -6.28, 6.28 for distance: 10 = far -> 6.28 = move straight
+        #   6.28, -6.28 for proximity: 10 = near -> -6.28 = go away
+        return {
+            k: adapt(v, self.stimulus_range, outputs_range)
+            for k, v in outputs
+        }
