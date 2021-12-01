@@ -3,7 +3,7 @@ from epuck import EPuck
 from nanowire_network_simulator import minimum_viable_network
 from nanowire_network_simulator.model.device import Datasheet
 from optimization.Epoch import Epoch, new_epoch, evolve_epoch
-from typing import List, Tuple
+from typing import List
 
 
 class Simulation:
@@ -18,8 +18,7 @@ class Simulation:
     def __init__(
             self,
             robot: EPuck,
-            datasheet: Datasheet,
-            network_range: Tuple[float, float]
+            datasheet: Datasheet
     ):
         """
         Setup the simulation creating a controller network and assigning it to
@@ -32,7 +31,6 @@ class Simulation:
 
         # crate robot controller
         self.controller = Conductor(graph, datasheet)
-        self.controller.stimulus_range = network_range
 
         # finally set the controller to the robot
         robot.conductor = self.controller

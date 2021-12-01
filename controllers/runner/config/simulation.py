@@ -1,5 +1,4 @@
-""" SIMULATION CONFIGS """
-import itertools
+""" SIMULATION CONFIGURATIONS """
 import random
 
 from epuck import EPuck
@@ -7,23 +6,22 @@ from epuck import EPuck
 # set constant seed for simulation
 random.seed(1234)
 
-epoch_count = 50       # number of epochs (robot) to run in the simulation
-epoch_duration = 100    # in steps; an epoch allow a robot to run freely
+# number of epochs (net-connections) to test/simulate
+epoch_count = 20
 
-# grid-search like: get the cross-product of the given parameters
-grid = [*itertools.product(*[
-    # wires count, device size and wire length
-    [(200, 100, 20)],
-    # [(300, 200, 40), (500, 200, 30), (800, 200, 20)],
-    # # ranges
-    [(True, (-10.0, 0))]
-    # itertools.product(*[
-    #     # sensors range is raw -> (0, 4095) / (0, 7)
-    #     [True, False],
-    #     # network range
-    #     [(-10.0, 10.0), (0.0, 10.0)]
-    # ])
-])]
+# number of steps for which the robot can run freely
+epoch_duration = 150
+
+# network configurations to tests
+# syntax: (wires count, device size, wire length)
+grid = [
+    (100, 45, 10),      # density 4.94
+    (100, 40, 9),       # density 5.06
+    (100, 35, 8),       # density 5.22
+    (250, 40, 6),       # density 5.63
+    (400, 50, 6),       # density 5.76
+    (400, 80, 10)       # density 6.25
+]
 
 # create the Robot instance
 robot = EPuck()

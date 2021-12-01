@@ -5,12 +5,8 @@ from typing import List
 
 simulations: List[Simulation] = []
 
-for (wires, size, length), (raw_signals, network_range) in grid:
-    print(
-        f'Wires:', wires, 'wire length:', length, 'dev. size:', size,
-        # 'raw signal (not distance):', raw_signals,
-        'network input range:', network_range
-    )
+for wires, size, length in grid:
+    print('Network density:', wires * (length * length) / (size * size))
 
     # define network characteristics
     datasheet = Datasheet(
@@ -21,7 +17,7 @@ for (wires, size, length), (raw_signals, network_range) in grid:
         std_length=length * 0.35
     )
 
-    simulation = Simulation(robot, datasheet, network_range)
+    simulation = Simulation(robot, datasheet)
 
     # simulate count epochs run
     for epoch in range(epoch_count):
