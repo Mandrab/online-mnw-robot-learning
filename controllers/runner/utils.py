@@ -28,6 +28,6 @@ class Frequency:
     Being a class, it avoids usage of different measure units for error.
     """
     def __init__(self, hz_value: float):
-        self.Hz = 0.5
-        self.s = 1.0 / self.Hz
-        self.ms = self.s * 1000.0
+        self.Hz: float = hz_value
+        self.s: float = 1.0 / self.Hz
+        self.ms: int = int(self.s * 1000.0)
