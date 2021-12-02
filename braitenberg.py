@@ -1,6 +1,6 @@
 import subprocess
 
-__WORLD_FILE = 'worlds/world_braitenberg.wbt'
+__WORLD_FILE = 'worlds/braitenberg_world.wbt'
 
 ################################################################################
 # START OF SIMULATION
