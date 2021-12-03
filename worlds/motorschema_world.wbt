@@ -1,0 +1,93 @@
+#VRML_SIM R2021b utf8
+WorldInfo {
+  coordinateSystem "NUE"
+}
+Viewpoint {
+  orientation 1 0 0 4.71238898038469
+  position 0.0006007907278776988 1.6331870437043763 1.2984511648888276e-05
+  follow "e-puck"
+  followType "None"
+}
+Background {
+  skyColor [
+    0.4 0.7 1
+  ]
+}
+RectangleArena {
+}
+SolidBox {
+  translation -0.13 0 -0.07
+  name "box(6)"
+  size 0.13 0.13 0.13
+}
+SolidBox {
+  translation 0 0 0.18
+  name "box(1)"
+  size 0.13 0.13 0.13
+}
+SolidBox {
+  translation 0.13 0 0.18
+  name "box(13)"
+  size 0.13 0.13 0.13
+}
+SolidBox {
+  translation 0.13 0 -0.32
+  name "box(14)"
+  size 0.13 0.13 0.13
+}
+SolidBox {
+  translation -0.13 0 0.18
+  name "box(2)"
+  size 0.13 0.13 0.13
+}
+SolidBox {
+  translation 0.32 0 0.18
+  name "box(3)"
+  size 0.13 0.13 0.13
+}
+SolidBox {
+  translation 0.26 0 -0.07
+  name "box(4)"
+  size 0.13 0.13 0.13
+}
+SolidBox {
+  translation -0.13 0 -0.32
+  name "box(5)"
+  size 0.13 0.13 0.13
+}
+SolidBox {
+  translation -0.38 0 -0.19
+  name "box(9)"
+  size 0.13 0.13 0.13
+}
+SolidBox {
+  translation -0.38 0 0.06
+  name "box(10)"
+  size 0.13 0.13 0.13
+}
+SolidBox {
+  translation -0.26 0 0.18
+  name "box(11)"
+  size 0.13 0.13 0.13
+}
+SolidBox {
+  translation -0.26 0 -0.32
+  name "box(12)"
+  size 0.13 0.13 0.13
+}
+SolidBox {
+  translation 0 0 -0.32
+  name "box(7)"
+  size 0.13 0.13 0.13
+}
+SolidBox {
+  translation 0.32 0 -0.32
+  name "box(8)"
+  size 0.13 0.13 0.13
+}
+DEF evolvable E-puck {
+  translation 0.08 0 -0.0600003
+  rotation 0 1 0 1.5708
+  controller "motorschema"
+  supervisor TRUE
+}
