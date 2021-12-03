@@ -6,7 +6,7 @@ fields. The direction and speed is calculated as a sum of potential vectors.
 from controller import Robot
 from functools import reduce
 from math import radians, sin
-from utils import adapt, polar_vector_sum
+from controllers.motorschema.utils import adapt, polar_vector_sum
 
 TIME_STEP = 100  # ms; todo set equal to e-puck one used in other experiments
 
