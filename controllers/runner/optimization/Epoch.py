@@ -1,7 +1,7 @@
 from epuck import EPuck
 from evaluators import Fitness, Distance
 from nanowire_network_simulator import minimum_distance_selection,\
-    random_nodes, mutate
+    random_nodes, mutate, Evolution, plot
 from typing import List
 
 
@@ -28,17 +28,20 @@ class Epoch:
 
         # reset simulation to start/initial point
         robot.simulationReset()
-        robot.simulationSetMode(robot.SIMULATION_MODE_FAST)
 
     def step(self):
         """Run a simulation step and exec the required evaluations"""
-        self.robot.run()
+        self.robot.run(False)  # todo raw_signals)
 
         # update fitness value
         self.fitness.update()
 
         # update distance value
         self.distance.update()
+
+        # debugging plotting - to understand behaviour todo
+        # e = Evolution(self.controller.datasheet, {}, 0.5, set(), set(), [(self.controller.network, list())])
+        # plot.plot(e, plot.voltage_distribution_map)
 
 
 def new_epoch(robot: EPuck) -> Epoch:
@@ -48,7 +51,7 @@ def new_epoch(robot: EPuck) -> Epoch:
     graph = robot.conductor.network
 
     # select and set actuator nodes from the available nodes
-    actuators = [*random_nodes(graph, set(), len(robot.motors))]
+    actuators = random_nodes(graph, set(), len(robot.motors))
     robot.conductor.sensors = dict(zip(robot.motors, actuators))
 
     # select and set source nodes from the ones that are at least 2 steps
@@ -56,7 +59,7 @@ def new_epoch(robot: EPuck) -> Epoch:
     neighbor = minimum_distance_selection(
         outputs=actuators,
         distance=2,
-        take_neighbor=True
+        negate=True
     )(graph, list(), -1)
     sensors = [*random_nodes(graph, avoid=neighbor, count=len(robot.sensors))]
     robot.conductor.sensors = dict(zip(robot.sensors, sensors))
@@ -68,7 +71,7 @@ def new_epoch(robot: EPuck) -> Epoch:
     return Epoch(
         robot=robot,
         sensors=sensors,
-        actuators=actuators
+        actuators=[*actuators]
     )
 
 
@@ -87,7 +90,7 @@ def evolve_epoch(robot: Epoch) -> Epoch:
         minimum_mutants=1,
         maximum_mutants=4,
         viable_node_selection=minimum_distance_selection(
-            outputs=[*robot.robot.conductor.actuators.values()],
+            outputs={*robot.robot.conductor.actuators.values()},
             distance=2
         )
     )

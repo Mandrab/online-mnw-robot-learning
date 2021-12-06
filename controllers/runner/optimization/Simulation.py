@@ -38,7 +38,7 @@ class Simulation:
     def simulate(self, duration: int):
         """Evaluate the controller behaviour running different connections"""
 
-        if self.best_epoch is None:
+        if self.best_epoch is None or self.best_epoch.fitness.value() < 50:
             # setup first simulation's epoch
             epoch = new_epoch(self.robot)
             self.best_epoch = epoch
@@ -53,6 +53,8 @@ class Simulation:
         for _ in range(duration):
             epoch.step()
 
-        # if the connection is better than the pre-best one, start to evolve it
+        # if the connection is better than the best one, start to evolve it
         if self.best_epoch.fitness.value() <= epoch.fitness.value():
             self.best_epoch = epoch
+
+        print('fitness:', epoch.fitness.value())
