@@ -42,28 +42,49 @@ rightMotor.setPosition(float('inf'))
 # set initial speed
 left_speed, right_speed = 6.28, 6.28
 
-for _ in range(38):
+# set flag to turn just once
+turned = False
 
-    # execute a step of the simulation
+# create readings backup lists
+readings = []
+
+# update sensors' readings
+robot.step(TIME_STEP)
+
+# set direction ahead
+leftMotor.setVelocity(6.28)
+rightMotor.setVelocity(6.28)
+
+# run until you meet an obstacle
+while ps[0].getValue() < 100:
     if robot.step(TIME_STEP) == -1:
-        continue
+        exit()
+    readings.append({i: s.getValue() for i, s in enumerate(ps)})
 
-    # check obstacles
-    values = [ps[i].getValue() > 80 for i in [0, 1]]
+# set direction left
+leftMotor.setVelocity(-6.28)
+rightMotor.setVelocity(6.28)
+robot.step(TIME_STEP)
 
-    # check if it has to turn
-    if any(values):
-        left_speed, right_speed = -6.28, 6.28
-    else:
-        left_speed, right_speed = 6.28, 6.28
+# turn and avoid the obstacle
+while ps[1].getValue() > 100:
+    if robot.step(TIME_STEP) == -1:
+        exit()
+    readings.append({i: s.getValue() for i, s in enumerate(ps)})
 
-    # set velocities to the motors
-    leftMotor.setVelocity(left_speed)
-    rightMotor.setVelocity(right_speed)
+# set direction ahead
+leftMotor.setVelocity(6.28)
+rightMotor.setVelocity(6.28)
 
-    # save sensors readings to file
-    with open(AVOID_FILE, "a") as file:
-        file.write(json.dumps({i: s.getValue() for i, s in enumerate(ps)}))
+# run until you meet a second obstacle
+while ps[0].getValue() < 100:
+    if robot.step(TIME_STEP) == -1:
+        exit()
+    readings.append({i: s.getValue() for i, s in enumerate(ps)})
+
+# save sensors readings to file
+with open(AVOID_FILE, "a") as file:
+    file.write(json.dumps(readings))
 
 # get handle to robot's translation field and change robot position
 node = robot.getFromDef("robot")
@@ -77,12 +98,15 @@ rightMotor.setVelocity(6.28)
 # update sensors' readings
 robot.step(TIME_STEP)
 
-while ps[0].getValue() < 100:
+# create readings backup lists
+readings = []
 
-    # execute a step of the simulation
+# run until you meet an obstacle
+while ps[0].getValue() < 100:
     if robot.step(TIME_STEP) == -1:
         continue
+    readings.append({i: s.getValue() for i, s in enumerate(ps)})
 
-    # save sensors readings to file
-    with open(DIRECT_FILE, "a") as file:
-        file.write(json.dumps({i: s.getValue() for i, s in enumerate(ps)}))
+# save sensors readings to file
+with open(DIRECT_FILE, "a") as file:
+    file.write(json.dumps(readings))
