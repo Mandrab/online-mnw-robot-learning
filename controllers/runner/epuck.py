@@ -1,17 +1,17 @@
 from component import Sensor, Motor
 from conductor import Conductor
 from controller import Supervisor
-from utils import Frequency
+from controllers.runner.utils import Frequency
 
 
 class EPuck(Supervisor):
     """Represent the robot in the simulation"""
 
     # update/working time for robot modules
-    run_frequency = Frequency(10)
+    run_frequency = Frequency(hz_value=10)
 
     # names of the sensors and actuators actually used
-    sensors = [Sensor(f'ps{idx}') for idx in [0, 2, 5, 7]]
+    sensors = [Sensor(f'ps{idx}') for idx in range(8)]
     motors = [Motor(f'{side} wheel motor') for side in ['left', 'right']]
 
     def __init__(self, conductor: Conductor = None):
@@ -41,7 +41,7 @@ class EPuck(Supervisor):
         if self.step(self.run_frequency.ms) == -1:
             return False
 
-        # get sensors readings todo
+        # get sensors readings
         stimulus = {s: s.read(raw_signal) for s in self.sensors}
         # print('distances:\t', [(k, round(v, 3)) for k, v in stimulus.items()])
 
@@ -51,7 +51,7 @@ class EPuck(Supervisor):
             inputs=stimulus,
             inputs_range=self.sensors_range(raw_signal),
             outputs_range=self.motors_range(raw_signal),
-            actuators_load=100
+            actuators_load=1e6  # MOhm
         )
         # print('motors:\t\t', [(k, round(v, 3)) for k, v in outputs.items()])
 
