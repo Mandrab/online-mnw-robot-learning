@@ -5,8 +5,13 @@ from typing import List
 
 simulations: List[Simulation] = []
 
-for wires, size, length in grid:
-    print('Network density:', wires * (length * length) / (size * size))
+for density in densities:
+
+    size = 50
+    length = 10.0
+    wires = int(density * size * size / (length * length))
+
+    print('Network density:', density, 'wires:', wires)
 
     # define network characteristics
     datasheet = Datasheet(
@@ -16,6 +21,8 @@ for wires, size, length in grid:
         mean_length=length,
         std_length=length * 0.35
     )
+
+    robot.simulationSetMode(robot.SIMULATION_MODE_FAST)
 
     simulation = Simulation(robot, datasheet)
 
