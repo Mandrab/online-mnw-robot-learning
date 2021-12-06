@@ -110,7 +110,7 @@ zoom_ax.set_xticks([220, 235, 250])
 
 handles, labels = ax.get_legend_handles_labels()
 plt.legend(
-    handles,labels,
+    handles, labels,
     ncol=4, loc='lower right', bbox_to_anchor=(1.05, -0.8)
 )
 plt.title(
