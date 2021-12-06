@@ -28,10 +28,13 @@ from utils import *
 # network is freshly stimulated and thus it responds fastly to it. Logically,
 # after long periods of time the influence of the first stimulation fades,
 # making the network ready again for new stimulation. This is a perfect
-# representation of the so called 'fading memory' property. Finally, it is
-# interesting to note that, although the average conductance decrease for near
-# signals, the maximum one increase. This is due to a longer time of stimulation
-# of the best/shortest path. todo check again
+# representation of the so called 'fading memory' property.
+# Finally, it is interesting to note that, although the average conductance
+# decrease for near signals, the maximum one increase. This is due to a longer
+# time of stimulation of the best/shortest path: it has already been said indeed
+# that the stimulation is more effective on short paths. The hypothesis is then
+# that the lower-voltage stimulation is balanced by the higher intensity/
+# influence on those paths. todo check again
 # This behaviour can be seen as a sort of adaptation to stimulated states. To
 # force a parallelism to a natural behaviour, it resemble the process by which
 # a person or animal get used to harsh life conditions, responding weakly to
