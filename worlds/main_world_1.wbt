@@ -1,0 +1,27 @@
+#VRML_SIM R2021b utf8
+WorldInfo {
+  coordinateSystem "NUE"
+}
+Viewpoint {
+  orientation 1 0 0 4.71238898038469
+  position 1.6511936569576716e-08 1.4876699713072439 5.666697436744598e-07
+  follow "e-puck"
+  followType "None"
+}
+Background {
+  skyColor [
+    0.4 0.7 1
+  ]
+}
+RectangleArena {
+}
+SolidBox {
+  translation 0 0.05 0
+  size 0.75 0.1 0.5
+}
+DEF evolvable E-puck {
+  translation -2.20392e-07 0 -0.37
+  rotation 0 1 0 -1.5707953071795862
+  controller "runner"
+  supervisor TRUE
+}

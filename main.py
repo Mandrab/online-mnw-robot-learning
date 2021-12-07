@@ -1,6 +1,11 @@
 import subprocess
+import sys
 
 __WORLD_FILE = 'worlds/main_world.wbt'
+
+# open different main worlds
+if len(sys.argv) > 1:
+    __WORLD_FILE = f'worlds/main_world_{sys.argv[1]}.wbt'
 
 ################################################################################
 # START OF SIMULATION
