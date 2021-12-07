@@ -9,6 +9,7 @@ from typing import List
 
 DEVICE_SIZE = 50
 WIRES_LENGTH = 10.0
+SAVING_FOLDER = '../../res/configuration/'
 
 # create a list of simulations to fill with each density simulation
 simulations: List[Simulation] = []
@@ -52,9 +53,9 @@ for index, epoch in enumerate(bests):
     ms_time = time.time()
     backup.save(
         c.datasheet, c.network, c.wires,
-        f'datasheet.{ms_time}.{index}.dat',
-        f'datasheet.{ms_time}.{index}.dat'
-        f'datasheet.{ms_time}.{index}.dat'
+        f'{SAVING_FOLDER}datasheet.{ms_time}.{index}.dat',
+        f'{SAVING_FOLDER}network.{ms_time}.{index}.dat',
+        f'{SAVING_FOLDER}wires.{ms_time}.{index}.dat'
     )
 
 # get the best configuration overall
