@@ -3,7 +3,6 @@ from epuck import EPuck
 from nanowire_network_simulator import minimum_viable_network
 from nanowire_network_simulator.model.device import Datasheet
 from optimization.Epoch import Epoch, new_epoch, evolve_epoch
-from typing import List
 
 
 class Simulation:
@@ -25,10 +24,10 @@ class Simulation:
         self.robot = robot
 
         # create a device that is represented by the given datasheet
-        graph, _ = minimum_viable_network(datasheet)
+        graph, wires = minimum_viable_network(datasheet)
 
         # crate robot controller
-        self.controller = Conductor(graph, datasheet)
+        self.controller = Conductor(graph, datasheet, wires)
 
         # finally set the controller to the robot
         robot.conductor = self.controller

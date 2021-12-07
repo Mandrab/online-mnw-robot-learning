@@ -17,6 +17,7 @@ class Conductor:
     # graphs information and instance
     network: Graph
     datasheet: Datasheet
+    wires: Dict = field(default_factory=dict)
 
     # accepted stimulus range of the network
     stimulus_range: Tuple[float, float] = (0.0, 10.0)
