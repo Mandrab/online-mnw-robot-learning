@@ -138,58 +138,5 @@ def __influence(iteration_distances):
     plt.show()
 
 
-# time to relax: 150s
 __influence([*range(0, 25, 1)])
 
-# exit() todo real sensors data test
-#
-# AVOID_FILE = 'avoid_obstacle_sensors_readings.dat'
-# DIRECT_FILE = 'direct_moving_sensors_readings.dat'
-#
-# # save sensors readings to file
-# with open(DIRECT_FILE, 'r') as file:
-#     readings_a = json.loads(file.read())
-#
-# # save sensors readings to file
-# with open(AVOID_FILE, 'r') as file:
-#     readings_b = json.loads(file.read())
-#
-# # take readings until start of obstacle perception
-# first = [*takewhile(lambda d: all([v < 80 for v in d.values()]), readings_b)]
-#
-# # remove taken values from lists
-# readings_b = readings_b[len(first):]
-#
-# # take values until 'end' of obstacle perception
-# second = [*takewhile(lambda d: any([v > 80 for v in d.values()]), readings_b)]
-#
-# # takes readings of last obstacle and attach to previously processed readings
-# # (to make both end with same readings)
-# third = [*takewhile(
-#     lambda d: any([v > 80 for v in d.values()]), reversed(readings_a)
-# )]
-#
-# # reduce data to better format
-# imix = iter(first + second + first + third)
-# keys = {k: [v] for k, v in next(imix).items()}
-# for d in imix:
-#     for k, v in d.items():
-#         keys[k].append(v)
-#
-# fig, ax = plt.subplots()
-# for k in keys:
-#     ax.plot(keys[k])
-# plt.show()
-#
-# # get lists lengths
-# difference = len(readings_a) - len(readings_b)
-#
-# # if a is longer than b, discard older values
-# if difference > 0:
-#     readings_a = readings_a[difference:]
-#
-# # if b is longer than a, discard older values
-# if difference < 0:
-#     readings_b = readings_b[-difference:]
-#
-# print('a', readings_a, '\nb', readings_b)
