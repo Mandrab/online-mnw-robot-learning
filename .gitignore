@@ -1,0 +1,8 @@
+# FOLDERS
+.idea/
+venv/
+# FILES
+*.dat
+*.pyc
+*.wbproj
+
