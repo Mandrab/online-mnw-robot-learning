@@ -3,6 +3,9 @@
 venv/
 # FILES
 *.dat
+*.mp4
 *.pyc
 *.wbproj
+# EXCEPTIONS
+!res/configuration/**/*.dat
 
