@@ -11,8 +11,6 @@ class Simulation:
     Simulate a robot moving in an environment with a with a given controller.
     Evaluate its behaviour and call for its optimization.
     """
-
-    epochs: List[Epoch] = []
     best_epoch: Epoch = None
 
     def __init__(
@@ -45,9 +43,6 @@ class Simulation:
         else:
             # evolve best network
             epoch = evolve_epoch(self.best_epoch)
-
-        # add the epoch to the list
-        self.epochs += [epoch]
 
         # iterate for the epoch duration
         for _ in range(duration):
