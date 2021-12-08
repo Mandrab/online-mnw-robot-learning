@@ -7,7 +7,6 @@ from nanowire_network_simulator.model.device import Datasheet
 from nanowire_network_simulator import backup
 from os import listdir
 from os.path import isfile, join
-from typing import List
 
 DEVICE_SIZE = 50
 WIRES_LENGTH = 10.0
@@ -21,10 +20,12 @@ READING_FOLDER = 'controllers/'
 files = map(lambda s: join(READING_FOLDER, s), listdir(READING_FOLDER))
 files = sorted(filter(isfile, files))
 count = int(len(files) / 4)  # pairs of datasheet, graph, wires & connections
-files = zip(files[:count], files[count:][:count], files[-count:])
-
-# create a list of simulations to fill with each density simulation
-simulations: List[Simulation] = []
+files = zip(
+    files[count:][:count],      # datasheet
+    files[2 * count:][:count],  # graph
+    files[-count:],             # wires
+    files[:count],              # connections
+)
 
 # if configurations have been found, use them; otherwise generate according to
 # densities
@@ -35,7 +36,10 @@ if count > 0:
     configurations = map(lambda _: backup.read(*_), files)
 
     # instantiate simulation with the given controller/device
-    simulations = [Simulation(robot, d, (n, w)) for n, d, w in configurations]
+    simulations = map(
+        lambda _: Simulation(robot, _[1], (_[0], *_[2:])),
+        configurations
+    )
 else:
     print('Running generated configurations')
 
@@ -52,18 +56,23 @@ else:
     ]
 
     # instantiate simulations with the given controllers/devices
-    simulations = [Simulation(robot, d) for d in datasheets]
+    simulations = map(lambda d: Simulation(robot, d), datasheets)
 
 ################################################################################
 # SIMULATION
 
 # run simulations of different devices
 for i, simulation in enumerate(simulations):
-    if count > 0:
-        print(
-            'Network density:', densities[i],
-            'wires:', simulation.controller.network.number_of_nodes()
-        )
+    g, d = simulation.controller.network, simulation.controller.datasheet
+    print(
+        'Network density:',
+        g.number_of_nodes() * d.mean_length * d.mean_length / (d.Lx * d.Ly)
+        if count > 0 else densities[i],
+        'wires:', g.number_of_nodes()
+    )
+
+    # initialize the first epoch
+    simulation.initialize(epoch_duration)
 
     # simulate count-epochs run
     for epoch in range(epoch_count):

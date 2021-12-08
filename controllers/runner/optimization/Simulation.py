@@ -18,34 +18,52 @@ class Simulation:
             self,
             robot: EPuck,
             datasheet: Datasheet,
-            network: Tuple[Graph, Dict] = None
+            network: Tuple[Graph, Dict, Dict] = None
     ):
         """
         Setup the simulation creating a controller network and assigning it to
         the robot.
+        If the network variable is not None, the simulator will use that
+        controller for the first run. In that case, an evaluation duration is
+        needed.
         """
         self.robot = robot
 
-        # create a device that is represented by the given datasheet
-        graph, wires = generator(datasheet) if network is None else network
+        # create/get a device that is represented by the given datasheet
+        graph, wires = generator(datasheet) if network is None else network[:2]
 
-        # crate robot controller
+        # crate robot controller to interact with the device
         self.controller = Conductor(graph, datasheet, wires)
 
         # finally set the controller to the robot
         robot.conductor = self.controller
 
+        # define first epoch to test
+        self.best_epoch = epoch = new_epoch(self.robot)
+
+        # if specified, set connections
+        if network is not None:
+            inputs, outputs = network[2]['inputs'], network[2]['outputs']
+            epoch.controller.sensors = dict(zip(robot.sensors, inputs))
+            epoch.controller.actuators = dict(zip(robot.motors, outputs))
+
+    def initialize(self, duration: int):
+        self.__run(self.best_epoch, duration)
+
     def simulate(self, duration: int):
         """Evaluate the controller behaviour running different connections"""
 
-        if self.best_epoch is None or self.best_epoch.fitness.value() < 50:
-            # setup first simulation's epoch
+        if self.best_epoch.fitness.value() < 50:
+            # setup a new simulation's epoch
             epoch = new_epoch(self.robot)
-            self.best_epoch = epoch
         else:
             # evolve best network
             epoch = evolve_epoch(self.best_epoch)
 
+        # run the simulation of this epoch
+        self.__run(epoch, duration)
+
+    def __run(self, epoch: Epoch, duration: int):
         # iterate for the epoch duration
         for _ in range(duration):
             epoch.step()
