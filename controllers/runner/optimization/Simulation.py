@@ -1,8 +1,10 @@
 from conductor import Conductor
 from epuck import EPuck
-from nanowire_network_simulator import minimum_viable_network
+from nanowire_network_simulator import minimum_viable_network as generator
 from nanowire_network_simulator.model.device import Datasheet
+from networkx import Graph
 from optimization.Epoch import Epoch, new_epoch, evolve_epoch
+from typing import Dict, Tuple
 
 
 class Simulation:
@@ -15,7 +17,8 @@ class Simulation:
     def __init__(
             self,
             robot: EPuck,
-            datasheet: Datasheet
+            datasheet: Datasheet,
+            network: Tuple[Graph, Dict] = None
     ):
         """
         Setup the simulation creating a controller network and assigning it to
@@ -24,7 +27,7 @@ class Simulation:
         self.robot = robot
 
         # create a device that is represented by the given datasheet
-        graph, wires = minimum_viable_network(datasheet)
+        graph, wires = generator(datasheet) if network is None else network
 
         # crate robot controller
         self.controller = Conductor(graph, datasheet, wires)
