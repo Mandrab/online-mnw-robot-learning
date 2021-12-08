@@ -13,7 +13,7 @@ epoch_count = 20
 epoch_duration = 300
 
 # network (density) configurations to tests
-densities = [_ / 10.0 for _ in range(40, 251, 23)]
+densities = sorted([5.64] + [_ / 10.0 for _ in range(40, 251, 23)])
 
 # create the Robot instance
 robot = EPuck()
