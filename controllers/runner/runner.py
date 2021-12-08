@@ -5,44 +5,72 @@ from config.simulation import *
 from optimization.Simulation import Simulation
 from nanowire_network_simulator.model.device import Datasheet
 from nanowire_network_simulator import backup
+from os import listdir
+from os.path import isfile, join
 from typing import List
 
 DEVICE_SIZE = 50
 WIRES_LENGTH = 10.0
 SAVING_FOLDER = '../../res/configuration/'
+READING_FOLDER = 'controllers/'
+
+################################################################################
+# SETUP
+
+# check if there are configurations to use and get their representing files
+files = map(lambda s: join(READING_FOLDER, s), listdir(READING_FOLDER))
+files = sorted(filter(isfile, files))
+count = int(len(files) / 4)  # pairs of datasheet, graph, wires & connections
+files = zip(files[:count], files[count:][:count], files[-count:])
 
 # create a list of simulations to fill with each density simulation
 simulations: List[Simulation] = []
 
-# for each density, create and test a device as a controller
-for density in densities:
+# if configurations have been found, use them; otherwise generate according to
+# densities
+if count > 0:
+    print('Running found configurations')
 
-    # calculate number of needed wires
-    wires = int(density * DEVICE_SIZE ** 2 / WIRES_LENGTH ** 2)
-    print('Network density:', density, 'wires:', wires)
-
-    # define network characteristics
-    datasheet = Datasheet(
-        wires_count=wires,
-        Lx=DEVICE_SIZE, Ly=DEVICE_SIZE,
-        mean_length=WIRES_LENGTH, std_length=WIRES_LENGTH * 0.35
-    )
-
-    # set simulation to fast mode
-    robot.simulationSetMode(robot.SIMULATION_MODE_FAST)
+    # load configurations from memory
+    configurations = map(lambda _: backup.read(*_), files)
 
     # instantiate simulation with the given controller/device
-    simulation = Simulation(robot, datasheet)
+    simulations = [Simulation(robot, d, (n, w)) for n, d, w in configurations]
+else:
+    print('Running generated configurations')
+
+    # calculate number of needed wires
+    wires = [int(d * DEVICE_SIZE ** 2 / WIRES_LENGTH ** 2) for d in densities]
+
+    # define network characteristics
+    datasheets = [
+        Datasheet(
+            wires_count=w,
+            Lx=DEVICE_SIZE, Ly=DEVICE_SIZE,
+            mean_length=WIRES_LENGTH, std_length=WIRES_LENGTH * 0.35
+        ) for w in wires
+    ]
+
+    # instantiate simulations with the given controllers/devices
+    simulations = [Simulation(robot, d) for d in datasheets]
+
+################################################################################
+# SIMULATION
+
+# run simulations of different devices
+for i, simulation in enumerate(simulations):
+    if count > 0:
+        print(
+            'Network density:', densities[i],
+            'wires:', simulation.controller.network.number_of_nodes()
+        )
 
     # simulate count-epochs run
     for epoch in range(epoch_count):
         simulation.simulate(epoch_duration)
 
-    # save simulation results
-    simulations += [simulation]
-
-print("Running the best scoring controller")
-robot.simulationReset()
+################################################################################
+# SAVE OF BEST CONTROLLERS FILES
 
 # get the best configurations found for each controller
 bests = list(map(lambda s: s.best_epoch, simulations))
@@ -53,10 +81,18 @@ for index, epoch in enumerate(bests):
     ms_time = time.time()
     backup.save(
         c.datasheet, c.network, c.wires,
+        dict(inputs=c.sensors, ouputs=c.actuators),
         f'{SAVING_FOLDER}datasheet.{ms_time}.{index}.dat',
         f'{SAVING_FOLDER}network.{ms_time}.{index}.dat',
-        f'{SAVING_FOLDER}wires.{ms_time}.{index}.dat'
+        f'{SAVING_FOLDER}wires.{ms_time}.{index}.dat',
+        f'{SAVING_FOLDER}connections.{ms_time}.{index}.dat',
     )
+
+################################################################################
+# RUN OF THE BEST CONTROLLER
+
+print('Running the best scoring controller')
+robot.simulationReset()
 
 # get the best configuration overall
 best = max(bests, key=lambda e: e.fitness.value())
