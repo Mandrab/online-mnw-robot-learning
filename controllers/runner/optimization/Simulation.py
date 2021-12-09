@@ -6,6 +6,9 @@ from networkx import Graph
 from optimization.Epoch import Epoch, new_epoch, evolve_epoch
 from typing import Dict, Tuple
 
+# minimum fitness needed to evolve an epoch instead of creating a new one
+MINIMUM_FITNESS = 35.0
+
 
 class Simulation:
     """
@@ -53,7 +56,7 @@ class Simulation:
     def simulate(self, duration: int):
         """Evaluate the controller behaviour running different connections"""
 
-        if self.best_epoch.fitness.value() < 50:
+        if self.best_epoch.fitness.value() < MINIMUM_FITNESS:
             # setup a new simulation's epoch
             epoch = new_epoch(self.robot)
         else:
