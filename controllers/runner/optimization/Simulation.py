@@ -44,9 +44,8 @@ class Simulation:
 
         # if specified, set connections
         if network is not None:
-            inputs, outputs = network[2]['inputs'], network[2]['outputs']
-            epoch.controller.sensors = dict(zip(robot.sensors, inputs))
-            epoch.controller.actuators = dict(zip(robot.motors, outputs))
+            epoch.controller.sensors = network[2]['inputs']
+            epoch.controller.actuators = network[2]['outputs']
 
     def initialize(self, duration: int):
         self.__run(self.best_epoch, duration)
