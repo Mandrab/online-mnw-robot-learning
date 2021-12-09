@@ -1,4 +1,4 @@
-from conductor import adapt  # todo move to utils file
+from controllers.runner.utils import adapt
 from epuck import EPuck
 from functools import reduce
 from math import sqrt
@@ -12,18 +12,15 @@ class Fitness:
     __counter: int = 0
 
     def __init__(self, robot: EPuck):
-        # save robot instance
-        self.robot = robot
+        """Initialize the evaluator and save the robot instance"""
 
-    def fitness(self) -> float:
-        return 100 * self.__fitness / self.__counter
+        self.robot = robot
 
     def update(self):
         # get the most near measure and make it in range 0-1
         value = max(sensor.read() for sensor in self.robot.sensors)
 
-        min_value = self.robot.sensors[0].lower_bound()
-        max_value = self.robot.sensors[0].upper_bound()
+        min_value, max_value = self.robot.sensors_range()
 
         # get motors velocities and make them in range 0-1
         speeds = [motor.speed for motor in self.robot.motors]
@@ -36,6 +33,8 @@ class Fitness:
         self.__fitness += (1 - max_proximity) * (1 - directions) * average_speed
         self.__counter += 1
 
+    def value(self) -> float: return 100 * self.__fitness / self.__counter
+
 
 class Distance:
     """Calculate the distance travelled by the robot"""
@@ -44,7 +43,8 @@ class Distance:
     distance: float = 0
 
     def __init__(self, robot: EPuck):
-        # save robot instance
+        """Initialize the evaluator and save the robot instance"""
+
         self.robot = robot
 
         # get measure function
@@ -67,3 +67,5 @@ class Distance:
 
         # update position
         self.position = new_position
+
+    def value(self) -> float: return self.distance
