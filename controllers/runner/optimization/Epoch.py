@@ -1,8 +1,9 @@
+from conductor import Conductor, copy
 from epuck import EPuck
 from evaluators import Fitness, Distance
 from nanowire_network_simulator import minimum_distance_selection,\
-    random_nodes, mutate, Evolution, plot
-from typing import List
+    random_nodes, mutate
+from typing import List, Dict
 
 
 class Epoch:
@@ -26,12 +27,17 @@ class Epoch:
         self.fitness = Fitness(robot)
         self.distance = Distance(robot)
 
+        # define history-container utils
+        self.stimulus: List[Dict[str, float]] = []
+        self.response: List[Dict[str, float]] = []
+
         # reset simulation to start/initial point
         robot.simulationReset()
 
     def step(self):
         """Run a simulation step and exec the required evaluations"""
-        self.robot.run(False)  # todo raw_signals)
+
+        self.robot.run(False)  # todo make configurable (e.g., raw_signals)
 
         # update fitness value
         self.fitness.update()
@@ -39,9 +45,9 @@ class Epoch:
         # update distance value
         self.distance.update()
 
-        # debugging plotting - to understand behaviour todo
-        # e = Evolution(self.controller.datasheet, {}, 0.5, set(), set(), [(self.controller.network, list())])
-        # plot.plot(e, plot.voltage_distribution_map)
+        # save sensor readings and motors speeds for future analysis
+        self.stimulus += [{s: s.read(False) for s in self.robot.sensors}]
+        self.response += [{m: m.speed for m in self.robot.motors}]
 
 
 def new_epoch(robot: EPuck) -> Epoch:
@@ -68,14 +74,10 @@ def new_epoch(robot: EPuck) -> Epoch:
     robot.conductor.initialize()
 
     # return the new Epoch
-    return Epoch(
-        robot=robot,
-        sensors=sensors,
-        actuators=[*actuators]
-    )
+    return Epoch(robot=robot, sensors=sensors, actuators=[*actuators])
 
 
-def evolve_epoch(robot: Epoch) -> Epoch:
+def evolve_epoch(epoch: Epoch) -> Epoch:
     """
     Instantiate a new evaluation run for a robot as an evolution (in
     connections) of a previous one.
@@ -83,21 +85,17 @@ def evolve_epoch(robot: Epoch) -> Epoch:
 
     # obtain the new sensors
     sensors = mutate(
-        graph=robot.robot.conductor.network,
-        sources=[*robot.controller.sensors.values()],
-        ground=-1,
-        probability=0.3,
-        minimum_mutants=1,
-        maximum_mutants=4,
+        graph=epoch.controller.network,
+        sources=[*epoch.controller.sensors.values()], ground=-1,
+        probability=0.3, minimum_mutants=1, maximum_mutants=4,
         viable_node_selection=minimum_distance_selection(
-            outputs={*robot.robot.conductor.actuators.values()},
+            outputs={*epoch.controller.actuators.values()},
             distance=2
         )
     )
 
+    # avoid ovewrite of controller's fields
+    epoch.robot.conductor = copy(epoch.controller)
+
     # return the evolved epoch
-    return Epoch(
-        robot=robot.robot,
-        sensors=sensors,
-        actuators=robot.actuators
-    )
+    return Epoch(robot=epoch.robot, sensors=sensors, actuators=epoch.actuators)
