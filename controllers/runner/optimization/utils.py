@@ -65,11 +65,11 @@ def import_simulations(
     # take chunks of 6 (number of simulations files)
     chunks = map(lambda i: sorted(files[i*6:][:6]), range(int(len(files) / 6)))
 
-    # discard sensors/actuators history files (indexes: 0, 4)
+    # discard sensors/actuators history files (indexes: 0, 4) & order others
     chunks = map(lambda _: _[1:][:2] + _[-1:] + _[:1], chunks)
 
     # convert files to python data
-    chunks = map(lambda _: backup.read(_[1], _[2], _[-1], _[0]), chunks)
+    chunks = map(lambda _: backup.read(*_), chunks)
 
     # instantiate simulation with the given controller/device
     return map(lambda _: Simulation(robot, _[1], (_[0], _[2], _[3])), chunks)
