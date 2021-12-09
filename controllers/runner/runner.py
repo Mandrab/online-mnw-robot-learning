@@ -1,3 +1,4 @@
+import json
 import time
 
 from conductor import Conductor
@@ -58,6 +59,8 @@ else:
     # instantiate simulations with the given controllers/devices
     simulations = map(lambda d: Simulation(robot, d), datasheets)
 
+simulations = list(simulations)
+
 ################################################################################
 # SIMULATION
 
@@ -82,7 +85,7 @@ for i, simulation in enumerate(simulations):
 # SAVE OF BEST CONTROLLERS FILES
 
 # get the best configurations found for each controller
-bests = list(map(lambda s: s.best_epoch, simulations))
+bests = list(map(lambda _: _.best_epoch, simulations))
 
 # save the configurations in a file
 for index, epoch in enumerate(bests):
@@ -96,6 +99,10 @@ for index, epoch in enumerate(bests):
         f'{SAVING_FOLDER}wires.{ms_time}.{index}.dat',
         f'{SAVING_FOLDER}connections.{ms_time}.{index}.dat',
     )
+    with open(f'{SAVING_FOLDER}sensors.{ms_time}.{index}.dat', 'w') as file:
+        json.dump(epoch.stimulus, file)
+    with open(f'{SAVING_FOLDER}actuators.{ms_time}.{index}.dat', 'w') as file:
+        json.dump(epoch.response, file)
 
 ################################################################################
 # RUN OF THE BEST CONTROLLER
