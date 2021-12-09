@@ -39,7 +39,7 @@ def import_simulations(
 ) -> Iterable[Simulation]:
     """
     Check if there are simulations files in the given folder.
-    Return a list with the imported simulations instances.
+    Return an iterable with the imported simulations instances.
     If the folder does not exists or if there are not files, return an empty
     list.
     """
@@ -53,6 +53,11 @@ def import_simulations(
 
     # get data files (exclude any other extension file)
     files = filter(lambda _: _.endswith('.dat'), files)
+
+    # if the folder does not contains data files, return an empty list
+    # this is needed to identify lack of instances without import all the graphs
+    if not list(files):
+        return []
 
     # sort them by simulation index (pre-extension)
     files = sorted(files, key=lambda _: _.split('.')[-2])
