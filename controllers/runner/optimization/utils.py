@@ -66,7 +66,7 @@ def import_simulations(
     chunks = map(lambda i: sorted(files[i*6:][:6]), range(int(len(files) / 6)))
 
     # discard sensors/actuators history files (indexes: 0, 4)
-    chunks = map(lambda _: _[1:][:3] + [_[-1]], chunks)
+    chunks = map(lambda _: _[1:][:2] + _[-1:] + _[:1], chunks)
 
     # convert files to python data
     chunks = map(lambda _: backup.read(_[1], _[2], _[-1], _[0]), chunks)
