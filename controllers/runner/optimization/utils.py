@@ -7,12 +7,12 @@ from nanowire_network_simulator.model.device.datasheet import factory as ds
 from optimization.Epoch import Epoch
 from optimization.Simulation import Simulation
 from os import listdir
-from os.path import join, isfile
+from os.path import join, isfile, exists
 from typing import Iterable
 
 DEVICE_SIZE = 50
 WIRES_LENGTH = 10.0
-READING_FOLDER = '../controllers/'
+READING_FOLDER = 'controllers/'
 
 
 def new_simulations(
@@ -45,7 +45,7 @@ def import_simulations(
     """
 
     # check that the folder exists
-    if not exit(folder):
+    if not exists(folder):
         return []
 
     # find files in the given folder
