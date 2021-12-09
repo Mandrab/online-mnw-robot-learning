@@ -10,10 +10,10 @@ random.seed(1234)
 epoch_count = 20
 
 # number of steps for which the robot can run freely
-epoch_duration = 300
+epoch_duration = 350
 
 # network (density) configurations to tests
-densities = sorted([5.64] + [_ / 10.0 for _ in range(40, 251, 23)])
+densities = [_ / 10.0 for _ in range(40, 201, 16)]
 
 # create the Robot instance
 robot = EPuck()
