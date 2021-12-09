@@ -1,3 +1,5 @@
+import dataclasses
+
 from dataclasses import dataclass, field
 from nanowire_network_simulator import *
 from nanowire_network_simulator.model.device import Datasheet
@@ -28,6 +30,7 @@ class Conductor:
 
     def initialize(self):
         """Initialize network"""
+
         initialize_graph_attributes(
             graph=self.network,
             sources={*self.sensors.values()},
@@ -48,6 +51,7 @@ class Conductor:
         Stimulate the network with the sensors signals.
         Evaluate its response and return it.
         """
+
         # filter to get used sensors
         inputs = [(k, v) for k, v in inputs.items() if k in self.sensors]
 
@@ -59,7 +63,6 @@ class Conductor:
             (k, adapt(v, inputs_range, self.stimulus_range))
             for k, v in inputs
         ]
-        # print('in voltages:\t', inputs)
 
         # define the pin-resistance/load pairs for the motors
         outputs = [(pin, actuators_load) for pin in self.actuators.values()]
@@ -79,7 +82,6 @@ class Conductor:
             (actuator, self.network.nodes[pin]['V'])
             for actuator, pin in self.actuators.items()
         ]
-        # print('out voltages:\t', {s: p[1] for s, p in zip(['l', 'r'], outputs)})
 
         # remap output values from 0, 10 to:
         #   -6.28, 6.28 for distance: 10 = far -> 6.28 = move straight
@@ -88,3 +90,16 @@ class Conductor:
             k: adapt(v, self.stimulus_range, outputs_range)
             for k, v in outputs
         }
+
+
+def copy(conductor: Conductor) -> Conductor:
+    """Create a deep copy of the conductor"""
+
+    return Conductor(
+        conductor.network.copy(),
+        dataclasses.replace(conductor.datasheet),
+        conductor.wires.copy(),
+        conductor.stimulus_range,
+        conductor.sensors.copy(),
+        conductor.actuators.copy()
+    )
