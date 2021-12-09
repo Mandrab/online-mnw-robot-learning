@@ -43,7 +43,6 @@ class EPuck(Supervisor):
 
         # get sensors readings
         stimulus = {s: s.read(raw_signal) for s in self.sensors}
-        # print('distances:\t', [(k, round(v, 3)) for k, v in stimulus.items()])
 
         # run the controller
         outputs = self.conductor.evaluate(
@@ -53,7 +52,6 @@ class EPuck(Supervisor):
             outputs_range=self.motors_range(raw_signal),
             actuators_load=1e6  # MOhm
         )
-        # print('motors:\t\t', [(k, round(v, 3)) for k, v in outputs.items()])
 
         # set the motors speed
         for motor, value in zip(self.motors, map(outputs.get, self.motors)):

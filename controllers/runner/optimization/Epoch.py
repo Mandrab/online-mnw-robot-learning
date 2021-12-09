@@ -94,7 +94,7 @@ def evolve_epoch(epoch: Epoch) -> Epoch:
         )
     )
 
-    # avoid ovewrite of controller's fields
+    # avoid overwrite of controller's fields
     epoch.robot.conductor = copy(epoch.controller)
 
     # return the evolved epoch

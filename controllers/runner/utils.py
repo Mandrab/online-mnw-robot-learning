@@ -29,6 +29,7 @@ class Frequency:
     Represents the working frequency of the robot.
     Being a class, it avoids usage of different measure units for error.
     """
+
     def __init__(self, hz_value: float):
         self.Hz: float = hz_value
         self.s: float = 1.0 / self.Hz

@@ -27,6 +27,7 @@ class Simulation:
         controller for the first run. In that case, an evaluation duration is
         needed.
         """
+
         self.robot = robot
 
         # create/get a device that is represented by the given datasheet
