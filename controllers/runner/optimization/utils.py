@@ -52,11 +52,11 @@ def import_simulations(
     files = filter(isfile, map(lambda s: join(folder, s), listdir(folder)))
 
     # get data files (exclude any other extension file)
-    files = filter(lambda _: _.endswith('.dat'), files)
+    files = list(filter(lambda _: _.endswith('.dat'), files))
 
     # if the folder does not contains data files, return an empty list
     # this is needed to identify lack of instances without import all the graphs
-    if not list(files):
+    if not files:
         return []
 
     # sort them by simulation index (pre-extension)
