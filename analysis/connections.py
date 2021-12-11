@@ -330,32 +330,61 @@ nx.draw_networkx_labels(
 plt.title('Connection and conductivity of the network at its last stimulation')
 plt.show()
 
-# left_resistance, right_resistance = [ [
-#         nx.resistance_distance(graph, s, m, weight='Y', invert_weight=False)
-#         for s in sensors.values()
-#     ] for m in actuators.values()
-# ]
-# resistances = {'left motor': left_resistance, 'right motor': right_resistance}
-#
-# fig, ax = plt.subplots(figsize=(9.2, 5))
-#
-# left_start, right_start = 0, 0
-# for i, sensor in enumerate(sensors):
-#     ax.bar(
-#         resistances.keys(),
-#         [left_resistance[i], right_resistance[i]],
-#         width=0.35,
-#         bottom=[left_start, right_start],
-#         label=f'ps{i}'
-#     )
-#     left_start += left_resistance[i]
-#     right_start += right_resistance[i]
-#
-# ax.set(title='Sensor-Actuator path\'s resistance', ylabel='Resistance')
-# ax.legend()
-#
-# plt.show()
-#
-# fig, ax = plt.subplots()
-# plot.conductance_map(fig, ax, e)
-# plt.show()
+################################################################################
+# CHANGES IN SENSOR-MOTOR PATH RESISTANCE DURING RUN
+# This plot shows the variance of the resistance during the robot run. It allows
+# to confirm previous observations and to see the influence from the point of
+# view of the stimulation of the path.
+# Each plot represent the path resistance between the sensor-input nodes and the
+# motor node. As we can see, the previous observations are confirmed, in that
+# the resistance of near nodes is lower than the one of farther nodes. This
+# allows the system to self organize in a way that allows some node to have more
+# influence than the others. This is visible by the fact, for example, that
+# robot-right sensors have an higher resistance between them and the right
+# motor. This observation is opposed but true also for the left motor.
+# This graph allows also to observe that there aren't specific nodes that are
+# strongly connected with the motor, confirming our previous assertion that the
+# output of the motor is a combination of each single sensor signal.
+# Finally, this graph shows also the important property of stimulation and
+# relaxation. As visible, although the near nodes remain stimulated, the further
+# nodes greatly modify their conductance runtime. This is especially visible in
+# correspondence of iteration 50, 160, and 280 approximately, where the paths
+# are suddenly stimulated by the neighborhood of an obstacle and thus increase
+# their conductance.
+
+# reset the network state
+for _ in range(100):
+    stimulate(graph, datasheet, 1e3, [], [], set())
+
+resistances = []
+for i_signal in i_signals:
+    c.evaluate(0.1, i_signal, (0, 7), (-6.28, 6.28), 100)
+    resistances += [{
+        motor_name: {
+            sensor_name: nx.resistance_distance(
+                graph,
+                sensor_index, motor_index,
+                weight='Y', invert_weight=False
+            )
+            for sensor_name, sensor_index in sensors.items()
+        }
+        for motor_name, motor_index in actuators.items()
+    }]
+
+fig = plt.figure(figsize=(10, 8))
+axs = fig.subplots(2, 1)
+
+for ax, (motor_name, values) in zip(axs, collapse_history(resistances).items()):
+    for sensor_name, resistances in collapse_history(values).items():
+        ax.plot(resistances, label=sensor_name)
+    ax.set(
+        title=f'Sensors to {motor_name} path resistance',
+        ylabel='Resistance', yscale='log',
+        xlabel='Iteration'
+    )
+    ax.legend()
+
+fig.suptitle('Change in resistance of sensor-motor path')
+
+plt.subplots_adjust(hspace=0.3)
+plt.show()
