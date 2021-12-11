@@ -1,8 +1,10 @@
 import json
 import matplotlib.pyplot as plt
+import networkx as nx
 import scipy.stats as stats
 
-from nanowire_network_simulator import backup
+from conductor import Conductor
+from nanowire_network_simulator import backup, stimulate, Evolution, plot
 from os import listdir
 from os.path import join, isfile
 from scipy.signal import savgol_filter
@@ -58,6 +60,7 @@ def smoother(signal):
     """Approximate signal with a curve; window size 51, polynomial order 3."""
     return savgol_filter(signal, 51, 3)
 
+
 # plot distances
 ax = next(figs).subplots()
 
@@ -74,13 +77,13 @@ ax.legend()
 # plot direction
 ax = next(figs).subplots()
 
-left, right = collapse_history(o_signals).values()
-direction = [l - r for l, r in zip(left, right)]
+left_signals, right_signals = collapse_history(o_signals).values()
+direction = [left - right for left, right in zip(left_signals, right_signals)]
 direction = smoother(direction)
 ax.plot(direction)
 ax.plot([0.0] * len(direction), color='b', linestyle=(0, (5, 5)))
 ax.set(title='Robot direction', xlabel='Iterations', ylabel='Direction')
-ax.set_yticks(range(-6, 7), ['right', *map(str, range(-10, 11, 2)), 'left'])
+ax.set_yticks(range(-6, 7), ['left', *map(str, range(-10, 11, 2)), 'right'])
 
 # plot motors control signal
 axs = iter(next(figs).subplots(1, 2))
@@ -91,7 +94,7 @@ for key, command in collapse_history(o_signals).items():
     ax = next(axs)
     ax.plot(command, label='signal')
     ax.plot(command_smooth, color='r', linewidth=3, label='averaged signal')
-    ax.set(title=key, xlabel='Iterations', ylabel='Motor output')
+    ax.set(title=key, xlabel='Iterations', ylabel='Motor speed')
     ax.legend()
 
 plt.show()
@@ -136,12 +139,13 @@ ax.set_ylabel('Motor speed')
 ax = ax.twinx()
 
 data = [k for k, *_ in pairs]
-lines += ax.plot(data, label='sensor', color='r')
+lines += ax.plot(data, label='ps0', color='r')
 ax.set_ylabel('Distance', color='r')
 
-labels = [l.get_label() for l in lines]
+labels = [line.get_label() for line in lines]
 ax.legend(lines, labels, loc=0)
 
+plt.title('Sensor-Motor relation for sensor 0')
 plt.show()
 
 ################################################################################
@@ -176,7 +180,6 @@ pcm = ax.pcolormesh(
 )
 for y, k in enumerate(correlations):
     for x, v in enumerate(correlations[k]):
-        print(y, x, k, v)
         plt.text(
             y, x, '%.4f' % v,
             horizontalalignment='center',
@@ -184,19 +187,149 @@ for y, k in enumerate(correlations):
         )
 fig.colorbar(pcm, location='bottom')
 
+plt.title('Sensor-Motor Pearson\'s correlation coefficient')
 plt.show()
 
-#
-# # make the conductance decrease in order to analyse its relaxed state (the
-# # aim of this analysis is to individuate interesting characteristics of the
-# # network and thus the stimulated version shows only a specific response of it).
-# inputs = [(i, 0) for i in sensors.values()]
-# outputs = {(i, 100) for i in actuators.values()}
-# for _ in range(100):
-#     stimulate(graph, datasheet, 1e3, [], [], set())
-#
-# e = Evolution(datasheet, wires, -1, set(), outputs, [(graph, inputs)])
-#
+################################################################################
+# ANALYSIS OF MOTOR RESPONSE WITH BROKEN SENSORS (0V INPUT)
+# The following graphs show the influence of a missing sensor signal in the
+# output computation.
+# Since the previous measure of correlation of input and output signals is not
+# symptom of a mediating behaviour, the following graph approach an opposite
+# analysis. The goal is to understand if the lack/miss of a sensor signal
+# effectively/strongly change the behaviour of the robot. This analysis is
+# important because allows to understand if the system is controlled by a
+# limited number of sensors or if it performs a mediating/mixing process.
+# Moreover, it allows to understand the resistance of the system to possible
+# damage of components.
+# The correlation map on the left gives us an initial and visual idea of the
+# relation of input/output signals. It is visible that some sensors influence
+# the output more than others, and some greatly influence the final result.
+# However, it also shows that, at least for this configuration, no sensors
+# completely influence the output and thus that at least a basic mixing process
+# is taking place. This is confirmed looking at the changes in the motor outputs
+# on the right graphs. We can clearly see that, although the output value may
+# increase or decrease, the output signal still follows a similar path.
+# The lack/break of a sensor will obviously slightly change the behaviour of the
+# robot, but this results show an incredible capacity of possibly manage those
+# events. Furthermore, those suggests the possibility of using those measure
+# and events also during an offline training, with the aim of maximize the
+# resistance to failures. This is however outside the scope of the research,
+# that aim instead at an online and continuous training.
+
+# retrieve inputs and outputs nodes
+inputs = [(i, 0) for i in sensors.values()]
+outputs = {(i, 100) for i in actuators.values()}
+
+c = Conductor(
+    graph, datasheet, wires,
+    sensors=sensors, actuators=dict(actuators)
+)
+
+
+def break_sensor(name: str):
+    # reset the network state
+    for _ in range(100):
+        stimulate(graph, datasheet, 1e3, [], [], set())
+
+    commands = []
+    for stimulus in i_signals:
+        stimulus = {k: v for k, v in stimulus.items() if k != name}
+        commands += [c.evaluate(0.1, stimulus, (0, 7), (-6.28, 6.28), 100)]
+
+    return commands
+
+
+# stimulate the network disabling each time a different sensor
+results = [break_sensor(sensor) for sensor in [None, *sensors]]
+
+normal, *results = [collapse_history(result) for result in results]
+
+# calculate correlation between output signals
+correlations = [
+    {k: stats.pearsonr(normal[k], v)[0] for k, v in dictionary.items()}
+    for dictionary in results
+]
+
+# remove left/right keys from list
+correlations = [[*dictionary.values()] for dictionary in correlations]
+
+fig, other_fig = plt.figure(figsize=(10, 8)).subfigures(1, 2)
+left_m_ax, right_m_ax = other_fig.subplots(2, 1)
+ax = fig.subplots()
+
+for i, result in enumerate(results + [normal]):
+    label, width = (f'ps{i}', 1) if i <= 7 else ('all working', 3)
+    left_values = smoother(result['left wheel motor'])
+    right_values = smoother(result['right wheel motor'])
+    left_m_ax.plot(left_values, label=label, linewidth=width)
+    right_m_ax.plot(right_values, label=label, linewidth=width)
+
+left_m_ax.set(title='Left motor behaviour with broken sensors')
+left_m_ax.legend(ncol=3)
+right_m_ax.set(title='Right motor behaviour with broken sensors')
+right_m_ax.legend(ncol=3)
+
+ax.set(title='''
+    Pearson\'s correlation coefficient between
+    normal and sensor-missing-generated outputs
+''')
+pcm = ax.pcolormesh(
+    actuators.keys(),
+    [f'ps{i}' for i in range(8)],
+    correlations,
+    vmin=-1, vmax=1
+)
+for y, values in enumerate(correlations):
+    for x, value in enumerate(values):
+        plt.text(
+            x, y, '%.4f' % value,
+            horizontalalignment='center',
+            verticalalignment='center',
+        )
+fig.colorbar(pcm, location='bottom')
+
+plt.show()
+
+################################################################################
+# GRAPHICAL ANALYSIS OF SENSORS CONNECTIONS
+# This plot is aimed at better understanding how a good configuration is
+# structured in terms of sensors/output connections.
+# As visible, the sensors concentrate around the motor that they aim to control
+# more. This is likely to change with other tasks that require all the sensors
+# to influence the motor output.
+# We can see for example that the right sensors tend to organize around the left
+# motor, and thus influence it more. This is due to the given configuration,
+# that gives an higher motor command for farther obstacles and a low or negative
+# value for near obstacles. This organization appears also around the right
+# motor, with the only difference of the nearness of the ps0 sensor. This is
+# probably due to an internal optimization that helps the robot to run away from
+# obstacles, preferring a left turn and thus saving some 'indecision time'.
+
+e = Evolution(datasheet, wires, -1, set(), outputs, [(graph, inputs)])
+
+fig, ax = plt.subplots(figsize=(9.2, 5))
+plot.conductance_map(fig, ax, e)
+
+# invert dictionary from str -> int to int -> str
+labels = {}
+for k, v in sensors.items() | actuators.items():
+    labels[v] = labels[v] + '/' + k if k in labels else k
+
+nx.draw_networkx_labels(
+    graph,
+    {
+        k: (x, y-4)
+        for k, (x, y) in nx.get_node_attributes(graph, 'pos').items()
+    },
+    labels,
+    font_size=18,
+    font_color='k'
+)
+
+plt.title('Connection and conductivity of the network at its last stimulation')
+plt.show()
+
 # left_resistance, right_resistance = [ [
 #         nx.resistance_distance(graph, s, m, weight='Y', invert_weight=False)
 #         for s in sensors.values()
