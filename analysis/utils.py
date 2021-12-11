@@ -2,20 +2,39 @@ import random
 
 from conductor import Conductor
 from epuck import EPuck
+from functools import reduce
 from nanowire_network_simulator.model.device import Datasheet
 from nanowire_network_simulator import minimum_viable_network, random_nodes, \
     minimum_distance_selection
+from typing import Iterable
 
 random.seed(1234)
 
 
+def collapse_history(states: Iterable):
+    """
+    Take an history in the form [state, state, state, ...], where 'state' is in
+    the form {var_1: value, var_2: value, ...} and collapse it to a the form
+    {var_1: [value, value, ...], var_2: [value, value, ...]}
+    """
+    return reduce(
+        lambda a, b: {k: a.get(k, []) + [v] for k, v in b.items()},
+        states, dict()
+    )
+
+
 def generate(datasheet: Datasheet):
+    """
+    Generate a device, a conductor and a set of connections to instantiate and
+    perform experiments in a shorter and cleaner way.
+    """
+
     graph, _ = minimum_viable_network(datasheet)
 
-    c = Conductor(graph, datasheet)
+    conductor = Conductor(graph, datasheet)
 
     actuators = random_nodes(graph, set())
-    c.actuators = dict(zip(['m'], actuators))
+    conductor.actuators = dict(zip(['m'], actuators))
 
     neighbor = minimum_distance_selection(
         outputs=actuators,
@@ -23,11 +42,11 @@ def generate(datasheet: Datasheet):
         negate=True
     )(graph, list(), -1)
     sensors = [*random_nodes(graph, neighbor)]
-    c.sensors = dict(zip(['s'], sensors))
+    conductor.sensors = dict(zip(['s'], sensors))
 
-    c.initialize()
+    conductor.initialize()
 
-    return graph, c, actuators, sensors
+    return graph, conductor, actuators, sensors
 
 
 datasheet = Datasheet(
