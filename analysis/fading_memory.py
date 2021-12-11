@@ -5,7 +5,6 @@ its recent history.
 import math
 import matplotlib.pyplot as plt
 
-from functools import reduce
 from nanowire_network_simulator import plot, Evolution
 from utils import *
 
@@ -139,4 +138,3 @@ def __influence(iteration_distances):
 
 
 __influence([*range(0, 25, 1)])
-
