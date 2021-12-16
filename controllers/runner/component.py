@@ -1,4 +1,5 @@
 from controller import Robot
+from scipy.interpolate import interp1d
 from typing import Dict, Tuple
 
 
@@ -9,58 +10,40 @@ class Sensor(str):
     robot: Robot
 
     # distance sensors lookup table (signal-distance)
-    lookup_table: Dict[float, float] = {
-        65: 7.0,
-        306: 3.0,
-        676: 2.0,
-        1550: 0.0
-    }
+    transform = interp1d([65, 306, 676, 1550], [7.0, 3.0, 2.0, 0.0])
 
-    def range(self, raw: bool = True) -> Tuple[float, float]:
+    def range(self, proximity: bool = True) -> Tuple[float, float]:
         """
         Return range of read values.
         If raw is true: return [min, max] signal's range (i.e. far, near).
         If raw is false: return [min, max] distance's range (i.e. near, far).
         """
-        if raw:
-            return min(self.lookup_table), max(self.lookup_table)
-        return min(self.lookup_table.values()), max(self.lookup_table.values())
+        if proximity:
+            return 65, 1550
+        return self.transform(1550)[()], self.transform(65)[()]
 
-    def read(self, raw: bool = True) -> float:
+    def read(self, proximity: bool = True) -> float:
         """
         Returns the sensor reading.
-        If raw is true, the function returns the raw signal given by the robot.
-        If raw is false, the function returns a distance reading.
+
+        Parameters:
+        -----------
+        Proximity: bool
+            Define if the function will return a proximity (higher -> nearer) or
+            a distance (higher -> farther) value
+
+        Return:
+        -------
+            A proximity value if 'proximity' is true, a distance value
+            otherwise. Both of the values are in the range 0-1550.
         """
         value = self.robot.getDevice(self).getValue()
 
-        # return raw sensor reading
-        if raw:
-            return value
+        # force value in range [65, 1550]
+        value = max(min(self.range()), value)
+        value = min(max(self.range()), value)
 
-        # get adapted value directly from the lookup table
-        if value in self.lookup_table:
-            return self.lookup_table[value]
-
-        # to avoid ranges errors, if the value is out of the raw-range, return
-        # the boundaries
-        upper_bound = max(self.lookup_table)
-        if value > upper_bound:
-            return self.lookup_table[upper_bound]
-        lower_bound = min(self.lookup_table)
-        if value < lower_bound:
-            return self.lookup_table[lower_bound]
-
-        # get the nearest values in the table
-        lower_bound = max(key for key in self.lookup_table if key < value)
-        upper_bound = min(key for key in self.lookup_table if key > value)
-
-        # get the distance value of the raw signals
-        lower_value = self.lookup_table[lower_bound]
-        upper_value = self.lookup_table[upper_bound]
-
-        # return the average of them
-        return (lower_value + upper_value) / 2.0
+        return value if proximity else self.transform(value)[()]
 
     def enable(self, update_frequency: int):
         self.robot.getDevice(self).enable(update_frequency)
