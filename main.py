@@ -1,11 +1,14 @@
 import subprocess
 import sys
 
-__WORLD_FILE = 'worlds/main_world.wbt'
+# get process parameters:
+# - first: process name
+# - second: world file's name
+# - third: not expected parameters
+_0, world_name, *_1 = *sys.argv, None
 
-# open different main worlds
-if len(sys.argv) > 1:
-    __WORLD_FILE = f'worlds/main_world_{sys.argv[1]}.wbt'
+# define world file location and use default file if none is specified
+__WORLD_FILE = f'worlds/{world_name or "main_world"}.wbt'
 
 ################################################################################
 # START OF SIMULATION
