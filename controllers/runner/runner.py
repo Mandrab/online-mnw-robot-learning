@@ -1,4 +1,8 @@
+import os
+import sys
 import time
+
+sys.path.append(os.path.abspath('../..'))
 
 from config.simulation import *
 from optimization.utils import import_simulations, new_simulations, save_epoch
