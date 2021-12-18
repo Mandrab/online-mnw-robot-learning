@@ -1,6 +1,6 @@
 from controller import Robot
 from scipy.interpolate import interp1d
-from typing import Dict, Tuple
+from typing import Tuple
 
 
 class Sensor(str):
