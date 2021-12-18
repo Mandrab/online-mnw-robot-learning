@@ -1,9 +1,12 @@
-import time
+import os
 
 from config.simulation import *
+from datetime import datetime
 from optimization.utils import import_simulations, new_simulations, save_epoch
 
-SAVING_FOLDER = '../../res/configuration/'
+CONFIGURATIONS_LOCATION = '../../res/configuration'
+SAVING_FOLDER = datetime.today().strftime('%Y-%m-%d.%S%f')
+
 
 ################################################################################
 # SIMULATION SETUP
@@ -43,9 +46,13 @@ for simulation in simulations:
 ################################################################################
 # RESULT SAVING
 
+# create saving folder
+path = os.path.join(CONFIGURATIONS_LOCATION, SAVING_FOLDER)
+os.mkdir(path)
+
 # save the configurations in a file
 for index, epoch in enumerate(best_epochs):
-    file_format = SAVING_FOLDER + '{name}' + f'.{time.time()}.{index}.dat'
+    file_format = str(path) + '/{name}' + f'.{index}.dat'
     save_epoch(epoch, file_format)
 
 ################################################################################
