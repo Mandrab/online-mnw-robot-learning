@@ -38,7 +38,7 @@ epoch_count = 30
 epoch_duration = 300
 
 # if true, continue simulation with best controller after the evolution finish
-continue_after_evolution = True
+continue_after_evolution = False
 
 # network density-configurations to tests and generating seeds
 densities = {
