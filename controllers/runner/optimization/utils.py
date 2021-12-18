@@ -2,13 +2,14 @@ import json
 
 from conductor import Conductor
 from epuck import EPuck
+from itertools import product, chain
 from nanowire_network_simulator import backup
 from nanowire_network_simulator.model.device.datasheet import factory as ds
 from optimization.Epoch import Epoch
 from optimization.Simulation import Simulation
 from os import listdir
 from os.path import join, isfile, exists
-from typing import Iterable
+from typing import Iterable, Dict
 
 DEVICE_SIZE = 50
 WIRES_LENGTH = 10.0
@@ -17,20 +18,23 @@ READING_FOLDER = 'controllers/'
 
 def new_simulations(
         robot: EPuck,
-        densities: Iterable[float],
+        densities: Dict[float, Iterable[int]],
         size: int = DEVICE_SIZE,
-        wires_length: float = WIRES_LENGTH
+        wires_length: float = WIRES_LENGTH,
 ) -> Iterable[Simulation]:
     """
     Generate a simulations set with each instance using a device with a
-    different nano-wires density.
+    different nano-wires density and seed.
     """
 
-    # define network characteristics (i.e.: datasheet)
-    datasheet = map(lambda _: ds.from_density(_, size, wires_length), densities)
+    # convert from dict of density -> seeds-list to list of density -> seed
+    params = chain(*map(lambda k: [*product([k], densities[k])], densities))
+
+    # map density-seed pairs to datasheets
+    datasheets = [ds.from_density(k, size, wires_length, v) for k, v in params]
 
     # instantiate simulations with the given controllers/devices
-    return map(lambda _: Simulation(robot, _), datasheet)
+    return map(lambda _: Simulation(robot, _), datasheets)
 
 
 def import_simulations(
