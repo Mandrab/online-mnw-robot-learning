@@ -1,7 +1,7 @@
 from component import Sensor, Motor
 from conductor import Conductor
 from controller import Supervisor
-from utils import Frequency
+from ..utils import Frequency
 
 
 class EPuck(Supervisor):

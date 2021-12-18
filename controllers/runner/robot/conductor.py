@@ -5,7 +5,7 @@ from nanowire_network_simulator import *
 from nanowire_network_simulator.model.device import Datasheet
 from networkx import Graph
 from typing import Dict, Tuple
-from utils import adapt
+from ..utils import adapt
 
 
 @dataclass
