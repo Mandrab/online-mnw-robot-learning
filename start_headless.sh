@@ -25,7 +25,7 @@ export DISPLAY=:99
 export LIBGL_ALWAYS_SOFTWARE=true
 
 # start a virtual screen with Xvfb
-Xvfb :99 -screen 0 1024x768x16 &
+Xvfb :99 -screen 0 1024x768x16 > log 2>&1 &
 
 ################################################################################
 # VIRTUAL ENVIRONMENT SETUP
@@ -37,7 +37,7 @@ fi
 source venv/bin/activate
 
 # install pip requirements
-pip install -r requirements.txt
+pip install -r requirements.txt >> log 2>&1
 
 ################################################################################
 # SIMULATION START
