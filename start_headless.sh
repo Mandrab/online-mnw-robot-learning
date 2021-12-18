@@ -42,5 +42,5 @@ pip install -r requirements.txt >> log 2>&1
 ################################################################################
 # SIMULATION START
 
-# start webots simulation from .py specified file
-python $1 2>&1 | tee -a log
+# start webots simulation from .py specified file (in background)
+python $1 >>log 2>&1 &
