@@ -1,3 +1,5 @@
+import random
+
 from conductor import Conductor
 from epuck import EPuck
 from nanowire_network_simulator import minimum_viable_network as generator
@@ -51,6 +53,10 @@ class Simulation:
             epoch.controller.actuators = network[2]['outputs']
 
     def initialize(self, duration: int):
+        # set controller random seed
+        random.seed(self.controller.datasheet.seed)
+
+        # exec an initialization run
         self.__run(self.best_epoch, duration)
 
     def simulate(self, duration: int):
