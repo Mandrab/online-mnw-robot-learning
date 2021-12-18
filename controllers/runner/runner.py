@@ -56,7 +56,12 @@ for index, epoch in enumerate(best_epochs):
     save_epoch(epoch, file_format)
 
 ################################################################################
-# BEST CONTROLLER RUN
+# BEST CONTROLLER RUN OR EXIT
+
+if not continue_after_evolution:
+    # exit the simulator
+    print('Simulation complete')
+    robot.simulationQuit(0)
 
 print('Running the best scoring controller')
 robot.simulationReset()

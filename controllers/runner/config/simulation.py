@@ -37,6 +37,9 @@ epoch_count = 30
 # number of steps for which the robot can run freely
 epoch_duration = 300
 
+# if true, continue simulation with best controller after the evolution finish
+continue_after_evolution = True
+
 # network density-configurations to tests and generating seeds
 densities = {
     _ + 4.5: [random.randint(0, 9999) for _ in range(replica_count)]
