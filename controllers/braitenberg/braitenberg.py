@@ -4,7 +4,7 @@ it evaluates also side sensors and it weight them according to their importance.
 """
 
 from controller import Robot
-from controllers.braitenberg.utils import adapt
+from utils import adapt
 
 TIME_STEP = 100  # ms; todo set equal to the epuck one used in other experiments
 

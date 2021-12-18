@@ -1,8 +1,8 @@
-from controllers.runner.utils import adapt
 from epuck import EPuck
 from functools import reduce
 from math import sqrt
 from operator import add, sub
+from utils import adapt
 
 
 class Fitness:
