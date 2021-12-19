@@ -1,7 +1,7 @@
-from .Fitness import Fitness
 from functools import reduce
 from math import sqrt
 from operator import add
+from optimization.Fitness import Fitness
 from robot.epuck import EPuck
 
 
@@ -13,11 +13,10 @@ class Distance(Fitness):
 
     def __init__(self, robot: EPuck):
         """Initialize the evaluator and save the robot instance"""
-        super(Fitness, self).__init__(self, robot)
+        Fitness.__init__(self, robot)
 
         # get robot node and get its position field
-        node = robot.getFromDef('evolvable')
-        self.translation = node.getField('translation')
+        self.translation = robot.getFromDef('evolvable').getField('translation')
 
         # get position of the robot at the step (x, y, z)
         self.position = self.translation.getSFVec3f()[:2]
