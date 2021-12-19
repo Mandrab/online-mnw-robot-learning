@@ -3,40 +3,71 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation 1 0 0 4.71238898038469
-  position 0.0182216846425097 2.39153423266334 0.005052852606829687
+  orientation 1 0 0 4.7
+  position 0 1.5 0
   follow "e-puck"
   followType "None"
 }
 Background {
-  skyColor [
-    0.4 0.7 1
-  ]
+  skyColor [0.4 0.7 1]
 }
-RectangleArena {
-  floorAppearance Plastic {
-    colorOverride 0.5 0.5 0.5
+RectangleArena {}
+Floor {
+  translation 0 -0.1 0.25
+  name "light_floor"
+  size 0.3 0.5
+  appearance MattePaint {
+    baseColor 1 1 1
   }
 }
 Floor {
-  translation 0 0 0.25
-  size 1 0.5
-  appearance Plastic {
-    colorOverride 1 1 1
+  translation 0 0.01 0.25
+  name "dark_floor"
+  size 0.3 0.5
+  appearance MattePaint {
+    baseColor 0 0 0
+  }
+}
+Floor {
+  translation 0 0.009 -0.25
+  name "hider"
+  size 0.5 0.5
+  appearance MattePaint {
+    baseColor 0.2 0.2 0.2
+  }
+}
+Floor {
+  translation 0.37 0.008 -0.375
+  name "light_end"
+  size 0.26 0.25
+  appearance MattePaint {
+    baseColor 1 1 1
+  }
+}
+Floor {
+  translation -0.37 0.008 -0.375
+  name "dark_end"
+  size 0.26 0.25
+  appearance MattePaint {
+    baseColor 0 0 0
   }
 }
 SolidBox {
   translation -0.31 0.05 0.11
+  name "left box"
   size 0.4 0.1 0.8
 }
 SolidBox {
   translation 0.31 0.05 0.11
-  name "box(1)"
+  name "right box"
   size 0.4 0.1 0.8
 }
 DEF evolvable E-puck {
-  translation 4.08917e-07 0 0.25
-  rotation 0 1 0 1.01503e-06
+  translation 0 0.01 0.25
   controller "runner"
   supervisor TRUE
+  groundSensorsSlot [
+    E-puckGroundSensors {
+    }
+  ]
 }
