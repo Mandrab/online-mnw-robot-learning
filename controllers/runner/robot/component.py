@@ -3,8 +3,27 @@ from scipy.interpolate import interp1d
 from typing import Tuple
 
 
-class Sensor(str):
-    """Represents a robot sensor"""
+class GroundSensor(str):
+    """Represents a robot ground sensor"""
+
+    # the robot that it is working for/in
+    robot: Robot
+
+    @staticmethod
+    def range(self) -> Tuple[float, float]:
+        """Return sensor working output range."""
+        # todo
+        return 0, 1
+
+    def read(self) -> float: return self.robot.getDevice(self).getValue()
+
+    def enable(self, update_frequency: int):
+        """Enable the sensors to perceive information at the given frequency."""
+        self.robot.getDevice(self).enable(update_frequency)
+
+
+class IRSensor(str):
+    """Represents a robot IR (proximity) sensor"""
 
     # the robot that it is working for/in
     robot: Robot
@@ -46,6 +65,7 @@ class Sensor(str):
         return value if proximity else self.transform(value)[()]
 
     def enable(self, update_frequency: int):
+        """Enable the sensors to perceive information at the given frequency."""
         self.robot.getDevice(self).enable(update_frequency)
 
 
@@ -57,13 +77,16 @@ class Motor(str):
 
     @staticmethod
     def range(reverse: bool = False) -> Tuple[float, float]:
+        """Return motor working input range."""
         return (6.28, -6.28) if reverse else (-6.28, 6.28)
 
     @property
     def speed(self) -> float:
+        """Return motor actual running speed."""
         return self.robot.getDevice(self).getVelocity()
 
     @speed.setter
     def speed(self, value: float):
+        """Set motor running speed."""
         self.robot.getDevice(self).setPosition(float('inf'))
         self.robot.getDevice(self).setVelocity(value)

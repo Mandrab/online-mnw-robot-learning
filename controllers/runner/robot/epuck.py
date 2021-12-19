@@ -1,7 +1,8 @@
-from component import Sensor, Motor
-from conductor import Conductor
+from .component import IRSensor, Motor, GroundSensor
+from .conductor import Conductor
 from controller import Supervisor
-from ..utils import Frequency
+from itertools import chain
+from utils import Frequency
 
 
 class EPuck(Supervisor):
@@ -11,7 +12,8 @@ class EPuck(Supervisor):
     run_frequency = Frequency(hz_value=10)
 
     # names of the sensors and actuators actually used
-    sensors = [Sensor(f'ps{idx}') for idx in range(8)]
+    ir_sensors = [IRSensor(f'ps{idx}') for idx in range(8)]
+    ground_sensors = [GroundSensor(f'gs{idx}') for idx in range(1)]
     motors = [Motor(f'{side} wheel motor') for side in ['left', 'right']]
 
     def __init__(self, conductor: Conductor = None):
@@ -19,7 +21,7 @@ class EPuck(Supervisor):
         super().__init__()
 
         # initialize distance sensors
-        for sensor in self.sensors:
+        for sensor in chain(self.ir_sensors, self.ground_sensors):
             sensor.robot = self
             sensor.enable(self.run_frequency.ms)
 
@@ -28,7 +30,8 @@ class EPuck(Supervisor):
             motor.robot = self
 
         # set actuators and motors range
-        self.sensors_range = next(iter(self.sensors)).range
+        self.ir_sensors_range = next(iter(self.ir_sensors)).range
+        self.ground_sensors_range = next(iter(self.ground_sensors)).range
         self.motors_range = next(iter(self.motors)).range
 
         # set the network controller
@@ -42,13 +45,13 @@ class EPuck(Supervisor):
             return False
 
         # get sensors readings
-        stimulus = {s: s.read(raw_signal) for s in self.sensors}
+        stimulus = {s: s.read(raw_signal) for s in self.ir_sensors}
 
-        # run the controller
+        # run the controller ; todo add ground sensor usage for tmaze task
         outputs = self.conductor.evaluate(
             update_time=self.run_frequency.s,
             inputs=stimulus,
-            inputs_range=self.sensors_range(raw_signal),
+            inputs_range=self.ir_sensors_range(raw_signal),
             outputs_range=self.motors_range(raw_signal),
             actuators_load=1e6  # MOhm
         )
