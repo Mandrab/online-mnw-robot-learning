@@ -1,7 +1,7 @@
-from .Fitness import Fitness
 from functools import reduce
 from math import sqrt
 from operator import sub
+from optimization.Fitness import Fitness
 from utils import adapt
 
 
