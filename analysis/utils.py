@@ -1,7 +1,7 @@
 import random
 
-from conductor import Conductor
-from epuck import EPuck
+from robot.conductor import Conductor
+from robot.epuck import EPuck
 from functools import reduce
 from nanowire_network_simulator.model.device import Datasheet
 from nanowire_network_simulator import minimum_viable_network, random_nodes, \
@@ -56,5 +56,5 @@ datasheet = Datasheet(
 )
 graph, c, actuators, sensors = generate(datasheet)
 
-sensor_range = next(iter(EPuck.sensors)).range()
+sensor_range = next(iter(EPuck.ir_sensors)).range()
 motors_range = next(iter(EPuck.motors)).range(reverse=False)

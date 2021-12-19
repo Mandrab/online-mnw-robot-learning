@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import scipy.stats as stats
 
-from conductor import Conductor
+from robot.conductor import Conductor
 from nanowire_network_simulator import backup, stimulate, Evolution, plot
 from os import listdir
 from os.path import join, isfile
