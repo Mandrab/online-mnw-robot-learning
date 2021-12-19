@@ -15,7 +15,7 @@ class CollisionAvoidance(Fitness):
         # get the most near measure and make it in range 0-1
         value = max(sensor.read() for sensor in self.robot.ir_sensors)
 
-        min_value, max_value = self.robot.sensors_range()
+        min_value, max_value = self.robot.ir_sensors_range()
 
         # get motors velocities and make them in range 0-1
         speeds = [motor.speed for motor in self.robot.motors]

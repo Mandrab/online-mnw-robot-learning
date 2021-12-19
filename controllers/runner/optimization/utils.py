@@ -1,7 +1,5 @@
 import json
 
-from conductor import Conductor
-from epuck import EPuck
 from itertools import product, chain
 from nanowire_network_simulator import backup
 from nanowire_network_simulator.model.device.datasheet import factory as ds
@@ -9,6 +7,8 @@ from optimization.Epoch import Epoch
 from optimization.Simulation import Simulation
 from os import listdir
 from os.path import join, isfile, exists
+from robot.conductor import Conductor
+from robot.epuck import EPuck
 from typing import Iterable, Dict
 
 DEVICE_SIZE = 50
