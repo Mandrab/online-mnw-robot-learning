@@ -1,31 +1,33 @@
-from conductor import Conductor, copy
-from epuck import EPuck
-from evaluators import Fitness, Distance
-from nanowire_network_simulator import minimum_distance_selection,\
-    random_nodes, mutate
-from typing import List, Dict
+from optimization.Fitness import Fitness
+from nanowire_network_simulator import minimum_distance_selection
+from nanowire_network_simulator import mutate, random_nodes
+from robot.conductor import copy
+from robot.epuck import EPuck
+from typing import List, Dict, Callable
 
 
 class Epoch:
     """Evaluate the quality of connections to a network"""
 
-    def __init__(self, robot: EPuck, sensors: List[int], actuators: List[int]):
-        self.robot = robot
-
-        # save connections to maintain epoch data
-        self.sensors = sensors
-        self.actuators = actuators
+    def __init__(
+            self,
+            robot: EPuck,
+            sensors: List[int],
+            actuators: List[int],
+            evaluator: Callable[[EPuck], Fitness]
+    ):
+        # save data used during epoch run (it works as a log of states)
+        self.robot, self.sensors, self.actuators = robot, sensors, actuators
 
         # save the controller to avoid changes in the robot reference
         self.controller = robot.conductor
 
         # set sensors to the controller
-        self.controller.sensors = dict(zip(self.robot.sensors, sensors))
+        self.controller.sensors = dict(zip(self.robot.ir_sensors, sensors))
         self.controller.actuators = dict(zip(self.robot.motors, actuators))
 
         # define evaluation utils
-        self.fitness = Fitness(robot)
-        self.distance = Distance(robot)
+        self.evaluator = evaluator(robot)
 
         # define history-container utils
         self.stimulus: List[Dict[str, float]] = []
@@ -40,17 +42,17 @@ class Epoch:
         self.robot.run(False)  # todo make configurable (e.g., raw_signals)
 
         # update fitness value
-        self.fitness.update()
-
-        # update distance value
-        self.distance.update()
+        self.evaluator.update()
 
         # save sensor readings and motors speeds for future analysis
-        self.stimulus += [{s: s.read(False) for s in self.robot.sensors}]
+        self.stimulus += [{s: s.read(False) for s in self.robot.ir_sensors}]
         self.response += [{m: m.speed for m in self.robot.motors}]
 
 
-def new_epoch(robot: EPuck) -> Epoch:
+def new_epoch(
+        robot: EPuck,
+        builder: Callable[[EPuck, List[int], List[int]], Epoch]
+) -> Epoch:
     """Instantiate a new evaluation run for a robot"""
 
     # get the controller from the robot
@@ -67,17 +69,20 @@ def new_epoch(robot: EPuck) -> Epoch:
         distance=2,
         negate=True
     )(graph, list(), -1)
-    sensors = [*random_nodes(graph, avoid=neighbor, count=len(robot.sensors))]
-    robot.conductor.sensors = dict(zip(robot.sensors, sensors))
+    sensors = [*random_nodes(graph, neighbor, len(robot.ir_sensors))]
+    robot.conductor.sensors = dict(zip(robot.ir_sensors, sensors))
 
     # initialize the network with the given setting
     robot.conductor.initialize()
 
     # return the new Epoch
-    return Epoch(robot=robot, sensors=sensors, actuators=[*actuators])
+    return builder(robot, sensors, [*actuators])
 
 
-def evolve_epoch(epoch: Epoch) -> Epoch:
+def evolve_epoch(
+        epoch: Epoch,
+        builder: Callable[[EPuck, List[int], List[int]], Epoch]
+) -> Epoch:
     """
     Instantiate a new evaluation run for a robot as an evolution (in
     connections) of a previous one.
@@ -98,4 +103,4 @@ def evolve_epoch(epoch: Epoch) -> Epoch:
     epoch.robot.conductor = copy(epoch.controller)
 
     # return the evolved epoch
-    return Epoch(robot=epoch.robot, sensors=sensors, actuators=epoch.actuators)
+    return builder(epoch.robot, sensors, epoch.actuators)
