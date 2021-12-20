@@ -3,67 +3,18 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation 1 0 0 4.7
-  position 0 1.5 0
+  orientation 1 0 0 4.71238898038469
+  position 2.893755181971747e-13 1.560450149086121 6.254092258116292e-15
   follow "e-puck"
   followType "None"
 }
 Background {
-  skyColor [0.4 0.7 1]
-}
-RectangleArena {}
-DEF light_floor Floor {
-  translation 0 -0.1 0.25
-  name "light_floor"
-  size 0.3 0.5
-  appearance MattePaint {
-    baseColor 1 1 1
-  }
-}
-DEF dark_floor Floor {
-  translation 0 0.01 0.25
-  name "dark_floor"
-  size 0.3 0.5
-  appearance MattePaint {
-    baseColor 0 0 0
-  }
-}
-Floor {
-  translation 0 0.009 -0.24
-  name "hider"
-  size 0.5 0.53
-  appearance MattePaint {
-    baseColor 0.2 0.2 0.2
-  }
-}
-Floor {
-  translation 0.37 0.008 -0.396
-  name "light_end"
-  size 0.26 0.21
-  appearance MattePaint {
-    baseColor 1 1 1
-  }
-}
-Floor {
-  translation -0.37 0.008 -0.396
-  name "dark_end"
-  size 0.26 0.21
-  appearance MattePaint {
-    baseColor 0 0 0
-  }
-}
-SolidBox {
-  translation -0.31 0.05 0.11
-  name "left box"
-  size 0.4 0.1 0.8
-}
-SolidBox {
-  translation 0.31 0.05 0.11
-  name "right box"
-  size 0.4 0.1 0.8
+  skyColor [
+    0.4 0.7 1
+  ]
 }
 DEF evolvable E-puck {
-  translation 0 0.02 0.25
+  translation 0 0 0.25
   controller "runner"
   supervisor TRUE
   groundSensorsSlot [
@@ -71,4 +22,86 @@ DEF evolvable E-puck {
       rotation 0.1294279597735375 0.1294279597735375 -0.9831056944488314 -1.5878353071795859
     }
   ]
+}
+RectangleArena {
+  floorAppearance PBRAppearance {
+    transparency 1
+  }
+}
+Solid {
+  translation 0 0 0.25
+  scale 0.51 0.51 0.51
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+      }
+      geometry Plane {
+        size 0.4 1
+      }
+    }
+  ]
+}
+Solid {
+  translation 0 0 -0.25
+  scale 0.51 0.51 0.51
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.2 0.2 0.2
+      }
+      geometry Plane {
+        size 1 0.98
+      }
+    }
+  ]
+  name "solid(1)"
+}
+Solid {
+  translation -0.38 0 -0.38
+  scale 0.25 0.25 0.25
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+      }
+      geometry Plane {
+      }
+    }
+  ]
+  name "solid(2)"
+}
+Solid {
+  translation 0.38 0 -0.38
+  scale 0.25 0.25 0.25
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Plane {
+      }
+    }
+  ]
+  name "solid(3)"
+}
+Wall {
+  translation -0.3 0 -0.25
+  size 0.4 0.1 0.01
+}
+Wall {
+  translation -0.105 0 0.125
+  rotation 0 1 0 1.5708
+  name "wall(2)"
+  size 0.75 0.1 0.01
+}
+Wall {
+  translation 0.105 0 0.125
+  rotation 0 1 0 1.5708
+  name "wall(3)"
+  size 0.75 0.1 0.01
+}
+Wall {
+  translation 0.3 0 -0.25
+  name "wall(1)"
+  size 0.4 0.1 0.01
 }
