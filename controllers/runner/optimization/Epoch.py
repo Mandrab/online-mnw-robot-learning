@@ -58,25 +58,25 @@ def new_epoch(
     # get the controller from the robot
     graph = robot.conductor.network
 
-    # select and set actuator nodes from the available nodes
+    # select actuator nodes from the available nodes
     actuators = random_nodes(graph, set(), len(robot.motors))
-    robot.conductor.sensors = dict(zip(robot.motors, actuators))
 
-    # select and set source nodes from the ones that are at least 2 steps
-    # far from the outputs nodes
+    # select source nodes from the ones that are at least 2 steps far from the
+    # outputs nodes
     neighbor = minimum_distance_selection(
         outputs=actuators,
         distance=2,
         negate=True
     )(graph, list(), -1)
     sensors = [*random_nodes(graph, neighbor, len(robot.ir_sensors))]
-    robot.conductor.sensors = dict(zip(robot.ir_sensors, sensors))
+
+    # return the new Epoch
+    epoch = builder(robot, sensors, [*actuators])
 
     # initialize the network with the given setting
     robot.conductor.initialize()
 
-    # return the new Epoch
-    return builder(robot, sensors, [*actuators])
+    return epoch
 
 
 def evolve_epoch(
