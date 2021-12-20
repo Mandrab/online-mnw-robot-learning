@@ -5,6 +5,7 @@ from nanowire_network_simulator import backup
 from nanowire_network_simulator.model.device.datasheet import factory as ds
 from optimization.Epoch import Epoch
 from optimization.Simulation import Simulation
+from optimization.task.Tasks import Tasks
 from os import listdir
 from os.path import join, isfile, exists
 from robot.conductor import Conductor
@@ -21,6 +22,7 @@ def new_simulations(
         densities: Dict[float, Iterable[int]],
         size: int = DEVICE_SIZE,
         wires_length: float = WIRES_LENGTH,
+        task_type: Tasks = Tasks.COLLISION_AVOIDANCE
 ) -> Iterable[Simulation]:
     """
     Generate a simulations set with each instance using a device with a
@@ -34,7 +36,7 @@ def new_simulations(
     datasheets = [ds.from_density(k, size, wires_length, v) for k, v in params]
 
     # instantiate simulations with the given controllers/devices
-    return map(lambda _: Simulation(robot, _), datasheets)
+    return map(lambda _: Simulation(robot, _, task_type=task_type), datasheets)
 
 
 def import_simulations(
