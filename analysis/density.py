@@ -1,5 +1,6 @@
 import json
 from functools import reduce
+from itertools import chain
 
 import matplotlib.pyplot as plt
 
@@ -195,11 +196,6 @@ ax.set(
     xlabel='Configuration', ylabel='Fitness'
 )
 
-
-def value_wise_avg(*a):
-    return [*map(lambda _: sum(_) / len(_), zip(*a))]
-
-
 densities = set(map(lambda _: _['density'], data))
 densities = dict(map(
     lambda k: (k, reduce(
@@ -209,14 +205,11 @@ densities = dict(map(
     )),
     densities
 ))
-densities = {k: [*value_wise_avg(*v)] for k, v in densities.items()}
+densities = {k: [*chain(*v)] for k, v in densities.items()}
 ax.boxplot(densities.values())
 ax.set_xticks(
     [*range(len(densities) + 2)],
     labels=[3.5, *densities.keys(), 9.5]
 )
-# for density, fitness in densities.items():
-#     ax.plot(fitness, label=f'density {density}')
 
-plt.legend()
 plt.show()
