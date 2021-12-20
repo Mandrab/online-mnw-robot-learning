@@ -10,7 +10,7 @@ from optimization.Epoch import Epoch
 from typing import Dict, Tuple
 
 # minimum fitness needed to evolve an epoch instead of creating a new one
-MINIMUM_FITNESS = 35.0
+MINIMUM_FITNESS = 30.0
 
 
 class Simulation:
