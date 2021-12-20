@@ -23,7 +23,7 @@ The required process is the following:
 """
 import random
 
-from epuck import EPuck
+from robot.epuck import EPuck
 
 # set default constant seed for simulation
 random.seed(1234)
