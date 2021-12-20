@@ -1,5 +1,5 @@
 from optimization.Fitness import Fitness
-from world import Colors
+from .world import Colors
 
 
 class TMaze(Fitness):

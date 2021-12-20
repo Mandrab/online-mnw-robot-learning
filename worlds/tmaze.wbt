@@ -12,7 +12,7 @@ Background {
   skyColor [0.4 0.7 1]
 }
 RectangleArena {}
-Floor {
+DEF light_floor Floor {
   translation 0 -0.1 0.25
   name "light_floor"
   size 0.3 0.5
@@ -20,7 +20,7 @@ Floor {
     baseColor 1 1 1
   }
 }
-Floor {
+DEF dark_floor Floor {
   translation 0 0.01 0.25
   name "dark_floor"
   size 0.3 0.5
@@ -29,25 +29,25 @@ Floor {
   }
 }
 Floor {
-  translation 0 0.009 -0.25
+  translation 0 0.009 -0.24
   name "hider"
-  size 0.5 0.5
+  size 0.5 0.53
   appearance MattePaint {
     baseColor 0.2 0.2 0.2
   }
 }
 Floor {
-  translation 0.37 0.008 -0.375
+  translation 0.37 0.008 -0.396
   name "light_end"
-  size 0.26 0.25
+  size 0.26 0.21
   appearance MattePaint {
     baseColor 1 1 1
   }
 }
 Floor {
-  translation -0.37 0.008 -0.375
+  translation -0.37 0.008 -0.396
   name "dark_end"
-  size 0.26 0.25
+  size 0.26 0.21
   appearance MattePaint {
     baseColor 0 0 0
   }
@@ -63,11 +63,12 @@ SolidBox {
   size 0.4 0.1 0.8
 }
 DEF evolvable E-puck {
-  translation 0 0.01 0.25
+  translation 0 0.02 0.25
   controller "runner"
   supervisor TRUE
   groundSensorsSlot [
     E-puckGroundSensors {
+      rotation 0.1294279597735375 0.1294279597735375 -0.9831056944488314 -1.5878353071795859
     }
   ]
 }
