@@ -13,6 +13,8 @@ __WORLD_FILE = f'worlds/{world_name or "main_world"}.wbt'
 ################################################################################
 # START OF SIMULATION
 
+print(f'Running simulation in {__WORLD_FILE}')
+
 # start a simulation subprocess
 subprocess.run([
     'webots ' +
