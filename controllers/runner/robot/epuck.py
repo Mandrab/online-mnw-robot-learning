@@ -13,26 +13,29 @@ class EPuck(Supervisor):
 
     # names of the sensors and actuators actually used
     ir_sensors = [IRSensor(f'ps{idx}') for idx in range(8)]
-    ground_sensors = [GroundSensor(f'gs{idx}') for idx in range(1)]
+    ground_sensors = [GroundSensor('gs0')]
     motors = [Motor(f'{side} wheel motor') for side in ['left', 'right']]
 
     def __init__(self, conductor: Conductor = None):
         # get the time step of the current world
         super().__init__()
 
-        # initialize distance sensors
-        for sensor in chain(self.ir_sensors, self.ground_sensors):
-            sensor.robot = self
-            sensor.enable(self.run_frequency.ms)
-
-        # initialize motors
-        for motor in self.motors:
-            motor.robot = self
-
         # set actuators and motors range
         self.ir_sensors_range = next(iter(self.ir_sensors)).range
         self.ground_sensors_range = next(iter(self.ground_sensors)).range
         self.motors_range = next(iter(self.motors)).range
+
+        # initialize distance sensors
+        for sensor in chain(self.ir_sensors, self.ground_sensors):
+            sensor.robot = self
+            if isinstance(sensor, GroundSensor) and not sensor.exists():
+                self.ground_sensors.remove(sensor)
+            else:
+                sensor.enable(self.run_frequency.ms)
+
+        # initialize motors
+        for motor in self.motors:
+            motor.robot = self
 
         # set the network controller
         self.conductor = conductor

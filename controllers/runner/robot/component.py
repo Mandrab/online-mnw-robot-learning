@@ -10,16 +10,17 @@ class GroundSensor(str):
     robot: Robot
 
     @staticmethod
-    def range(self) -> Tuple[float, float]:
+    def range() -> Tuple[float, float]:
         """Return sensor working output range."""
-        # todo
-        return 0, 1
+        return 0, 1000  # todo
 
     def read(self) -> float: return self.robot.getDevice(self).getValue()
 
     def enable(self, update_frequency: int):
         """Enable the sensors to perceive information at the given frequency."""
         self.robot.getDevice(self).enable(update_frequency)
+
+    def exists(self): return not self.robot.getDevice(self) is None
 
 
 class IRSensor(str):
