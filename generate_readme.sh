@@ -14,7 +14,6 @@ SIZE=`cat controllers/runner/optimization/utils.py | grep -F 'DEVICE_SIZE =' | a
 LENGTH=`cat controllers/runner/optimization/utils.py | grep -F 'WIRES_LENGTH =' | awk -F '= ' '{print $2}'`
 
 # create readme file
-touch README.md
 echo "
 EXECUTIONS RESULTS 
 Date: 
@@ -37,5 +36,5 @@ Configuration:
     - actuators resistance: $LOAD
 --------------------------------------------------------------------------------
 `cat $1 | grep '^[fitness|Effective]'`
-" #| tee README.md
+"
 
