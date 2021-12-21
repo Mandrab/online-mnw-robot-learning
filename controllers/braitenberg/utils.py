@@ -7,10 +7,10 @@ from typing import Tuple
 
 def adapt(
         value: float,
-        in_range: Tuple[float, float],
-        out_range: Tuple[float, float]
+        in_range: Tuple[float, float] = (0.0, 1.0),
+        out_range: Tuple[float, float] = (0.0, 1.0)
 ) -> float:
-    """Adapt a value to a different range"""
+    """Adapt a value in a range to a different one."""
 
     in_delta: float = reduce(operator.__sub__, reversed(in_range))
     out_delta: float = reduce(operator.__sub__, reversed(out_range))
@@ -18,7 +18,4 @@ def adapt(
     value = out_range[0] + copysign(value, out_delta)
 
     # force bounds to the value
-    value = min(value, max(out_range))
-    value = max(value, min(out_range))
-
-    return value
+    return max(min(value, max(out_range)), min(out_range))
