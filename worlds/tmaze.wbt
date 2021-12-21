@@ -4,7 +4,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation 1 0 0 4.71238898038469
-  position 2.893755181971747e-13 1.560450149086121 6.254092258116292e-15
+  position -0.0018988925894868104 1.619564365988467 -0.014870842252598342
   follow "e-puck"
   followType "None"
 }
@@ -14,94 +14,161 @@ Background {
   ]
 }
 DEF evolvable E-puck {
-  translation 0 0 0.25
+  translation 0 0 0.4
+  rotation 0 -1 0 0
   controller "runner"
   supervisor TRUE
   groundSensorsSlot [
     E-puckGroundSensors {
-      rotation 0.1294279597735375 0.1294279597735375 -0.9831056944488314 -1.5878353071795859
+      translation 0 0 0.03
+      rotation 0 0 1 1.58784
     }
   ]
 }
 RectangleArena {
+  floorSize 1.1 1.1
   floorAppearance PBRAppearance {
     transparency 1
   }
 }
-Solid {
-  translation 0 0 0.25
-  scale 0.51 0.51 0.51
+DEF dark_floor Solid {
+  translation 0 2e-05 0.25
+  scale 0.5 0.5 0.5
   children [
     Shape {
       appearance PBRAppearance {
         baseColor 0 0 0
+        metalness 0
       }
       geometry Plane {
         size 0.4 1
       }
+      castShadows FALSE
     }
   ]
+  name "black start"
 }
-Solid {
-  translation 0 0 -0.25
+DEF light_floor Solid {
+  translation 0 -1 0.25
   scale 0.51 0.51 0.51
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0.2 0.2 0.2
+        metalness 0
       }
       geometry Plane {
-        size 1 0.98
+        size 0.4 1
       }
+      castShadows FALSE
     }
   ]
-  name "solid(1)"
+  name "white start"
 }
 Solid {
-  translation -0.38 0 -0.38
-  scale 0.25 0.25 0.25
+  translation 0 1e-05 -0.38
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.2 0.2 0.2
+        metalness 0
+        occlusionMapStrength 0
+      }
+      geometry Plane {
+        size 1 0.25
+      }
+      castShadows FALSE
+    }
+  ]
+  name "north hider"
+}
+Solid {
+  translation 0 1e-05 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.2 0.2 0.2
+        metalness 0
+        occlusionMapStrength 0
+      }
+      geometry Plane {
+        size 0.2 1
+      }
+      castShadows FALSE
+    }
+  ]
+  name "hider"
+}
+Solid {
+  translation -0.38 2e-05 -0.38
   children [
     Shape {
       appearance PBRAppearance {
         baseColor 0 0 0
+        metalness 0
       }
       geometry Plane {
+        size 0.25 0.25
       }
+      castShadows FALSE
     }
   ]
-  name "solid(2)"
+  name "black end"
 }
 Solid {
-  translation 0.38 0 -0.38
-  scale 0.25 0.25 0.25
+  translation 0.38 2e-05 -0.38
   children [
     Shape {
       appearance PBRAppearance {
+        metalness 0
       }
       geometry Plane {
+        size 0.25 0.25
       }
     }
   ]
-  name "solid(3)"
+  name "white end"
 }
 Wall {
   translation -0.3 0 -0.25
+  name "orizontal left wall"
   size 0.4 0.1 0.01
+}
+Wall {
+  translation -0.5 0 -0.38
+  rotation 0 1 0 1.5708
+  name " left"
+  size 0.25 0.1 0.01
+}
+Wall {
+  translation 0.5 0 -0.38
+  rotation 0 1 0 1.5708
+  name "right"
+  size 0.25 0.1 0.01
+}
+Wall {
+  translation 0 0 -0.51
+  name "north wall"
+  size 1 0.1 0.01
+}
+Wall {
+  translation 0 0 0.5
+  name "south wall"
+  size 0.22 0.1 0.01
 }
 Wall {
   translation -0.105 0 0.125
   rotation 0 1 0 1.5708
-  name "wall(2)"
+  name "vertical left wall"
   size 0.75 0.1 0.01
 }
 Wall {
   translation 0.105 0 0.125
   rotation 0 1 0 1.5708
-  name "wall(3)"
+  name "vertical right wall"
   size 0.75 0.1 0.01
 }
 Wall {
   translation 0.3 0 -0.25
-  name "wall(1)"
+  name "orizontal right wall"
   size 0.4 0.1 0.01
 }

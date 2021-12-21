@@ -8,9 +8,9 @@ class Colors(Enum):
     """
 
     NONE = -1
-    WHITE = 600
-    GRAY = 400
-    BLACK = 300
+    WHITE = 825
+    GRAY = 625
+    BLACK = 325
 
     def __eq__(self, other):
         other_value = other.value if isinstance(other, Colors) else other
