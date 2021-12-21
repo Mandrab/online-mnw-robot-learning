@@ -67,7 +67,7 @@ print('Running the best scoring controller')
 robot.simulationReset()
 
 # get the best configuration overall
-best = max(best_epochs, key=lambda e: e.fitness.value())
+best = max(best_epochs, key=lambda e: e.evaluator.value())
 
 # run the best controller until it is stopped
 robot.conductor = best.controller
