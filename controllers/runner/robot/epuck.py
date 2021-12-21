@@ -1,8 +1,8 @@
-from .component import IRSensor, Motor, GroundSensor
+from .component import sensor, enable
 from .conductor import Conductor
 from controller import Supervisor
-from itertools import chain
-from utils import Frequency
+from .component.Motor import Motor
+from utils import Frequency, adapt
 
 
 class EPuck(Supervisor):
@@ -12,26 +12,15 @@ class EPuck(Supervisor):
     run_frequency = Frequency(hz_value=10)
 
     # names of the sensors and actuators actually used
-    ir_sensors = [IRSensor(f'ps{idx}') for idx in range(8)]
-    ground_sensors = [GroundSensor('gs0')]
+    sensors = list(map(sensor, [f'ps{_}' for _ in range(8)] + [f'gs{0}']))
     motors = [Motor(f'{side} wheel motor') for side in ['left', 'right']]
 
     def __init__(self, conductor: Conductor = None):
         # get the time step of the current world
-        super().__init__()
+        Supervisor.__init__(self)
 
-        # set actuators and motors range
-        self.ir_sensors_range = next(iter(self.ir_sensors)).range
-        self.ground_sensors_range = next(iter(self.ground_sensors)).range
-        self.motors_range = next(iter(self.motors)).range
-
-        # initialize distance sensors
-        for sensor in chain(self.ir_sensors, self.ground_sensors):
-            sensor.robot = self
-            if isinstance(sensor, GroundSensor) and not sensor.exists():
-                self.ground_sensors.remove(sensor)
-            else:
-                sensor.enable(self.run_frequency.ms)
+        # initialize (existing) sensors and keep 'successful' ones
+        self.sensors = list(filter(enable(self), self.sensors))
 
         # initialize motors
         for motor in self.motors:
@@ -40,27 +29,25 @@ class EPuck(Supervisor):
         # set the network controller
         self.conductor = conductor
 
-    def run(self, raw_signal: bool = True):
-        """Execute a step and notify success"""
+    def run(self) -> bool:
+        """Execute a step and notify possible success."""
 
         # webots has stopped/paused the simulation
         if self.step(self.run_frequency.ms) == -1:
             return False
 
-        # get sensors readings
-        stimulus = {s: s.read(raw_signal) for s in self.ir_sensors}
+        # get normalized sensors readings: [0, 1]
+        stimulus = {s: s.read(normalize=True) for s in self.sensors}
 
-        # run the controller ; todo add ground sensor usage for tmaze task
+        # run the controller
         outputs = self.conductor.evaluate(
             update_time=self.run_frequency.s,
             inputs=stimulus,
-            inputs_range=self.ir_sensors_range(raw_signal),
-            outputs_range=self.motors_range(raw_signal),
             actuators_load=1e6  # MOhm
         )
 
         # set the motors speed
         for motor, value in zip(self.motors, map(outputs.get, self.motors)):
-            motor.speed = value
+            motor.speed = adapt(value, out_range=Motor.range())
 
         return True
