@@ -22,7 +22,7 @@ class Conductor:
     wires: Dict = field(default_factory=dict)
 
     # accepted stimulus range of the network
-    stimulus_range: Tuple[float, float] = (0.0, 10.0)
+    network_range: Tuple[float, float] = (0.0, 10.0)
 
     # mappings that represent the sensor/actuator -> network-node relation
     sensors: Dict[str, int] = field(default_factory=dict)
@@ -43,10 +43,10 @@ class Conductor:
             self,
             update_time: float,
             inputs: Dict[str, float],
-            inputs_range: Tuple[float, float],
-            outputs_range: Tuple[float, float],
+            inputs_range: Tuple[float, float] = (0.0, 1.0),
+            outputs_range: Tuple[float, float] = (0.0, 1.0),
             actuators_load: float = 1
-    ) -> dict[str, float]:
+    ) -> Dict[str, float]:
         """
         Stimulate the network with the sensors signals.
         Evaluate its response and return it.
@@ -60,7 +60,7 @@ class Conductor:
 
         # remap sensors readings from their range to network range (voltages)
         inputs = [
-            (k, adapt(v, inputs_range, self.stimulus_range))
+            (k, adapt(v, inputs_range, self.network_range))
             for k, v in inputs
         ]
 
@@ -87,7 +87,7 @@ class Conductor:
         #   -6.28, 6.28 for distance: 10 = far -> 6.28 = move straight
         #   6.28, -6.28 for proximity: 10 = near -> -6.28 = go away
         return {
-            k: adapt(v, self.stimulus_range, outputs_range)
+            k: adapt(v, self.network_range, outputs_range)
             for k, v in outputs
         }
 
@@ -99,7 +99,7 @@ def copy(conductor: Conductor) -> Conductor:
         conductor.network.copy(),
         dataclasses.replace(conductor.datasheet),
         conductor.wires.copy(),
-        conductor.stimulus_range,
+        conductor.network_range,
         conductor.sensors.copy(),
         conductor.actuators.copy()
     )
