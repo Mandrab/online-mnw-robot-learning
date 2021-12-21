@@ -1,4 +1,5 @@
 from optimization.Fitness import Fitness
+from robot.component import grounds
 from .world import Colors
 
 
@@ -8,14 +9,13 @@ class TMaze(Fitness):
     maze and staying there as long as possible.
     """
 
-    fitness: float = 0
+    fitness: float = 0.0
     initial_color = Colors.NONE
 
-    def reset(self):
-        self.initial_color = Colors.NONE
+    def reset(self): self.initial_color = Colors.NONE
 
     def update(self):
-        floor_level = next(iter(self.robot.ground_sensors)).read()
+        floor_level = next(iter(grounds(self.robot.sensors))).read()
 
         # map reading to discrete values (the comparison is in a neighborhood)
         if Colors.WHITE <= floor_level:
