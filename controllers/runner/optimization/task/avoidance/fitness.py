@@ -18,7 +18,7 @@ class CollisionAvoidance(Fitness):
 
         # get motors velocities and make them in range 0-1
         speeds = [motor.speed for motor in self.robot.motors]
-        speeds = [adapt(value, Motor.range()) for value in speeds]
+        speeds = [adapt(value, Motor.range(reverse=True)) for value in speeds]
 
         average_speed = sum(speeds) / 2.0
         directions = sqrt(abs(reduce(sub, speeds)))

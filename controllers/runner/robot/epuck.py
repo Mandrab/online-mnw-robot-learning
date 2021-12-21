@@ -48,6 +48,6 @@ class EPuck(Supervisor):
 
         # set the motors speed
         for motor, value in zip(self.motors, map(outputs.get, self.motors)):
-            motor.speed = adapt(value, out_range=Motor.range())
+            motor.speed = adapt(value, out_range=Motor.range(reverse=True))
 
         return True
