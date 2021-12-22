@@ -23,7 +23,7 @@ class Sensor(str):
         value = self.robot.getDevice(self).getValue()
         return adapt(value, self.range(), (0, 1)) if normalize else value
 
-    def enable(self, update_frequency: int):
+    def enable(self, update_frequency: int = 1):
         """Enable the sensors to perceive information at the given frequency."""
         self.robot.getDevice(self).enable(update_frequency)
 

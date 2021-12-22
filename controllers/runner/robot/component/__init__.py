@@ -15,7 +15,7 @@ def enable(robot: Robot) -> Callable[[Sensor], bool]:
         target.robot = robot
         if not target.exists():
             return False
-        target.enable(robot.run_frequency.ms)
+        target.enable()
         return True
     return _
 
