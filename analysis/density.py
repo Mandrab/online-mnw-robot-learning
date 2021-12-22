@@ -1,10 +1,11 @@
 import json
+import matplotlib.pyplot as plt
+import numpy as np
+
 from functools import reduce
 from itertools import chain
 
-import matplotlib.pyplot as plt
-
-from scipy.stats import wilcoxon
+# from scipy.stats import wilcoxon
 
 # FITNESS = '''[{
 #     "density": 2.28,
@@ -186,30 +187,55 @@ from scipy.stats import wilcoxon
 # plt.subplots_adjust(top=0.8, bottom=0.1, hspace=0.4)
 # plt.show()
 
-with open('fitness.json') as file:
+################################################################################
+# DENSITY INFLUENCE ON FITNESS
+
+with open('fitness_1.json') as file:
     data = json.load(file)
 
-fig = plt.figure(figsize=(10, 6))
-ax = fig.subplots(1, 1)
-ax.set(
-    title='Fitness according to network creation densities',
-    xlabel='Configuration', ylabel='Fitness'
-)
+fig = plt.figure(figsize=(10, 10))
+fig.suptitle('Fitness according to network creation densities')
 
-densities = set(map(lambda _: _['density'], data))
-densities = dict(map(
-    lambda k: (k, reduce(
-        lambda a, b: a + [b['fitness']],
-        filter(lambda _: _['density'] == k, data),
-        list()
-    )),
-    densities
-))
-densities = {k: [*chain(*v)] for k, v in densities.items()}
-ax.boxplot(densities.values())
-ax.set_xticks(
-    [*range(len(densities) + 2)],
-    labels=[3.5, *densities.keys(), 9.5]
-)
+ax1, ax2 = fig.subplots(2, 1)
 
+densities_keys = sorted(set(map(lambda _: _['density'], data)))
+
+
+def _(f=lambda _: _):
+    return dict(map(
+        lambda k: (k, reduce(
+            lambda a, b: a + [f(b['fitness'])],
+            filter(lambda _: _['density'] == k, data),
+            list()
+        )),
+        densities_keys
+    ))
+
+
+densities = {k: [*chain(*v)] for k, v in _().items()}
+ax1.boxplot(densities.values())
+
+densities = [None] + [np.percentile(v, 50) for v in densities.values()]
+ax1.plot(densities, linewidth=3, linestyle='dotted')
+
+ax1.set(title='All fitness history', xlabel='Density', ylabel='Fitness')
+ax1.set_xticks(
+    [*range(len(densities_keys) + 2)],
+    labels=[3.5, *densities_keys, 9.5]
+)
+ax1.yaxis.grid(True, linestyle='dotted')
+
+ax2.boxplot(_(max).values())
+
+densities = [None] + [np.percentile(v, 50) for v in _(max).values()]
+ax2.plot(densities, linewidth=3, linestyle='dotted')
+
+ax2.set(title='Max fitness', xlabel='Density', ylabel='Fitness')
+ax2.set_xticks(
+    [*range(len(densities_keys) + 2)],
+    labels=[3.5, *densities_keys, 9.5]
+)
+ax2.yaxis.grid(True, linestyle='dotted')
+
+plt.tight_layout()
 plt.show()
