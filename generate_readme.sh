@@ -15,7 +15,7 @@ LENGTH=`cat controllers/runner/optimization/utils.py | grep -F 'WIRES_LENGTH =' 
 
 # create readme file
 echo "
-EXECUTIONS RESULTS 
+EXECUTIONS RESULTS
 Date: 
 Start time: 
 End time: 
@@ -35,6 +35,6 @@ Configuration:
     - std length: 0.35 * $LENGTH
     - actuators resistance: $LOAD
 --------------------------------------------------------------------------------
-`cat $1 | grep '^[fitness|Effective]'`
+`cat $1 | grep '^[fitness|Creation]'`
 "
 
