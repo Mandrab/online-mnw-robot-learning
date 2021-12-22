@@ -3,8 +3,8 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation 1 0 0 4.71238898038469
-  position 0.05358642372835204 2.810023476256576 0.0007011701234420509
+  orientation 1 0 0 4.7
+  position 0 2 0
   follow "e-puck"
   followType "None"
 }
@@ -13,8 +13,7 @@ Background {
     0.4 0.7 1
   ]
 }
-RectangleArena {
-}
+RectangleArena {}
 SolidBox {
   translation 0 0.05 -0.25
   name "north"
@@ -32,13 +31,13 @@ SolidBox {
 }
 SolidBox {
   translation 0.233343 0.05 -0.13
-  rotation 0 0.9999999999999999 0 0.78
+  rotation 0 1 0 0.78
   name "center(1)"
   size 0.3 0.1 0.1
 }
 SolidBox {
   translation -0.234 0.05 0.0892028
-  rotation 0 0.9999999999999999 0 0.78
+  rotation 0 1 0 0.78
   name "center(3)"
   size 0.3 0.1 0.1
 }
@@ -52,6 +51,30 @@ SolidBox {
   translation -0.431333 0.05 -0.002724
   rotation 0 1 0 2.35619
   name "center(5)"
+  size 0.1 0.1 0.1
+}
+SolidBox {
+  translation 0.205059 0.05 -0.299707
+  rotation 0 1 0 2.35619
+  name "center(13)"
+  size 0.1 0.1 0.1
+}
+SolidBox {
+  translation 0.304053 0.05 -0.299707
+  rotation 0 1 0 2.35619
+  name "center(16)"
+  size 0.1 0.1 0.1
+}
+SolidBox {
+  translation -0.205061 0.05 -0.299707
+  rotation 0 1 0 2.35619
+  name "center(14)"
+  size 0.1 0.1 0.1
+}
+SolidBox {
+  translation -0.304055 0.05 -0.299707
+  rotation 0 1 0 2.35619
+  name "center(15)"
   size 0.1 0.1 0.1
 }
 SolidBox {
@@ -76,6 +99,18 @@ SolidBox {
   translation -5.63939e-07 0.05 0.258905
   rotation 0 1 0 2.35619
   name "center(7)"
+  size 0.1 0.1 0.1
+}
+SolidBox {
+  translation 0.255 0.05 -0.32
+  rotation 0 1 0 3.14159
+  name "center(11)"
+  size 0.1 0.1 0.1
+}
+SolidBox {
+  translation -0.2525 0.05 -0.3205
+  rotation 0 1 0 3.14159
+  name "center(12)"
   size 0.1 0.1 0.1
 }
 SolidBox {
