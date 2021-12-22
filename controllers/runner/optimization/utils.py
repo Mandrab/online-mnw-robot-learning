@@ -41,7 +41,8 @@ def new_simulations(
 
 def import_simulations(
         robot: EPuck,
-        folder: str = READING_FOLDER
+        folder: str = READING_FOLDER,
+        task_type: Tasks = Tasks.COLLISION_AVOIDANCE
 ) -> Iterable[Simulation]:
     """
     Check if there are simulations files in the given folder.
@@ -78,7 +79,12 @@ def import_simulations(
     chunks = map(lambda _: backup.read(*_), chunks)
 
     # instantiate simulation with the given controller/device
-    return map(lambda _: Simulation(robot, _[1], (_[0], _[2], _[3])), chunks)
+    return map(lambda _: Simulation(
+        robot=robot,
+        datasheet=_[1],
+        network=(_[0], _[2], _[3]),
+        task_type=task_type
+    ), chunks)
 
 
 def save_epoch(epoch: Epoch, file_format: str = '{name}.dat'):

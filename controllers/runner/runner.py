@@ -12,11 +12,11 @@ SAVING_FOLDER = datetime.today().strftime('%Y-%m-%d.%S%f')
 # SIMULATION SETUP
 
 # import simulations from the 'controllers' folder
-simulations = import_simulations(robot)
+simulations = import_simulations(robot, task_type=task)
 
 # if no simulations have been imported, generate new ones
 if not simulations:
-    simulations = new_simulations(robot, densities)
+    simulations = new_simulations(robot, densities, task_type=task)
 
 ################################################################################
 # SIMULATION EXECUTION
@@ -26,12 +26,7 @@ best_epochs = []
 
 # run simulations of different devices
 for simulation in simulations:
-    g, d = simulation.controller.network, simulation.controller.datasheet
-    print(
-        'Effective network density:',
-        g.number_of_nodes() * d.mean_length * d.mean_length / (d.Lx * d.Ly),
-        'wires:', g.number_of_nodes()
-    )
+    print(simulation)
 
     # initialize the first epoch/run of the simulation
     simulation.initialize(epoch_duration)
