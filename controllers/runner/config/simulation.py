@@ -23,10 +23,14 @@ The required process is the following:
 """
 import random
 
+from optimization.task.Tasks import Tasks
 from robot.epuck import EPuck
 
 # set default constant seed for simulation
 random.seed(1234)
+
+# define the type of task to execute/achieve
+task = Tasks.T_MAZE
 
 # number of device instances that conform to a single datasheet
 replica_count = 5
@@ -42,7 +46,7 @@ continue_after_evolution = False
 
 # network density-configurations to tests and generating seeds
 densities = {
-    _ + 4.5: [random.randint(0, 9999) for _ in range(replica_count)]
+    _ + 5: [random.randint(0, 9999) for _ in range(replica_count)]
     for _ in range(5)
 }
 
