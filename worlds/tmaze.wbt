@@ -14,7 +14,7 @@ Background {
   ]
 }
 DEF evolvable E-puck {
-  translation 0 0 0.4
+  translation 0 0 0.35
   rotation 0 -1 0 0
   controller "runner"
   supervisor TRUE
