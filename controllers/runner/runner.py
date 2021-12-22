@@ -69,7 +69,9 @@ robot.simulationReset()
 # get the best configuration overall
 best = max(best_epochs, key=lambda e: e.evaluator.value())
 
-# run the best controller until it is stopped
+# run the best controller until it is stopped; use the step function to allow
+# more advanced processing of the environment by the epoch; since thats the
+# last operation, the update of the fitness function is not considered a problem
 robot.conductor = best.controller
-while robot.run():
-    pass
+while True:
+    best.step()
