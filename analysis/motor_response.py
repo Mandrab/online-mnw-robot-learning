@@ -124,7 +124,7 @@ def __influence(values):
         # avoid modify the graph
         c.network = graph.copy()
 
-        step = lambda i: c.evaluate(
+        def step(i): return c.evaluate(
             update_time=0.1,  # seconds
             inputs={'s': i},
             inputs_range=sensor_range,
@@ -189,9 +189,9 @@ def __influence(values):
     values_ax, *axs = axs
 
     for ax, value in zip(axs, values):
-        graph, c, actuators, sensors = generate(value)
+        _, controller, motors, inputs = generate(value)
 
-        step = lambda i: c.evaluate(
+        def step(i): return controller.evaluate(
             update_time=0.1,  # seconds
             inputs={'s': i},
             inputs_range=sensor_range,
@@ -213,9 +213,9 @@ def __influence(values):
         e = Evolution(
             datasheet,
             wires_dict={}, delta_time=value, grounds=set(),
-            loads={(a, value) for a in actuators},
+            loads={(a, value) for a in motors},
             network_instances=[
-                (c.network, [(s, sensor_range[1]) for s in sensors])
+                (controller.network, [(s, sensor_range[1]) for s in inputs])
             ])
 
         plot.conductance_map(fig, ax, e)

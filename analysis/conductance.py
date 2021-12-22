@@ -50,7 +50,7 @@ def period_length(
     period_length([1,2,3,1,2], 3, 3, 1)) -> -1 ([1,2] is too short to be
         considered a repetition/period)
     """
-    for distance in range(1, max_length +1):
+    for distance in range(1, max_length + 1):
         if len(samples) - distance < min_length:
             return -1
         diffs = [a-b for a, b in zip(samples, samples[distance:])]
@@ -69,16 +69,24 @@ delay_range = [1, 2.5, 3, 10]
 colors = ['b', 'tab:orange', 'g', 'r']
 iterations = range(250)
 
+
+def average_conductance(controller):
+    avg_conductances = []
+    stimulus = {'s': max(sensor_range)}
+    for _ in iterations:
+        controller.evaluate(delay, stimulus, sensor_range, motors_range, 1)
+        avg_conductances += [
+            sum([
+                    controller.network[n1][n2]['Y']
+                    for n1, n2 in controller.network.edges()
+            ]) / controller.network.number_of_edges()
+        ]
+    return avg_conductances
+
+
 for delay, color in zip(delay_range, colors):
     c.network = graph.copy()
-    conductances = []
-    for _ in iterations:
-        c.evaluate(delay, {'s': sensor_range[1]}, sensor_range, motors_range, 1)
-        conductances += [
-            sum(
-                [c.network[n1][n2]['Y'] for n1, n2 in c.network.edges()]
-            ) / c.network.number_of_edges()
-        ]
+    conductances = average_conductance(c)
     ax.plot(conductances[:50], color=color, label=f'{round(1 / delay, 2)}Hz')
     single_ax, zoom_ax = next(axs)
     single_ax.plot(conductances[:30], color=color)
@@ -143,14 +151,7 @@ for density, (wires, size, length) in densities.items():
         Lx=size, Ly=size,
         mean_length=length, std_length=length * 0.35
     ))
-    conductances = []
-    for _ in iterations:
-        c.evaluate(delay, {'s': sensor_range[1]}, sensor_range, motors_range, 1)
-        conductances += [
-            sum(
-                [c.network[n1][n2]['Y'] for n1, n2 in c.network.edges()]
-            ) / c.network.number_of_edges()
-        ]
+    conductances = average_conductance(c)
     ax.plot(conductances, label=f'Density {density}')
 
 ax.set_xlabel('iterations')
