@@ -84,3 +84,16 @@ class Simulation:
             self.best_epoch = epoch
 
         print('fitness:', epoch.evaluator.value())
+
+    def __str__(self):
+        """Return a custom representation of the object."""
+
+        graph, data = self.controller.network, self.controller.datasheet
+        area = data.Lx * data.Ly
+        density = data.wires_count * data.mean_length ** 2 / area
+        cc_density = graph.number_of_nodes() * data.mean_length ** 2 / area
+
+        return str(
+            f'Creation density: {density}, ' +
+            f'Connected component density: {cc_density}'
+        )
