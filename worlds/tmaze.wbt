@@ -14,7 +14,7 @@ Background {
   ]
 }
 DEF evolvable E-puck {
-  translation 0 0 0.35
+  translation 0 2e-05 0.4
   rotation 0 -1 0 0
   controller "runner"
   supervisor TRUE
@@ -32,7 +32,7 @@ RectangleArena {
   }
 }
 DEF dark_floor Solid {
-  translation 0 2e-05 0.25
+  translation 0 -1 0.25
   scale 0.5 0.5 0.5
   children [
     Shape {
