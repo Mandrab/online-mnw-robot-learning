@@ -6,7 +6,7 @@ import math
 import matplotlib.pyplot as plt
 
 from nanowire_network_simulator import plot, Evolution
-from utils import *
+from analysis import *
 
 
 ################################################################################
