@@ -2,6 +2,7 @@ from .component import sensor, enable
 from .conductor import Conductor
 from controller import Supervisor
 from .component.Motor import Motor
+from typing import List
 from utils import Frequency, adapt
 
 
@@ -12,15 +13,14 @@ class EPuck(Supervisor):
     run_frequency = Frequency(hz_value=10)
 
     # names of the sensors and actuators actually used
-    sensors = list(map(sensor, [f'ps{_}' for _ in range(8)] + [f'gs{0}']))
     motors = [Motor(f'{side} wheel motor') for side in ['left', 'right']]
 
-    def __init__(self, conductor: Conductor = None):
+    def __init__(self, sensors: List[str], conductor: Conductor = None):
         # get the time step of the current world
         Supervisor.__init__(self)
 
         # initialize (existing) sensors and keep 'successful' ones
-        self.sensors = list(filter(enable(self), self.sensors))
+        self.sensors = list(filter(enable(self), map(sensor, sensors)))
 
         # initialize motors
         for motor in self.motors:

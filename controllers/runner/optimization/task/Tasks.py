@@ -13,10 +13,19 @@ from optimization.task.tmaze.epoch import new_epoch as t_new
 from optimization.task.tmaze.epoch import evolve_epoch as t_evolve
 
 
-class Tasks(Enum):
-    """Enumeration of implemented tasks to achieve during evolution."""
+IR_SENSORS = [f'ps{_}' for _ in range(8)]
+GROUND_SENSORS = ['gs0']
 
-    AREA_AVOIDANCE = (AAEpoch, aa_new, aa_evolve)
-    COLLISION_AVOIDANCE = (CAEpoch, ca_new, ca_evolve)
-    RUN = (REpoch, r_new, r_evolve)
-    T_MAZE = (TEpoch, t_new, t_evolve)
+
+class Tasks(Enum):
+    """
+    Enumeration of implemented tasks to achieve during evolution.
+    Each one is associated to a value that contains the epoch logic, the
+    functions to crate and update an epoch, the set of sensors used by the
+    robot for the task.
+    """
+
+    AREA_AVOIDANCE = (AAEpoch, aa_new, aa_evolve, GROUND_SENSORS)
+    COLLISION_AVOIDANCE = (CAEpoch, ca_new, ca_evolve, IR_SENSORS)
+    RUN = (REpoch, r_new, r_evolve, IR_SENSORS)
+    T_MAZE = (TEpoch, t_new, t_evolve, IR_SENSORS + GROUND_SENSORS)

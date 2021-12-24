@@ -30,7 +30,7 @@ from robot.epuck import EPuck
 random.seed(1234)
 
 # define the type of task to execute/achieve
-task = Tasks.T_MAZE
+task = Tasks.COLLISION_AVOIDANCE
 
 # number of device instances that conform to a single datasheet
 replica_count = 5
@@ -51,4 +51,4 @@ densities = {
 }
 
 # create the Robot instance
-robot = EPuck()
+robot = EPuck(sensors=task.value[3])
