@@ -39,6 +39,5 @@ class AreaAvoidance(Fitness):
         # prefer straight and fast movements
         self.fitness += (1 - directions) * average_speed
         self.counter += 1
-        print(floor_color, self.fitness)
 
     def value(self) -> float: return 100 * self.fitness / self.counter
