@@ -3,7 +3,7 @@ import random
 from optimization.Epoch import Epoch as Base
 from optimization.Epoch import new_epoch as new, evolve_epoch as evolve
 from optimization.task.tmaze.fitness import TMaze
-from optimization.task.tmaze.world import Colors
+from world import Colors
 from robot.epuck import EPuck
 
 INITIAL_POSITION = [0, 3e-5, 0.4]
