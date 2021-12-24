@@ -1,6 +1,6 @@
 from optimization.Epoch import Epoch
 from optimization.Epoch import new_epoch as new, evolve_epoch as evolve
-from optimization.task.avoidance.fitness import CollisionAvoidance as Evaluator
+from optimization.task.avoidance.collision.fitness import CollisionAvoidance as Evaluator
 from robot.epuck import EPuck
 
 
