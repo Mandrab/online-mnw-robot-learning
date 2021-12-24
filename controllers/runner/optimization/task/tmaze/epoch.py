@@ -3,8 +3,9 @@ import random
 from optimization.Epoch import Epoch as Base
 from optimization.Epoch import new_epoch as new, evolve_epoch as evolve
 from optimization.task.tmaze.fitness import TMaze
-from world import Colors
+from world.Colors import Colors
 from robot.epuck import EPuck
+from world.Manager import Manager
 
 INITIAL_POSITION = [0, 3e-5, 0.4]
 INITIAL_ROTATION = [0, -1, 0, 0]
@@ -22,10 +23,8 @@ class Epoch(Base):
     def __init__(self, robot: EPuck):
         Base.__init__(self, robot, TMaze)
 
-        # get position and rotation fields of robot controller
-        self.robot_node = self.robot.getFromDef('evolvable')
-        self.translation_field = self.robot_node.getField('translation')
-        self.rotation_field = self.robot_node.getField('rotation')
+        # save the manager of the world
+        self.world_manager = Manager(robot, 'evolvable')
 
     def step(self):
         """
@@ -37,24 +36,18 @@ class Epoch(Base):
         if not self.counter % self.duration:
 
             # reset robot to start position
-            self.translation_field.setSFVec3f(INITIAL_POSITION)
-            self.rotation_field.setSFRotation(INITIAL_ROTATION)
+            self.world_manager.move('evolvable', INITIAL_POSITION)
+            self.world_manager.rotate('evolvable', INITIAL_ROTATION)
 
             # ensure that changes take place
-            self.robot_node.resetPhysics()
-            self.robot.step(self.robot.run_frequency.ms)
-
-            # get floors transaction fields
-            light = self.robot.getFromDef('light_floor').getField('translation')
-            dark = self.robot.getFromDef('dark_floor').getField('translation')
+            self.world_manager.commit()
 
             # randomly set a floor as starting one (basically, hide the other)
+            starting_color, black_position, white_position = BLACK_START
             if random.randint(0, 1):
                 starting_color, black_position, white_position = WHITE_START
-            else:
-                starting_color, black_position, white_position = BLACK_START
-            light.setSFVec3f(white_position)
-            dark.setSFVec3f(black_position)
+            self.world_manager.move('light_floor', white_position)
+            self.world_manager.move('dark_floor', black_position)
 
             # (re)set initial color of evaluator utils
             self.evaluator.initial_color = starting_color

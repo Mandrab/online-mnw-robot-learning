@@ -1,7 +1,7 @@
 from operator import sub
 from optimization.Fitness import Fitness
 from robot.component import grounds
-from world import Colors
+from world.Colors import Colors
 
 
 class TMaze(Fitness):
