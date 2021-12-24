@@ -11,6 +11,7 @@ class TMaze(Fitness):
     """
 
     fitness: float = 0.0
+    counter: float = 0.0
     initial_color = Colors.NONE
 
     def update(self):
@@ -24,7 +25,7 @@ class TMaze(Fitness):
             self.fitness += 1
 
         # calculate robot direction as left < 0, right > 0
-        robot_direction = sub(*map(lambda _: _.speed, self.robot.motors))
+        robot_direction = sub(*map(lambda _: _.speed, self.robot.motors)) / 12.0
 
         # if robot is moving toward target, increase fitness
         if self.initial_color == Colors.BLACK:
@@ -32,4 +33,6 @@ class TMaze(Fitness):
         elif self.initial_color == Colors.WHITE:
             self.fitness -= robot_direction
 
-    def value(self) -> float: return self.fitness
+        self.counter += 1
+
+    def value(self) -> float: return 50 * self.fitness / self.counter
