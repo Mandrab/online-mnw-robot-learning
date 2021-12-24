@@ -189,6 +189,14 @@ from itertools import chain
 
 ################################################################################
 # DENSITY INFLUENCE ON FITNESS
+# This plots shows the influence of the density in the achievement of a good
+# fitness in the same task.
+# It is visible that the density has a really low impact on the score obtained
+# by the robot in the same task. This is also visible by the notch, that indeed
+# tell us that we cannot say that the medians of the distributions are different
+# (todo, i think we cannot say that they are equals).
+# The hypothesis however is that this results would change in case of more
+# complicated tasks.
 
 with open('fitness_1.json') as file:
     data = json.load(file)
@@ -213,7 +221,7 @@ def _(f=lambda _: _):
 
 
 densities = {k: [*chain(*v)] for k, v in _().items()}
-ax1.boxplot(densities.values())
+ax1.boxplot(densities.values(), notch=True)
 
 densities = [None] + [np.percentile(v, 50) for v in densities.values()]
 ax1.plot(densities, linewidth=3, linestyle='dotted')
@@ -225,7 +233,7 @@ ax1.set_xticks(
 )
 ax1.yaxis.grid(True, linestyle='dotted')
 
-ax2.boxplot(_(max).values())
+ax2.boxplot(_(max).values(), notch=True)
 
 densities = [None] + [np.percentile(v, 50) for v in _(max).values()]
 ax2.plot(densities, linewidth=3, linestyle='dotted')
