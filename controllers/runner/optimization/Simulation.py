@@ -46,7 +46,7 @@ class Simulation:
         robot.conductor = self.controller
 
         # define first epoch to test
-        _, self.new_epoch, self.evolve_epoch = task_type.value
+        _, self.new_epoch, self.evolve_epoch, _ = task_type.value
         self.best_epoch = self.new_epoch(self.robot)
 
         # if specified, set connections
