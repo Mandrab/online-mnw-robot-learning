@@ -7,5 +7,4 @@ venv/
 *.pyc
 *.wbproj
 # EXCEPTIONS
-!res/configuration/**/*.dat
 !analysis/**/*.dat
