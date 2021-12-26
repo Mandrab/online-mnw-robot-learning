@@ -8,4 +8,4 @@ venv/
 *.wbproj
 # EXCEPTIONS
 !res/configuration/**/*.dat
-
+!analysis/**/*.dat

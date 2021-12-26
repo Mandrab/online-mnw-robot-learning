@@ -1,0 +1,1 @@
+{"wires_count": 175, "centroid_dispersion": 200, "mean_length": 10.0, "std_length": 3.5, "Lx": 50, "Ly": 50, "kp0": 0.0001, "eta_p": 10, "kd0": 0.5, "eta_d": 1, "Y_min": 0.001, "Y_max": 0.1, "seed": 259}
