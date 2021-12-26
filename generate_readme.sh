@@ -34,6 +34,7 @@ Configuration:
     - mean wires length: $LENGTH
     - std length: 0.35 * $LENGTH
     - actuators resistance: $LOAD
+    - git-head hash: `git rev-parse HEAD`
 --------------------------------------------------------------------------------
 `cat $1 | grep '^[fitness|Creation]'`
 "
