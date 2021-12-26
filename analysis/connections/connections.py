@@ -13,7 +13,7 @@ from analysis import collapse_history
 DIRECTORY = 'connections/controllers_proximity/'
 CONFIGURATION_INDEX = 0
 PROXIMITY_MEASURE = True
-SENSOR = 'ps1'
+SENSOR = 'ps1'  # for proximity 'ps6', for distance 'ps1'
 
 IR_RANGE = (65, 1550) if PROXIMITY_MEASURE else (0, 7)
 MOTOR_RANGE = (6.28, -6.28) if PROXIMITY_MEASURE else (-6.28, 6.28)
