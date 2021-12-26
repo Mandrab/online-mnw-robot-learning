@@ -10,10 +10,10 @@ from os.path import join, isfile
 from scipy.signal import savgol_filter
 from analysis import collapse_history
 
-DIRECTORY = 'connections/controllers/'
+DIRECTORY = 'connections/controllers_proximity/'
 CONFIGURATION_INDEX = 0
 PROXIMITY_MEASURE = True
-SENSOR = 'ps6'
+SENSOR = 'ps1'
 
 IR_RANGE = (65, 1550) if PROXIMITY_MEASURE else (0, 7)
 MOTOR_RANGE = (6.28, -6.28) if PROXIMITY_MEASURE else (-6.28, 6.28)
@@ -147,7 +147,7 @@ ax.set_ylabel('Motor speed')
 ax = ax.twinx()
 
 data = [k for k, *_ in pairs]
-lines += ax.plot(data, label='ps0', color='r')
+lines += ax.plot(data, label=SENSOR, color='r')
 ax.set_ylabel('Distance', color='r')
 
 labels = [line.get_label() for line in lines]
@@ -238,7 +238,7 @@ c = Conductor(
 def break_sensor(name: str):
     # reset the network state
     for _ in range(100):
-        stimulate(graph, datasheet, 1e3, [], [], set())
+        c.evaluate(1e3, {'ps0': 0.0}, IR_RANGE, MOTOR_RANGE, 100)
 
     commands = []
     for stimulus in i_signals:
@@ -249,9 +249,8 @@ def break_sensor(name: str):
 
 
 # stimulate the network disabling each time a different sensor
-results = [break_sensor(sensor) for sensor in [None, *sensors]]
-
-normal, *results = [collapse_history(result) for result in results]
+results = map(break_sensor, [None, *sensors])
+normal, *results = map(collapse_history, results)
 
 # calculate correlation between output signals
 correlations = [
