@@ -8,9 +8,15 @@ from nanowire_network_simulator import backup, stimulate, Evolution, plot
 from os import listdir
 from os.path import join, isfile
 from scipy.signal import savgol_filter
-from utils import collapse_history
+from analysis import collapse_history
 
-DIRECTORY = 'controllers/'
+DIRECTORY = 'connections/controllers_proximity/'
+CONFIGURATION_INDEX = 0
+PROXIMITY_MEASURE = True
+SENSOR = 'ps1'  # for proximity 'ps6', for distance 'ps1'
+
+IR_RANGE = (65, 1550) if PROXIMITY_MEASURE else (0, 7)
+MOTOR_RANGE = (6.28, -6.28) if PROXIMITY_MEASURE else (-6.28, 6.28)
 
 ################################################################################
 # EVALUATION OF THE INFLUENCE OF EACH SENSORS AND THUS BEHAVIOUR OF THE NET IN
@@ -30,15 +36,14 @@ DIRECTORY = 'controllers/'
 files = filter(isfile, map(lambda s: join(DIRECTORY, s), listdir(DIRECTORY)))
 files = list(filter(lambda _: _.endswith('.dat'), files))
 files = sorted(files, key=lambda _: _.split('.')[-2])
-chunks = map(lambda i: sorted(files[i * 6:][:6]), range(int(len(files) / 6)))
-chunks = list(chunks)
+chunks = [*map(lambda i: sorted(files[i * 6:][:6]), range(int(len(files) / 6)))]
 io_signals = [(chunk[4], chunk[3]) for chunk in chunks]
 others = [chunk[:3] + chunk[-1:] for chunk in chunks]
 others = list(map(lambda _: backup.read(_[1], _[2], _[3], _[0]), others))
 
 # analyse just one device
-io_signals = io_signals[1]
-graph, datasheet, wires, connections = others[1]
+io_signals = io_signals[CONFIGURATION_INDEX]
+graph, datasheet, wires, connections = others[CONFIGURATION_INDEX]
 sensors = connections['inputs']
 actuators = connections['outputs']
 
@@ -63,13 +68,14 @@ def smoother(signal):
 
 # plot distances
 ax = next(figs).subplots()
-
 for key, signals in collapse_history(i_signals).items():
-    signals = [s if s < 5 else 5 for s in signals]
+    if not PROXIMITY_MEASURE:
+        signals = [s if s < 5 else 5 for s in signals]
     ax.plot(signals, label=key)
 
-labels = [*map(str, range(5))] + ['[7-5]']
-ax.set_yticks(range(len(labels)), labels)
+if not PROXIMITY_MEASURE:
+    labels = [*map(str, range(5))] + ['[7-5]']
+    ax.set_yticks(range(len(labels)), labels)
 ax.set(title='Sensors readings', xlabel='Iterations', ylabel='Distance')
 ax.invert_yaxis()
 ax.legend()
@@ -121,13 +127,15 @@ plt.show()
 
 _, ax = plt.subplots()
 
-ps = collapse_history(i_signals)['ps0']
-ps = [s if s < 5 else 5 for s in ps]
+ps = collapse_history(i_signals)[SENSOR]
+if not PROXIMITY_MEASURE:
+    ps = [s if s < 5 else 5 for s in ps]
 left = collapse_history(o_signals)['left wheel motor']
 right = collapse_history(o_signals)['right wheel motor']
 
 pairs = sorted(zip(ps, left, right))
-pairs = [*filter(lambda sd: sd[0] < 5, pairs)]
+if not PROXIMITY_MEASURE:
+    pairs = [*filter(lambda sd: sd[0] < 5, pairs)]
 
 data = [v for _, v, _ in pairs]
 lines = ax.plot(data, color='b', label='left motor')
@@ -139,7 +147,7 @@ ax.set_ylabel('Motor speed')
 ax = ax.twinx()
 
 data = [k for k, *_ in pairs]
-lines += ax.plot(data, label='ps0', color='r')
+lines += ax.plot(data, label=SENSOR, color='r')
 ax.set_ylabel('Distance', color='r')
 
 labels = [line.get_label() for line in lines]
@@ -176,7 +184,7 @@ pcm = ax.pcolormesh(
     correlations.keys(),
     [f'ps{i}' for i in range(8)],
     list(map(list, zip(*correlations.values()))),
-    vmin=-1, vmax=1
+    vmin=-1, vmax=1, cmap='coolwarm'
 )
 for y, k in enumerate(correlations):
     for x, v in enumerate(correlations[k]):
@@ -230,24 +238,23 @@ c = Conductor(
 def break_sensor(name: str):
     # reset the network state
     for _ in range(100):
-        stimulate(graph, datasheet, 1e3, [], [], set())
+        c.evaluate(1e3, {'ps0': 0.0}, IR_RANGE, MOTOR_RANGE, 100)
 
     commands = []
     for stimulus in i_signals:
         stimulus = {k: v for k, v in stimulus.items() if k != name}
-        commands += [c.evaluate(0.1, stimulus, (0, 7), (-6.28, 6.28), 100)]
+        commands += [c.evaluate(0.1, stimulus, IR_RANGE, MOTOR_RANGE, 100)]
 
     return commands
 
 
 # stimulate the network disabling each time a different sensor
-results = [break_sensor(sensor) for sensor in [None, *sensors]]
-
-normal, *results = [collapse_history(result) for result in results]
+results = map(break_sensor, [None, *sensors])
+normal, *results = map(collapse_history, results)
 
 # calculate correlation between output signals
 correlations = [
-    {k: stats.pearsonr(normal[k], v)[0] for k, v in dictionary.items()}
+    {k: 1-stats.pearsonr(normal[k], v)[0] for k, v in dictionary.items()}
     for dictionary in results
 ]
 
@@ -271,14 +278,14 @@ right_m_ax.set(title='Right motor behaviour with broken sensors')
 right_m_ax.legend(ncol=3)
 
 ax.set(title='''
-    Pearson\'s correlation coefficient between
+    1 - Pearson\'s correlation coefficient between
     normal and sensor-missing-generated outputs
 ''')
 pcm = ax.pcolormesh(
     actuators.keys(),
     [f'ps{i}' for i in range(8)],
     correlations,
-    vmin=-1, vmax=1
+    vmin=-1, vmax=1, cmap='coolwarm'
 )
 for y, values in enumerate(correlations):
     for x, value in enumerate(values):
@@ -358,7 +365,7 @@ for _ in range(100):
 
 resistances = []
 for i_signal in i_signals:
-    c.evaluate(0.1, i_signal, (0, 7), (-6.28, 6.28), 100)
+    c.evaluate(0.1, i_signal, IR_RANGE, MOTOR_RANGE, 100)
     resistances += [{
         motor_name: {
             sensor_name: nx.resistance_distance(
