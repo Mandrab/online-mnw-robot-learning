@@ -1,8 +1,5 @@
-import operator
-
 from abc import abstractmethod
 from collections import Callable
-from functools import reduce
 from optimization.Epoch import Epoch as Base
 from optimization.Fitness import Fitness
 from random import random
@@ -31,6 +28,11 @@ class Epoch(Base):
         """Returns the name of the moving objects."""
         NotImplemented('Shall return the name of the moving objects.')
 
+    @staticmethod
+    def force_in_arena(coordinate: float):
+        """Returns the coordinate limited into the arena."""
+        return min(max(coordinate, -0.5), 0.5)
+
     def step(self):
 
         # get object position and update them
@@ -39,15 +41,12 @@ class Epoch(Base):
 
         # update object directions
         if not self.counter % self.update_time:
-            directions = [[random() - 0.5, 0, random() - 0.5] for _ in range(6)]
-            self.delta = [
-                [reduce(operator.mul, _, self.multiplier) for _ in zip(p, d)]
-                for p, d in zip(positions, directions)
-            ]
+            self.delta = [[random() - 0.5, 0, random() - 0.5] for _ in range(6)]
+            self.delta = [[_ * self.multiplier for _ in p] for p in self.delta]
 
         if self.dynamic:
             for a, p, d in zip(self.objects(), positions, self.delta):
-                new_p = [min(max(_, -1), 1) for _ in map(sum, zip(p, d))]
+                new_p = [*map(self.force_in_arena, map(sum, zip(p, d)))]
                 self.world_manager.move(a, new_p)
             self.world_manager.commit(ensure=True)
 
