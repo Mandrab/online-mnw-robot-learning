@@ -5,8 +5,13 @@ from robot.epuck import EPuck
 
 
 class Epoch(Base):
+
     @staticmethod
     def objects(): return [f'area_{index}' for index in range(10)]
+
+    @staticmethod
+    def force_in_arena(coordinate: float):
+        return min(max(coordinate, -2.5), 2.5)
 
 
 def new_epoch(robot: EPuck) -> Epoch:
