@@ -15,74 +15,74 @@ Background {
 }
 RectangleArena {
 }
-SolidBox {
+DEF box_0 SolidBox {
   translation -0.13 0 -0.07
-  name "box(6)"
+  name "box(0)"
   size 0.13 0.13 0.13
 }
-SolidBox {
+DEF box_1 SolidBox {
   translation 0 0 0.18
   name "box(1)"
   size 0.13 0.13 0.13
 }
-SolidBox {
+DEF box_2 SolidBox {
   translation 0.13 0 0.18
-  name "box(13)"
-  size 0.13 0.13 0.13
-}
-SolidBox {
-  translation 0.13 0 -0.32
-  name "box(14)"
-  size 0.13 0.13 0.13
-}
-SolidBox {
-  translation -0.13 0 0.18
   name "box(2)"
   size 0.13 0.13 0.13
 }
-SolidBox {
-  translation 0.32 0 0.18
+DEF box_3 SolidBox {
+  translation 0.13 0 -0.32
   name "box(3)"
   size 0.13 0.13 0.13
 }
-SolidBox {
-  translation 0.26 0 -0.07
+DEF box_4 SolidBox {
+  translation -0.13 0 0.18
   name "box(4)"
   size 0.13 0.13 0.13
 }
-SolidBox {
-  translation -0.13 0 -0.32
+DEF box_5 SolidBox {
+  translation 0.32 0 0.18
   name "box(5)"
   size 0.13 0.13 0.13
 }
-SolidBox {
-  translation -0.38 0 -0.19
-  name "box(9)"
+DEF box_6 SolidBox {
+  translation 0.26 0 -0.07
+  name "box(6)"
   size 0.13 0.13 0.13
 }
-SolidBox {
-  translation -0.38 0 0.06
-  name "box(10)"
-  size 0.13 0.13 0.13
-}
-SolidBox {
-  translation -0.26 0 0.18
-  name "box(11)"
-  size 0.13 0.13 0.13
-}
-SolidBox {
-  translation -0.26 0 -0.32
-  name "box(12)"
-  size 0.13 0.13 0.13
-}
-SolidBox {
-  translation 0 0 -0.32
+DEF box_7 SolidBox {
+  translation -0.13 0 -0.32
   name "box(7)"
   size 0.13 0.13 0.13
 }
-SolidBox {
-  translation 0.32 0 -0.32
+DEF box_8 SolidBox {
+  translation -0.38 0 -0.19
   name "box(8)"
+  size 0.13 0.13 0.13
+}
+DEF box_9 SolidBox {
+  translation -0.38 0 0.06
+  name "box(9)"
+  size 0.13 0.13 0.13
+}
+DEF box_10 SolidBox {
+  translation -0.26 0 0.18
+  name "box(10)"
+  size 0.13 0.13 0.13
+}
+DEF box_11 SolidBox {
+  translation -0.26 0 -0.32
+  name "box(11)"
+  size 0.13 0.13 0.13
+}
+DEF box_12 SolidBox {
+  translation 0 0 -0.32
+  name "box(12)"
+  size 0.13 0.13 0.13
+}
+DEF box_13 SolidBox {
+  translation 0.32 0 -0.32
+  name "box(13)"
   size 0.13 0.13 0.13
 }
 DEF evolvable E-puck {

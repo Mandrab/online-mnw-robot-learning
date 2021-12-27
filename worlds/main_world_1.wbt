@@ -15,8 +15,9 @@ Background {
 }
 RectangleArena {
 }
-SolidBox {
+DEF box_0 SolidBox {
   translation 0 0.05 0
+  name "box 0"
   size 0.75 0.1 0.5
 }
 DEF evolvable E-puck {
