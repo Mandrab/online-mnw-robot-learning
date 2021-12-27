@@ -3,6 +3,7 @@
 
 # get fields from configs
 SEED=`cat controllers/runner/config/simulation.py | grep -F 'random.seed' | awk -F '(' '{print$2}' | awk -F ')' '{print$1}'`
+TASK=`cat controllers/runner/config/simulation.py | grep 'task =' | awk -F '.' '{print $2}'`
 REPLICA=`cat controllers/runner/config/simulation.py | grep -F 'replica_count =' | awk -F '= ' '{print $2}'`
 EPOCHS=`cat controllers/runner/config/simulation.py | grep -F 'epoch_count =' | awk -F '= ' '{print $2}'`
 DURATION=`cat controllers/runner/config/simulation.py | grep -F 'epoch_duration =' | awk -F '= ' '{print $2}'`
@@ -12,6 +13,7 @@ FREQUENCY=`cat controllers/runner/robot/epuck.py | grep -F 'Frequency(' | awk -F
 LOAD=`cat controllers/runner/robot/epuck.py | grep -F 'actuators_load=' | awk -F '=|  # MOhm' '{print $2}'`
 SIZE=`cat controllers/runner/optimization/utils.py | grep -F 'DEVICE_SIZE =' | awk -F '= ' '{print $2}'`
 LENGTH=`cat controllers/runner/optimization/utils.py | grep -F 'WIRES_LENGTH =' | awk -F '= ' '{print $2}'`
+WORLD_FILE=`cat $1 | grep 'Running simulation in' | awk -F ' ' '{print $4}'`
 
 # create readme file
 echo "
@@ -34,6 +36,8 @@ Configuration:
     - mean wires length: $LENGTH
     - std length: 0.35 * $LENGTH
     - actuators resistance: $LOAD
+    - task: $TASK
+    - world: $WORLD_FILE
     - git-head hash: `git rev-parse HEAD`
 --------------------------------------------------------------------------------
 `cat $1 | grep '^[fitness|Creation]'`
