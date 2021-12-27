@@ -18,7 +18,15 @@ class Manager:
 
     def move(self, name: str, to: List[float]):
         """Move the def-specified object to the given position."""
+        if not self.__field(name, 'translation'):
+            return None
         self.robot.getFromDef(name).getField('translation').setSFVec3f(to)
+
+    def position(self, name: str):
+        """Get the def-specified object's position."""
+        if not self.__field(name, 'translation'):
+            return None
+        return self.robot.getFromDef(name).getField('translation').getSFVec3f()
 
     def reset(self, name: str):
         """Reset the def-specified object to a previously saved state."""
@@ -29,11 +37,24 @@ class Manager:
 
     def rotate(self, name: str, to: List[float]):
         """Move the def-specified object to the given rotation."""
+        if not self.__field(name, 'rotation'):
+            return None
         self.robot.getFromDef(name).getField('rotation').setSFRotation(to)
 
     def save(self, name: str):
         """Save the state (position & rotation) of the def-specified object."""
+        if (
+            not self.__field(name, 'translation')
+            or
+            not self.__field(name, 'rotation')
+        ):
+            return None
         self.savings[name] = (
             self.robot.getFromDef(name).getField('translation').getSFVec3f(),
             self.robot.getFromDef(name).getField('rotation').getSFRotation()
         )
+
+    def __node(self, name: str): return self.robot.getFromDef(name)
+
+    def __field(self, node: str, field: str):
+        return self.__node(node) and self.__node(node).getField(field)

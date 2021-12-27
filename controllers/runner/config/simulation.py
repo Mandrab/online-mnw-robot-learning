@@ -32,6 +32,9 @@ random.seed(1234)
 # define the type of task to execute/achieve
 task = Tasks.COLLISION_AVOIDANCE
 
+# set if the world should have a dynamic behaviour (moving objects / obstacles)
+task.value[0].dynamic = False
+
 # number of device instances that conform to a single datasheet
 replica_count = 5
 
