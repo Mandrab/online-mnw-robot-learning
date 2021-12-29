@@ -16,11 +16,13 @@ class Manager:
         if ensure:
             self.robot.step(self.robot.run_frequency.ms)
 
-    def move(self, name: str, to: List[float]):
+    def move(self, name: str, to: List[float], can_intersect: bool = True):
         """Move the def-specified object to the given position."""
-        if not self.__field(name, 'translation'):
-            return None
-        self.robot.getFromDef(name).getField('translation').setSFVec3f(to)
+        if field := self.__field(name, 'translation'):
+            old_position = field.getSFVec3f()
+            field.setSFVec3f(to)
+            if not can_intersect and len(self.__node(name).getContactPoints()):
+                field.setSFVec3f(old_position)
 
     def position(self, name: str):
         """Get the def-specified object's position."""

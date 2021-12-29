@@ -47,7 +47,7 @@ class Epoch(Base):
         if self.dynamic:
             for a, p, d in zip(self.objects(), positions, self.delta):
                 new_p = [*map(self.force_in_arena, map(sum, zip(p, d)))]
-                self.world_manager.move(a, new_p)
+                self.world_manager.move(a, new_p, can_intersect=False)
             self.world_manager.commit(ensure=True)
 
         # call super step
