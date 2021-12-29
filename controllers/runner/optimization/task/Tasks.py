@@ -14,6 +14,7 @@ from optimization.task.tmaze.epoch import evolve_epoch as t_evolve
 
 
 IR_SENSORS = [f'ps{_}' for _ in range(8)]
+FRONT_IR_SENSORS = [IR_SENSORS[0], IR_SENSORS[7]]
 GROUND_SENSORS = ['gs0']
 
 
@@ -28,4 +29,4 @@ class Tasks(Enum):
     AREA_AVOIDANCE = (AAEpoch, aa_new, aa_evolve, GROUND_SENSORS)
     COLLISION_AVOIDANCE = (CAEpoch, ca_new, ca_evolve, IR_SENSORS)
     RUN = (REpoch, r_new, r_evolve, IR_SENSORS)
-    T_MAZE = (TEpoch, t_new, t_evolve, IR_SENSORS + GROUND_SENSORS)
+    T_MAZE = (TEpoch, t_new, t_evolve, FRONT_IR_SENSORS + GROUND_SENSORS)
