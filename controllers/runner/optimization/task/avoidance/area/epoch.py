@@ -7,7 +7,7 @@ from robot.epuck import EPuck
 class Epoch(Base):
 
     @staticmethod
-    def objects(): return [f'area_{index}' for index in range(10)]
+    def objects(): return [f'area_{index}' for index in range(15)]
 
     @staticmethod
     def force_in_arena(coordinate: float):

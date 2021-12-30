@@ -3,8 +3,8 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation 0.9999999999999999 0 0 4.70238898038469
-  position -0.0065541172021256755 3.0206915636554914 -0.12255878707652579
+  orientation 1 0 0 4.7
+  position 0 6 0
   follow "e-puck"
   followType "None"
 }
@@ -21,15 +21,14 @@ DEF evolvable E-puck {
   groundSensorsSlot [
     E-puckGroundSensors {
       translation 0 0 0.03
-      rotation 0 0 1 1.58784
+      rotation 0 0 1 1.5
     }
   ]
 }
 RectangleArena {
-  floorSize 5 5
+  floorSize 4 4
   floorAppearance PBRAppearance {
     transparency 1
-    metalness 0
   }
 }
 DEF area_0 Solid {
@@ -57,33 +56,8 @@ DEF area_0 Solid {
   ]
   name "area 0"
 }
-DEF area_5 Solid {
-  translation 0.14 0.001 -0.42
-  children [
-    Shape {
-      appearance PBRAppearance {
-        baseColor 0 0 0
-        metalness 0
-      }
-      geometry Plane {
-        size 0.5 0.5
-      }
-    }
-    Shape {
-      appearance PBRAppearance {
-        baseColor 0.5 0.5 0.5
-        metalness 0
-      }
-      geometry Plane {
-        size 0.8 0.8
-      }
-      castShadows FALSE
-    }
-  ]
-  name "area 5"
-}
 DEF area_1 Solid {
-  translation 0.17 0.001 1.32
+  translation -0.75 0.001 -1.48
   children [
     Shape {
       appearance PBRAppearance {
@@ -108,7 +82,7 @@ DEF area_1 Solid {
   name "area 1"
 }
 DEF area_2 Solid {
-  translation -0.38 0.001 1.58
+  translation -1.49 0.001 -0.76
   children [
     Shape {
       appearance PBRAppearance {
@@ -133,7 +107,7 @@ DEF area_2 Solid {
   name "area 2"
 }
 DEF area_3 Solid {
-  translation -1.41 0.001 1.04
+  translation 1.45 0.001 -0.76
   children [
     Shape {
       appearance PBRAppearance {
@@ -158,7 +132,7 @@ DEF area_3 Solid {
   name "area 3"
 }
 DEF area_4 Solid {
-  translation 1.17 0.001 0.4
+  translation 0.82 0.001 -1.37
   children [
     Shape {
       appearance PBRAppearance {
@@ -181,4 +155,154 @@ DEF area_4 Solid {
     }
   ]
   name "area 4"
+}
+DEF area_5 Solid {
+  translation 1.46 0.001 1.48
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+        metalness 0
+      }
+      geometry Plane {
+        size 0.5 0.5
+      }
+    }
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.5 0.5 0.5
+        metalness 0
+      }
+      geometry Plane {
+        size 0.8 0.8
+      }
+      castShadows FALSE
+    }
+  ]
+  name "area 5"
+}
+DEF area_6 Solid {
+  translation 1.08 0.001 0.37
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+        metalness 0
+      }
+      geometry Plane {
+        size 0.5 0.5
+      }
+    }
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.5 0.5 0.5
+        metalness 0
+      }
+      geometry Plane {
+        size 0.8 0.8
+      }
+      castShadows FALSE
+    }
+  ]
+  name "area 6"
+}
+DEF area_7 Solid {
+  translation 0.14 0.001 -0.42
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+        metalness 0
+      }
+      geometry Plane {
+        size 0.5 0.5
+      }
+    }
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.5 0.5 0.5
+        metalness 0
+      }
+      geometry Plane {
+        size 0.8 0.8
+      }
+      castShadows FALSE
+    }
+  ]
+  name "area 7"
+}
+DEF area_8 Solid {
+  translation 0.17 0.001 1.32
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+        metalness 0
+      }
+      geometry Plane {
+        size 0.5 0.5
+      }
+    }
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.5 0.5 0.5
+        metalness 0
+      }
+      geometry Plane {
+        size 0.8 0.8
+      }
+      castShadows FALSE
+    }
+  ]
+  name "area 8"
+}
+DEF area_9 Solid {
+  translation -0.38 0.001 1.58
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+        metalness 0
+      }
+      geometry Plane {
+        size 0.5 0.5
+      }
+    }
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.5 0.5 0.5
+        metalness 0
+      }
+      geometry Plane {
+        size 0.8 0.8
+      }
+      castShadows FALSE
+    }
+  ]
+  name "area 9"
+}
+DEF area_10 Solid {
+  translation -1.41 0.001 1.04
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+        metalness 0
+      }
+      geometry Plane {
+        size 0.5 0.5
+      }
+    }
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.5 0.5 0.5
+        metalness 0
+      }
+      geometry Plane {
+        size 0.8 0.8
+      }
+      castShadows FALSE
+    }
+  ]
+  name "area 10"
 }
