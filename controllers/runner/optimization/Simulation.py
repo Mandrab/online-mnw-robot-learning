@@ -9,15 +9,15 @@ from networkx import Graph
 from optimization.Epoch import Epoch
 from typing import Dict, Tuple
 
-# minimum fitness needed to evolve an epoch instead of creating a new one
-MINIMUM_FITNESS = 30.0
-
 
 class Simulation:
     """
     Simulate a robot moving in an environment with a with a given controller.
     Evaluate its behaviour and call for its optimization.
     """
+    # minimum fitness needed to evolve an epoch instead of creating a new one
+    MINIMUM_FITNESS = 30.0
+
     best_epoch: Epoch = None
 
     def __init__(
@@ -64,7 +64,7 @@ class Simulation:
     def simulate(self, duration: int):
         """Evaluate the controller behaviour running different connections"""
 
-        if self.best_epoch.evaluator.value() < MINIMUM_FITNESS:
+        if self.best_epoch.evaluator.value() < self.MINIMUM_FITNESS:
             # setup a new simulation's epoch
             epoch = self.new_epoch(self.robot)
         else:

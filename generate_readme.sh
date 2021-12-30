@@ -7,17 +7,18 @@ ROBOT=`cat controllers/runner/robot/epuck.py`
 UTILS=`cat controllers/runner/optimization/utils.py`
 
 # get fields from configs
+DURATION=`cat <<<$CONFIGS | awk -F 'epoch_duration =' '$2{print $2}'`
+EPOCHS=`cat <<<$CONFIGS | awk -F 'epoch_count = ' '$2{print $2}'`
+FITNESS=`cat <<<$CONFIGS | awk -F 'MINIMUM_FITNESS = ' '$2{print $2}'`
+LOAD=`cat <<<$CONFIGS | awk -F 'robot.motors_load = ' '$2{print $2}'`
+REPLICA=`cat <<<$CONFIGS | awk -F 'replica_count = ' '$2{print $2}'`
 SEED=`echo $CONFIGS | grep -F 'random.seed' | awk -F '[()]' '$2{print$2}'`
 TASK=`cat <<<$CONFIGS | awk -F 'task = Tasks.' '$2{print $2}'`
-REPLICA=`cat <<<$CONFIGS | awk -F 'replica_count = ' '$2{print $2}'`
-EPOCHS=`cat <<<$CONFIGS | awk -F 'epoch_count = ' '$2{print $2}'`
-DURATION=`cat <<<$CONFIGS | awk -F 'epoch_duration =' '$2{print $2}'`
-LOAD=`cat <<<$CONFIGS | awk -F 'robot.motors_load = ' '$2{print $2}'`
 
 # get other fields
 FREQUENCY=`cat <<<$ROBOT | grep -F 'Frequency(' | awk -F 'hz_value=|)' '{print $2}'`
-SIZE=`cat <<<$UTILS | awk -F 'DEVICE_SIZE = ' '$2{print $2}'`
 LENGTH=`cat <<<$UTILS | awk -F 'WIRES_LENGTH = ' '$2{print $2}'`
+SIZE=`cat <<<$UTILS | awk -F 'DEVICE_SIZE = ' '$2{print $2}'`
 
 # data from log file
 START_DATE=`cat $1 | grep -F '[' | head -n 1 | awk -F '[|[[:space:]]' '{print $2}'`
@@ -43,6 +44,7 @@ Configuration:
       - epoch count: $EPOCHS
       - epoch duration: $DURATION
       - densities:
+      - minimum fitness to evolve: $FITNESS
     3. robot characteristics:
       - epuck freq: $FREQUENCY Hz
       - sensors range:

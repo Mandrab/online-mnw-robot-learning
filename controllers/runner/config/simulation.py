@@ -23,6 +23,7 @@ The required process is the following:
 """
 import random
 
+from optimization.Simulation import Simulation
 from optimization.task.Tasks import Tasks
 from robot.epuck import EPuck
 
@@ -34,6 +35,9 @@ task = Tasks.COLLISION_AVOIDANCE
 
 # set if the world should have a dynamic behaviour (moving objects / obstacles)
 task.value[0].dynamic = False
+
+# minimum fitness needed to evolve a configuration instead of creating a new one
+Simulation.MINIMUM_FITNESS = 30.0
 
 # number of device instances that conform to a single datasheet
 replica_count = 5
@@ -55,3 +59,4 @@ densities = {
 
 # create the Robot instance
 robot = EPuck(sensors=task.value[3])
+robot.motors_load = 1e6
