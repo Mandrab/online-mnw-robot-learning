@@ -8,7 +8,7 @@ from utils import adapt
 from world.Colors import Colors
 
 
-PENALTY = 2
+PENALTY = 100
 
 
 class AreaAvoidance(Fitness):
