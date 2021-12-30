@@ -4,7 +4,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation 1 0 0 4.71238898038469
-  position -0.0018988925894868104 1.619564365988467 -0.014870842252598342
+  position 3.9603091291864205e-20 1.7982722205262143 -9.982416118860048e-17
   follow "e-puck"
   followType "None"
 }
@@ -20,7 +20,6 @@ DEF evolvable E-puck {
   supervisor TRUE
   groundSensorsSlot [
     E-puckGroundSensors {
-      translation 0 0 0.03
       rotation 0 0 1 1.58784
     }
   ]
@@ -28,7 +27,8 @@ DEF evolvable E-puck {
 RectangleArena {
   floorSize 1.1 1.1
   floorAppearance PBRAppearance {
-    transparency 1
+    baseColor 0.2 0.2 0.2
+    metalness 0
   }
 }
 DEF dark_floor Solid {
@@ -65,41 +65,22 @@ DEF light_floor Solid {
   name "white start"
 }
 Solid {
-  translation 0 1e-05 -0.38
-  children [
-    Shape {
-      appearance PBRAppearance {
-        baseColor 0.2 0.2 0.2
-        metalness 0
-        occlusionMapStrength 0
-      }
-      geometry Plane {
-        size 1 0.25
-      }
-      castShadows FALSE
-    }
-  ]
-  name "north hider"
-}
-Solid {
-  translation 0 1e-05 0
-  children [
-    Shape {
-      appearance PBRAppearance {
-        baseColor 0.2 0.2 0.2
-        metalness 0
-        occlusionMapStrength 0
-      }
-      geometry Plane {
-        size 0.2 1
-      }
-      castShadows FALSE
-    }
-  ]
-  name "hider"
-}
-Solid {
   translation -0.38 2e-05 -0.38
+  children [
+    Shape {
+      appearance PBRAppearance {
+        metalness 0
+      }
+      geometry Plane {
+        size 0.25 0.25
+      }
+      castShadows FALSE
+    }
+  ]
+  name "light end"
+}
+Solid {
+  translation 0.38 2e-05 -0.38
   children [
     Shape {
       appearance PBRAppearance {
@@ -109,24 +90,9 @@ Solid {
       geometry Plane {
         size 0.25 0.25
       }
-      castShadows FALSE
     }
   ]
-  name "black end"
-}
-Solid {
-  translation 0.38 2e-05 -0.38
-  children [
-    Shape {
-      appearance PBRAppearance {
-        metalness 0
-      }
-      geometry Plane {
-        size 0.25 0.25
-      }
-    }
-  ]
-  name "white end"
+  name "dark end"
 }
 Wall {
   translation -0.3 0 -0.25
