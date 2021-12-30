@@ -1,7 +1,5 @@
-from operator import sub
 from optimization.Fitness import Fitness
 from robot.component import grounds
-from robot.component.Motor import Motor
 from world.Colors import Colors
 
 
@@ -21,20 +19,17 @@ class TMaze(Fitness):
         # map reading to discrete values
         floor_level = Colors.convert(floor_level)
 
-        # if the target has been reached (we consider 3 color), increase fitness
-        if floor_level != self.initial_color and floor_level != Colors.GRAY:
-            self.fitness += 1
+        # if the robot is in neutral zone, it cannot gain scores
+        if floor_level == Colors.GRAY:
+            return
 
-        # calculate robot direction as left < 0, right > 0 and normalize it
-        direction = sub(*map(lambda _: _.speed, self.robot.motors))
-        direction /= abs(sub(*Motor.range()))
-
-        # if robot is moving toward target, increase fitness
-        if self.initial_color == Colors.BLACK:
-            self.fitness += direction
-        elif self.initial_color == Colors.WHITE:
-            self.fitness -= direction
+        # if the target (black->white; white->black) has been reached (we
+        # consider 3 color) increase fitness, otherwise decrease it
+        if floor_level != self.initial_color:
+            self.fitness += 2
+        else:
+            self.fitness -= 1
 
         self.counter += 1
 
-    def value(self) -> float: return 50 * self.fitness / self.counter
+    def value(self) -> float: return (self.fitness / self.counter + 1) / 0.03
