@@ -12,8 +12,9 @@ class EPuck(Supervisor):
     # update/working time for robot modules
     run_frequency = Frequency(hz_value=10)
 
-    # names of the sensors and actuators actually used
+    # names of actuators (motors) actually used and their connection load
     motors = [Motor(f'{side} wheel motor') for side in ['left', 'right']]
+    motors_load = 1e6   # MOhm
 
     def __init__(self, sensors: List[str], conductor: Conductor = None):
         # get the time step of the current world
@@ -43,7 +44,7 @@ class EPuck(Supervisor):
         outputs = self.conductor.evaluate(
             update_time=self.run_frequency.s,
             inputs=stimulus,
-            actuators_load=1e6  # MOhm
+            actuators_load=self.motors_load
         )
 
         # set the motors speed
