@@ -18,7 +18,8 @@ class Epoch(Base):
     """An epoch designed to run the T-Maze task evolution."""
 
     # initialize some variables used during epoch run to restart controller
-    duration, counter = 150, 0
+    duration = 200
+    counter = 0
 
     def __init__(self, robot: EPuck):
         Base.__init__(self, robot, TMaze)
