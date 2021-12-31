@@ -10,7 +10,6 @@ UTILS=$(cat controllers/runner/optimization/utils.py)
 DURATION=$(cat <<<"$CONFIGS" | awk -F 'epoch_duration = ' '$2{print $2}')
 EPOCHS=$(cat <<<"$CONFIGS" | awk -F 'epoch_count = ' '$2{print $2}')
 FITNESS=$(cat <<<"$CONFIGS" | awk -F 'MINIMUM_FITNESS = ' '$2{print $2}')
-LOAD=$(cat <<<"$CONFIGS" | awk -F 'robot.motors_load = ' '$2{print $2}')
 REPLICA=$(cat <<<"$CONFIGS" | awk -F 'replica_count = ' '$2{print $2}')
 SEED=$(echo "$CONFIGS" | awk -F 'random.seed[(]' '$2{sub(")", ""); print $2}')
 TASK=$(cat <<<"$CONFIGS" | awk -F 'task = Tasks.' '$2{print $2}')
@@ -26,7 +25,9 @@ START_DATE=$(grep -F '[' "$1" | head -n 1 | awk -F '[|[[:space:]]' '{print $2}')
 START_TIME=$(grep -F '[' "$1" | head -n 1 | awk '{print $2}')
 END_DATE=$(grep -F '[' "$1" | tail -n 1 | awk -F '[|[[:space:]]' '{print $2}')
 END_TIME=$(grep -F '[' "$1" | tail -n 1 | awk '{print $2}')
-WORLD_FILE=$(grep 'Running simulation in' "$1" | awk -F ' ' '{print $4}')
+DENSITIES=$(awk -F 'densities: ' '$2{print $2}' < "$1")
+LOADS=$(awk -F 'loads: ' '$2{print $2}' < "$1")
+WORLD_FILE=$(awk -F 'Running simulation in ' '$2{print $2}' < "$1")
 
 # create readme file
 echo "\
@@ -44,13 +45,13 @@ Configuration:
       - replicas: $REPLICA
       - epoch count: $EPOCHS
       - epoch duration: $DURATION
-      - densities:
+      - densities: $DENSITIES
       - minimum fitness to evolve: $FITNESS
     3. robot characteristics:
       - epuck freq: $FREQUENCY Hz
       - sensors range:
       - motor range:
-      - actuators resistances: $LOAD
+      - actuators resistances: $LOADS
     4. network:
       - network range: [0.0, 10.0]
       - device size: $SIZE
