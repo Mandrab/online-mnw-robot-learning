@@ -60,7 +60,7 @@ loads = list(map(lambda exp: 10 ** exp, range(3, 7)))
 
 # create the configurations and add a unique seed for each
 settings = [(*_, random.randint(0, 9999)) for _ in product(densities, loads)]
-print(settings)
+
 # create the Robot instance
 robot = EPuck(sensors=task.value[3])
 
