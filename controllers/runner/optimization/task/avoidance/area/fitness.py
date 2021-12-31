@@ -25,7 +25,7 @@ class AreaAvoidance(Fitness):
         floor_color = Colors.convert(floor_color)
 
         # if robot goes over illegal areas, penalize it
-        if floor_color == Colors.GRAY:
+        if floor_color == Colors.WHITE:
             self.fitness -= PENALTY
 
         # get motors velocities and make them in range 0-1
@@ -40,4 +40,5 @@ class AreaAvoidance(Fitness):
         self.fitness += (1 - directions) * average_speed
         self.counter += 1
 
-    def value(self) -> float: return 100 * self.fitness / self.counter
+    def value(self) -> float:
+        return adapt(self.fitness / self.counter, (-101, 1), (0, 100))
