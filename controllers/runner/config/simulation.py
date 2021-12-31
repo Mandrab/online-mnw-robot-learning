@@ -23,6 +23,7 @@ The required process is the following:
 """
 import random
 
+from itertools import product
 from optimization.Simulation import Simulation
 from optimization.task.Tasks import Tasks
 from robot.epuck import EPuck
@@ -51,12 +52,22 @@ epoch_duration = 300
 # if true, continue simulation with best controller after the evolution finish
 continue_after_evolution = False
 
-# network density-configurations to tests and generating seeds
-densities = {
-    _ + 5: [random.randint(0, 9999) for _ in range(replica_count)]
-    for _ in range(5)
-}
+# network density-configurations to tests (replicated 'replica_count' times)
+densities = sorted(list(map(lambda _: _ + 5.0, range(5))) * replica_count)
 
+# motor loads to test [1e3, 1e4, 1e5, 1e6]
+loads = list(map(lambda exp: 10 ** exp, range(3, 7)))
+
+# create the configurations and add a unique seed for each
+settings = [(*_, random.randint(0, 9999)) for _ in product(densities, loads)]
+print(settings)
 # create the Robot instance
 robot = EPuck(sensors=task.value[3])
-robot.motors_load = 1e6
+
+print(
+    '-' * 80 + '\n' +
+    f'Running simulation of task `{task.name}`\n' +
+    f'Tested densities: {[*set(densities)]}\n' +
+    f'Tested loads: [{", ".join(map("{:.0e}".format, loads))}]\n' +
+    '-' * 80
+)

@@ -16,7 +16,7 @@ simulations = import_simulations(robot, task_type=task)
 
 # if no simulations have been imported, generate new ones
 if not simulations:
-    simulations = new_simulations(robot, densities, task_type=task)
+    simulations = new_simulations(robot, settings, task_type=task)
 
 ################################################################################
 # SIMULATION EXECUTION

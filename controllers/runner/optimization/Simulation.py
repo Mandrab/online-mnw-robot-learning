@@ -18,6 +18,9 @@ class Simulation:
     # minimum fitness needed to evolve an epoch instead of creating a new one
     MINIMUM_FITNESS = 30.0
 
+    # optional motor load specific to the given run
+    motor_load = None
+
     best_epoch: Epoch = None
 
     def __init__(
@@ -58,6 +61,10 @@ class Simulation:
         # set controller random seed
         random.seed(self.controller.datasheet.seed)
 
+        # set robot motors load if specified
+        if self.motor_load is not None:
+            self.robot.motors_load = self.motor_load
+
         # exec an initialization run
         self.__run(self.best_epoch, duration)
 
@@ -93,7 +100,10 @@ class Simulation:
         density = data.wires_count * data.mean_length ** 2 / area
         cc_density = graph.number_of_nodes() * data.mean_length ** 2 / area
 
+        load = self.motor_load if self.motor_load else self.robot.motor_loads
+
         return str(
             f'Creation density: {density}, ' +
-            f'Connected component density: {cc_density}'
+            f'Connected component density: {cc_density}, ' +
+            'Motors load: {:.0e}'.format(load)
         )
