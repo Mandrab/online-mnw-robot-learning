@@ -4,7 +4,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation 1 0 0 4.71238898038469
-  position -4.198938052402487e-16 7.231473218992506 -9.40554027296178e-16
+  position -5.412907433255521e-16 7.393596306252845 3.488629862943803e-15
   follow "e-puck"
   followType "None"
 }
@@ -32,12 +32,13 @@ RectangleArena {
     metalness 0
   }
 }
-DEF border_north Solid {
+Solid {
   translation 0 0.001 -2.13
   scale 5 5 5
   children [
     Shape {
       appearance PBRAppearance {
+        baseColor 0.3 0.3 0.3
         metalness 0
       }
       geometry Plane {
@@ -47,12 +48,28 @@ DEF border_north Solid {
   ]
   name "border north"
 }
-DEF border_south Solid {
+Solid {
+  translation 0 0.002 -2.25
+  scale 5 5 5
+  children [
+    Shape {
+      appearance PBRAppearance {
+        metalness 0
+      }
+      geometry Plane {
+        size 1 0.1
+      }
+    }
+  ]
+  name "border north white"
+}
+Solid {
   translation 0 0.001 2.13
   scale 5 5 5
   children [
     Shape {
       appearance PBRAppearance {
+        baseColor 0.3 0.3 0.3
         metalness 0
       }
       geometry Plane {
@@ -62,12 +79,28 @@ DEF border_south Solid {
   ]
   name "border south"
 }
-DEF border_left Solid {
-  translation -2.14 0.001 0.01
+Solid {
+  translation 0 0.002 2.25
   scale 5 5 5
   children [
     Shape {
       appearance PBRAppearance {
+        metalness 0
+      }
+      geometry Plane {
+        size 1 0.1
+      }
+    }
+  ]
+  name "border south white"
+}
+Solid {
+  translation -2.14 0.001 0
+  scale 5 5 5
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.3 0.3 0.3
         metalness 0
       }
       geometry Plane {
@@ -77,12 +110,28 @@ DEF border_left Solid {
   ]
   name "border left"
 }
-DEF border_right Solid {
-  translation 2.13 0.001 0.01
+Solid {
+  translation -2.25 0.002 0
   scale 5 5 5
   children [
     Shape {
       appearance PBRAppearance {
+        metalness 0
+      }
+      geometry Plane {
+        size 0.1 1
+      }
+    }
+  ]
+  name "border left white"
+}
+Solid {
+  translation 2.13 0.001 0.02
+  scale 5 5 5
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.3 0.3 0.3
         metalness 0
       }
       geometry Plane {
@@ -92,17 +141,24 @@ DEF border_right Solid {
   ]
   name "border right"
 }
-DEF area_0 Solid {
-  translation -1.03 0.001 -0.2
+Solid {
+  translation 2.25 0.002 0
+  scale 5 5 5
   children [
     Shape {
       appearance PBRAppearance {
         metalness 0
       }
       geometry Plane {
-        size 0.5 0.5
+        size 0.1 1
       }
     }
+  ]
+  name "border right white"
+}
+DEF area_0 Solid {
+  translation -1.03 0.001 -0.2
+  children [
     Shape {
       appearance PBRAppearance {
         baseColor 0.3 0.3 0.3
@@ -116,8 +172,8 @@ DEF area_0 Solid {
   ]
   name "area 0"
 }
-DEF area_1 Solid {
-  translation -0.22 0.001 -1.16
+DEF area_0 Solid {
+  translation -1.03 0.002 -0.2
   children [
     Shape {
       appearance PBRAppearance {
@@ -127,6 +183,12 @@ DEF area_1 Solid {
         size 0.5 0.5
       }
     }
+  ]
+  name "area 0 white"
+}
+DEF area_1 Solid {
+  translation -0.22 0.001 -1.16
+  children [
     Shape {
       appearance PBRAppearance {
         baseColor 0.3 0.3 0.3
@@ -140,8 +202,8 @@ DEF area_1 Solid {
   ]
   name "area 1"
 }
-DEF area_2 Solid {
-  translation -1.28 0.001 -1.5
+DEF area_1 Solid {
+  translation -0.22 0.002 -1.16
   children [
     Shape {
       appearance PBRAppearance {
@@ -151,6 +213,12 @@ DEF area_2 Solid {
         size 0.5 0.5
       }
     }
+  ]
+  name "area 1 white"
+}
+DEF area_2 Solid {
+  translation -1.28 0.001 -1.5
+  children [
     Shape {
       appearance PBRAppearance {
         baseColor 0.3 0.3 0.3
@@ -164,8 +232,8 @@ DEF area_2 Solid {
   ]
   name "area 2"
 }
-DEF area_3 Solid {
-  translation 1.45 0.001 -0.76
+DEF area_2 Solid {
+  translation -1.28 0.002 -1.5
   children [
     Shape {
       appearance PBRAppearance {
@@ -175,6 +243,12 @@ DEF area_3 Solid {
         size 0.5 0.5
       }
     }
+  ]
+  name "area 2 white"
+}
+DEF area_3 Solid {
+  translation 1.45 0.001 -0.76
+  children [
     Shape {
       appearance PBRAppearance {
         baseColor 0.3 0.3 0.3
@@ -188,8 +262,8 @@ DEF area_3 Solid {
   ]
   name "area 3"
 }
-DEF area_4 Solid {
-  translation 0.82 0.001 -1.5
+DEF area_3 Solid {
+  translation 1.45 0.002 -0.76
   children [
     Shape {
       appearance PBRAppearance {
@@ -199,6 +273,12 @@ DEF area_4 Solid {
         size 0.5 0.5
       }
     }
+  ]
+  name "area 3 white"
+}
+DEF area_4 Solid {
+  translation 0.82 0.001 -1.5
+  children [
     Shape {
       appearance PBRAppearance {
         baseColor 0.3 0.3 0.3
@@ -212,8 +292,8 @@ DEF area_4 Solid {
   ]
   name "area 4"
 }
-DEF area_5 Solid {
-  translation 1.46 0.001 1.48
+DEF area_4 Solid {
+  translation 0.82 0.002 -1.5
   children [
     Shape {
       appearance PBRAppearance {
@@ -223,6 +303,12 @@ DEF area_5 Solid {
         size 0.5 0.5
       }
     }
+  ]
+  name "area 4 white"
+}
+DEF area_5 Solid {
+  translation 1.46 0.001 1.48
+  children [
     Shape {
       appearance PBRAppearance {
         baseColor 0.3 0.3 0.3
@@ -237,7 +323,7 @@ DEF area_5 Solid {
   name "area 5"
 }
 DEF area_5 Solid {
-  translation -0.04 0.001 1.02
+  translation 1.46 0.002 1.48
   children [
     Shape {
       appearance PBRAppearance {
@@ -247,30 +333,12 @@ DEF area_5 Solid {
         size 0.5 0.5
       }
     }
-    Shape {
-      appearance PBRAppearance {
-        baseColor 0.3 0.3 0.3
-        metalness 0
-      }
-      geometry Plane {
-        size 0.8 0.8
-      }
-      castShadows FALSE
-    }
   ]
-  name "area 5(1)"
+  name "area 5 white"
 }
 DEF area_6 Solid {
   translation 1.14 0.001 0.25
   children [
-    Shape {
-      appearance PBRAppearance {
-        metalness 0
-      }
-      geometry Plane {
-        size 0.5 0.5
-      }
-    }
     Shape {
       appearance PBRAppearance {
         baseColor 0.3 0.3 0.3
@@ -284,8 +352,8 @@ DEF area_6 Solid {
   ]
   name "area 6"
 }
-DEF area_7 Solid {
-  translation 0.14 0.001 -0.56
+DEF area_6 Solid {
+  translation 1.14 0.002 0.25
   children [
     Shape {
       appearance PBRAppearance {
@@ -295,6 +363,12 @@ DEF area_7 Solid {
         size 0.5 0.5
       }
     }
+  ]
+  name "area 6 white"
+}
+DEF area_7 Solid {
+  translation 0.14 0.001 -0.56
+  children [
     Shape {
       appearance PBRAppearance {
         baseColor 0.3 0.3 0.3
@@ -308,8 +382,8 @@ DEF area_7 Solid {
   ]
   name "area 7"
 }
-DEF area_8 Solid {
-  translation 0.17 0.001 0.66
+DEF area_7 Solid {
+  translation 0.14 0.002 -0.56
   children [
     Shape {
       appearance PBRAppearance {
@@ -319,6 +393,12 @@ DEF area_8 Solid {
         size 0.5 0.5
       }
     }
+  ]
+  name "area 7 white"
+}
+DEF area_8 Solid {
+  translation 0.17 0.001 0.66
+  children [
     Shape {
       appearance PBRAppearance {
         baseColor 0.3 0.3 0.3
@@ -332,8 +412,8 @@ DEF area_8 Solid {
   ]
   name "area 8"
 }
-DEF area_9 Solid {
-  translation -0.36 0.001 0.81
+DEF area_8 Solid {
+  translation 0.17 0.002 0.66
   children [
     Shape {
       appearance PBRAppearance {
@@ -343,6 +423,12 @@ DEF area_9 Solid {
         size 0.5 0.5
       }
     }
+  ]
+  name "area 8 white"
+}
+DEF area_9 Solid {
+  translation -0.33 0.001 0.81
+  children [
     Shape {
       appearance PBRAppearance {
         baseColor 0.3 0.3 0.3
@@ -356,8 +442,8 @@ DEF area_9 Solid {
   ]
   name "area 9"
 }
-DEF area_10 Solid {
-  translation -1.41 0.001 1.04
+DEF area_9 Solid {
+  translation -0.33 0.002 0.81
   children [
     Shape {
       appearance PBRAppearance {
@@ -367,6 +453,12 @@ DEF area_10 Solid {
         size 0.5 0.5
       }
     }
+  ]
+  name "area 9 white"
+}
+DEF area_10 Solid {
+  translation -1.41 0.001 1.04
+  children [
     Shape {
       appearance PBRAppearance {
         baseColor 0.3 0.3 0.3
@@ -379,4 +471,48 @@ DEF area_10 Solid {
     }
   ]
   name "area 10"
+}
+DEF area_10 Solid {
+  translation -1.41 0.002 1.04
+  children [
+    Shape {
+      appearance PBRAppearance {
+        metalness 0
+      }
+      geometry Plane {
+        size 0.5 0.5
+      }
+    }
+  ]
+  name "area 10 white"
+}
+DEF area_11 Solid {
+  translation -0.04 0.001 1.02
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.3 0.3 0.3
+        metalness 0
+      }
+      geometry Plane {
+        size 0.8 0.8
+      }
+      castShadows FALSE
+    }
+  ]
+  name "area 11"
+}
+DEF area_11 Solid {
+  translation -0.04 0.002 1.02
+  children [
+    Shape {
+      appearance PBRAppearance {
+        metalness 0
+      }
+      geometry Plane {
+        size 0.5 0.5
+      }
+    }
+  ]
+  name "area 11 white"
 }
