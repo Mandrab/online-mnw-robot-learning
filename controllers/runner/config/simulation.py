@@ -67,7 +67,7 @@ robot = EPuck(sensors=task.value[3])
 print(
     '-' * 80 + '\n' +
     f'Running simulation of task `{task.name}`\n' +
-    f'Tested densities: {[*set(densities)]}\n' +
+    f'Tested densities: {sorted(set(densities))}\n' +
     f'Tested loads: [{", ".join(map("{:.0e}".format, loads))}]\n' +
     '-' * 80
 )
