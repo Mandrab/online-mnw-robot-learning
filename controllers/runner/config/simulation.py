@@ -32,13 +32,13 @@ from robot.epuck import EPuck
 random.seed(1234)
 
 # define the type of task to execute/achieve
-task = Tasks.COLLISION_AVOIDANCE
+task = Tasks.AREA_AVOIDANCE
 
 # set if the world should have a dynamic behaviour (moving objects / obstacles)
 task.value[0].dynamic = False
 
 # minimum fitness needed to evolve a configuration instead of creating a new one
-Simulation.MINIMUM_FITNESS = 30.0
+Simulation.MINIMUM_FITNESS = 100
 
 # number of device instances that conform to a single datasheet
 replica_count = 5
@@ -47,13 +47,13 @@ replica_count = 5
 epoch_count = 30
 
 # number of steps for which the robot can run freely
-epoch_duration = 300
+epoch_duration = 750
 
 # if true, continue simulation with best controller after the evolution finish
 continue_after_evolution = False
 
 # network density-configurations to tests (replicated 'replica_count' times)
-densities = sorted(list(map(lambda _: _ + 5.0, range(5))) * replica_count)
+densities = sorted(list(map(lambda _: _ * 2.5 + 5.0, range(3))) * replica_count)
 
 # motor loads to test [1e3, 1e4, 1e5, 1e6]
 loads = list(map(lambda exp: 10 ** exp, range(3, 7)))
