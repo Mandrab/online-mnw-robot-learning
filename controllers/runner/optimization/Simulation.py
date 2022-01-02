@@ -100,7 +100,7 @@ class Simulation:
         density = data.wires_count * data.mean_length ** 2 / area
         cc_density = graph.number_of_nodes() * data.mean_length ** 2 / area
 
-        load = self.motor_load if self.motor_load else self.robot.motor_loads
+        load = self.motor_load if self.motor_load else self.robot.motors_load
 
         return str(
             f'Creation density: {density}, ' +
