@@ -30,7 +30,7 @@ class AreaAvoidance(Fitness):
 
         # get motors velocities and make them in range 0-1
         speeds = [motor.speed for motor in self.robot.motors]
-        speeds = [adapt(value, Motor.range()) for value in speeds]
+        speeds = [adapt(value, Motor.range(), (-1, 1)) for value in speeds]
 
         # calculate avg speed and direction of the robot
         average_speed = sum(speeds) / 2.0
