@@ -52,4 +52,6 @@ class AreaAvoidance(Fitness):
         self.counter += 1
 
     def value(self) -> float:
+        if self.counter == 0:
+            return 0.0
         return adapt(self.fitness / self.counter, (-101, 1), (0, 100))

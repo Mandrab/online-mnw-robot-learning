@@ -47,4 +47,6 @@ class TMaze(Fitness):
             self.fitness -= 1
 
     def value(self) -> float:
+        if self.counter == 0:
+            return 0.0
         return adapt(self.fitness / self.counter, (-1, 2), (0, 100))
