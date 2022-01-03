@@ -5,7 +5,7 @@ from datetime import datetime
 from optimization.utils import import_simulations, new_simulations, save_epoch
 
 CONFIGURATIONS_LOCATION = '../../res/configuration'
-SAVING_FOLDER = datetime.today().strftime('%Y-%m-%d.%S%f')
+SAVING_FOLDER = datetime.today().strftime('%Y-%m-%d.%H%M%S%f')
 
 
 ################################################################################
