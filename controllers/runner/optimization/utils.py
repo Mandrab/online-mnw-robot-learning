@@ -96,7 +96,7 @@ def save_epoch(epoch: Epoch, file_format: str = '{name}.dat'):
     # save controller characteristics
     backup.save(
         c.datasheet, c.network, c.wires,
-        dict(inputs=c.sensors, outputs=c.actuators),
+        dict(inputs=c.sensors, outputs=c.actuators, load=c.load),
         file_format.format(name='datasheet'),
         file_format.format(name='network'),
         file_format.format(name='wires'),
