@@ -47,17 +47,11 @@ def __influence(values):
     fig, axs = plt.subplots(len(values) + 1, 1, figsize=(7, 16))
     values_ax, *axs = axs
 
-    for ax, value in zip(axs, values):
+    for ax, s in zip(axs, values):
         # avoid modify the graph
         c.network = graph.copy()
-
-        def step(i): return c.evaluate(
-            update_time=value,  # seconds
-            inputs={'s': i},
-            inputs_range=sensor_range,
-            outputs_range=motors_range,
-            actuators_load=100
-        )
+        c.load = 100
+        def step(i): return c.evaluate(s, {'s': i}, sensor_range, motors_range)
 
         io = {
             i: [v for v in step(i).values()][0]
@@ -68,18 +62,18 @@ def __influence(values):
         x = [*io.keys()]
         y = [*io.values()]
 
-        values_ax.plot(x, y, label=f'frequency {1.0 / value} Hz')
+        values_ax.plot(x, y, label=f'frequency {1.0 / s} Hz')
 
         e = Evolution(
             datasheet,
-            wires_dict={}, delta_time=value, grounds=set(),
+            wires_dict={}, delta_time=s, grounds=set(),
             loads={(a, 1) for a in actuators},
             network_instances=[
                 (c.network, [(s, sensor_range[1]) for s in sensors])
             ])
 
         plot.conductance_map(fig, ax, e)
-        ax.set_title(f'Conductance in {1 / value} Hz updated network')
+        ax.set_title(f'Conductance in {1 / s} Hz updated network')
 
     values_ax.set(xlabel='Sensors signals', ylabel='Motor outputs')
     values_ax.legend()
@@ -123,14 +117,10 @@ def __influence(values):
     for ax, value in zip(axs, values):
         # avoid modify the graph
         c.network = graph.copy()
+        c.load = value
 
-        def step(i): return c.evaluate(
-            update_time=0.1,  # seconds
-            inputs={'s': i},
-            inputs_range=sensor_range,
-            outputs_range=motors_range,
-            actuators_load=value
-        )
+        def step(i):
+            return c.evaluate(0.1, {'s': i}, sensor_range, motors_range)
 
         io = {
             i: [v for v in step(i).values()][0]
@@ -190,13 +180,13 @@ def __influence(values):
 
     for ax, value in zip(axs, values):
         _, controller, motors, inputs = generate(value)
+        controller.load = 50
 
         def step(i): return controller.evaluate(
-            update_time=0.1,  # seconds
+            delta_time=0.1,  # seconds
             inputs={'s': i},
             inputs_range=sensor_range,
-            outputs_range=motors_range,
-            actuators_load=50
+            outputs_range=motors_range
         )
 
         io = {
