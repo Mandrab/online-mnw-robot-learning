@@ -29,7 +29,7 @@ for simulation in simulations:
     print(simulation)
 
     # initialize the first epoch/run of the simulation
-    simulation.initialize(epoch_duration)
+    simulation.initialize()
 
     # simulate count-epochs run
     for epoch in range(epoch_count):

@@ -41,32 +41,26 @@ class Simulation:
         # create/get a device that is represented by the given datasheet
         graph, wires = generator(datasheet) if network is None else network[:2]
 
-        # crate robot controller to interact with the device and save it and the
-        # robot instance itself
-        self.robot, self.controller = robot, Conductor(graph, datasheet, wires)
+        # crate the controller to interact with the device and set it
+        robot.conductor = Conductor(graph, datasheet, wires)
 
-        # finally set the controller to the robot
-        robot.conductor = self.controller
-
-        # define first epoch to test
+        # save the epoch utils, the robot reference and the best epoch
         _, self.new_epoch, self.evolve_epoch, _ = task_type.value
-        self.best_epoch = self.new_epoch(self.robot)
+        self.robot, self.best_epoch = robot, self.new_epoch(robot)
 
         # if specified, set connections
         if network is not None:
             self.best_epoch.controller.sensors = network[2]['inputs']
             self.best_epoch.controller.actuators = network[2]['outputs']
+            self.motor_load = network[2]['load']
 
-    def initialize(self, duration: int):
+    def initialize(self):
         # set controller random seed
-        random.seed(self.controller.datasheet.seed)
+        random.seed(self.best_epoch.controller.datasheet.seed)
 
         # set robot motors load if specified
         if self.motor_load is not None:
             self.robot.motors_load = self.motor_load
-
-        # exec an initialization run
-        self.__run(self.best_epoch, duration)
 
     def simulate(self, duration: int):
         """Evaluate the controller behaviour running different connections"""
@@ -78,10 +72,6 @@ class Simulation:
             # evolve best network
             epoch = self.evolve_epoch(self.best_epoch)
 
-        # run the simulation of this epoch
-        self.__run(epoch, duration)
-
-    def __run(self, epoch: Epoch, duration: int):
         # iterate for the epoch duration
         for _ in range(duration):
             epoch.step()
@@ -95,7 +85,8 @@ class Simulation:
     def __str__(self):
         """Return a custom representation of the object."""
 
-        graph, data = self.controller.network, self.controller.datasheet
+        graph = self.best_epoch.controller.network
+        data = self.best_epoch.controller.datasheet
         area = data.Lx * data.Ly
         density = data.wires_count * data.mean_length ** 2 / area
         cc_density = graph.number_of_nodes() * data.mean_length ** 2 / area
