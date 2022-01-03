@@ -1,4 +1,5 @@
 import os
+import threading
 
 from config.simulation import *
 from datetime import datetime
@@ -56,7 +57,8 @@ for index, epoch in enumerate(best_epochs):
 if not continue_after_evolution:
     # exit the simulator
     print('Simulation complete')
-    robot.simulationQuit(0)
+    threading.Thread(target=lambda: robot.simulationQuit(0))
+    exit(0)
 
 print('Running the best scoring controller')
 robot.simulationReset()
