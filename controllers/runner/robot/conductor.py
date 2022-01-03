@@ -28,12 +28,15 @@ class Conductor:
     sensors: Dict[str, int] = field(default_factory=dict)
     actuators: Dict[str, int] = field(default_factory=dict)
 
+    # motors/actuators load
+    load: float = 1e6   # MOhm
+
     def initialize(self):
-        """Initialize network"""
+        """Initialize network setting voltages values to nodes."""
 
         initialize_graph_attributes(
             graph=self.network,
-            sources={*self.sensors.values()},
+            sources=set(self.sensors.values()),
             grounds=set(),
             y_in=self.datasheet.Y_min
         )
@@ -41,11 +44,10 @@ class Conductor:
 
     def evaluate(
             self,
-            update_time: float,
+            delta_time: float,
             inputs: Dict[str, float],
             inputs_range: Tuple[float, float] = (0.0, 1.0),
-            outputs_range: Tuple[float, float] = (0.0, 1.0),
-            actuators_load: float = 1
+            outputs_range: Tuple[float, float] = (0.0, 1.0)
     ) -> Dict[str, float]:
         """
         Stimulate the network with the sensors signals.
@@ -53,32 +55,25 @@ class Conductor:
         """
 
         # filter to get used sensors
-        inputs = [(k, v) for k, v in inputs.items() if k in self.sensors]
+        reads = [(k, v) for k, v in inputs.items() if k in self.sensors]
 
         # get sensors readings
-        inputs = [(self.sensors[k], v) for k, v in inputs]
+        reads = [(self.sensors[k], v) for k, v in reads]
 
         # remap sensors readings from their range to network range (voltages)
-        inputs = [
+        reads = [
             (k, adapt(v, inputs_range, self.network_range))
-            for k, v in inputs
+            for k, v in reads
         ]
 
         # define the pin-resistance/load pairs for the motors
-        outputs = [(pin, actuators_load) for pin in self.actuators.values()]
+        loads = [(pin, self.load) for pin in self.actuators.values()]
 
         # stimulate the network with the sensors inputs
-        stimulate(
-            graph=self.network,
-            datasheet=self.datasheet,
-            delta_time=update_time,
-            inputs=inputs,
-            outputs=outputs,
-            grounds=set()
-        )
+        stimulate(self.network, self.datasheet, delta_time, reads, loads, set())
 
         # extract outputs from network
-        outputs = [
+        outs = [
             (actuator, self.network.nodes[pin]['V'])
             for actuator, pin in self.actuators.items()
         ]
@@ -86,10 +81,7 @@ class Conductor:
         # remap output values from 0, 10 to:
         #   -6.28, 6.28 for distance: 10 = far -> 6.28 = move straight
         #   6.28, -6.28 for proximity: 10 = near -> -6.28 = go away
-        return {
-            k: adapt(v, self.network_range, outputs_range)
-            for k, v in outputs
-        }
+        return {k: adapt(v, self.network_range, outputs_range) for k, v in outs}
 
 
 def copy(conductor: Conductor) -> Conductor:
@@ -101,5 +93,6 @@ def copy(conductor: Conductor) -> Conductor:
         conductor.wires.copy(),
         conductor.network_range,
         conductor.sensors.copy(),
-        conductor.actuators.copy()
+        conductor.actuators.copy(),
+        conductor.load
     )

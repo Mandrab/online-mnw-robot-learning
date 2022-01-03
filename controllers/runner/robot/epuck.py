@@ -14,7 +14,6 @@ class EPuck(Supervisor):
 
     # names of actuators (motors) actually used and their connection load
     motors = [Motor(f'{side} wheel motor') for side in ['left', 'right']]
-    motors_load = 1e6   # MOhm
 
     def __init__(self, sensors: List[str], conductor: Conductor = None):
         # get the time step of the current world
@@ -41,14 +40,16 @@ class EPuck(Supervisor):
         stimulus = {s: s.read(normalize=True) for s in self.sensors}
 
         # run the controller
-        outputs = self.conductor.evaluate(
-            update_time=self.run_frequency.s,
-            inputs=stimulus,
-            actuators_load=self.motors_load
-        )
+        outputs = self.conductor.evaluate(self.run_frequency.s, stimulus)
 
         # set the motors speed
         for motor, value in zip(self.motors, map(outputs.get, self.motors)):
             motor.speed = adapt(value, out_range=Motor.range(reverse=True))
 
         return True
+
+    @property
+    def motors_load(self) -> float: return self.conductor.load
+
+    @motors_load.setter
+    def motors_load(self, value: float): self.conductor.load = value
