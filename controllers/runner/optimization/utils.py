@@ -80,12 +80,12 @@ def import_simulations(
     chunks = map(lambda _: backup.read(*_), chunks)
 
     # instantiate simulation with the given controller/device
-    return map(lambda _: Simulation(
-        robot=robot,
-        datasheet=_[1],
-        network=(_[0], _[2], _[3]),
-        task_type=task_type
-    ), chunks)
+    def simulation(settings: Tuple) -> Simulation:
+        graph, datasheet, wires, io = settings
+        return Simulation(robot, datasheet, (graph, wires, io), task_type)
+
+    # return a lazy mapping to the simulations
+    return map(simulation, chunks)
 
 
 def save_epoch(epoch: Epoch, file_format: str = '{name}.dat'):
