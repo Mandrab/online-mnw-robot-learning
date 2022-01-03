@@ -42,8 +42,9 @@ from analysis import *
 def network_states(signal):
     # stimulate the first graph with the signal
     c.network = graph.copy()
+    c.load = 100
     for value in signal:
-        c.evaluate(1, {'s': value}, (0, 1), (0, 1), 100)
+        c.evaluate(1, {'s': value}, (0, 1), (0, 1))
 
     conductance = [c.network[a][b]['Y'] for a, b in c.network.edges()]
     return sum(conductance) / len(conductance), max(conductance)
@@ -115,8 +116,9 @@ def __influence(iteration_distances):
 
         # stimulate the first graph with the signal
         c.network = graph.copy()
+        c.load = 100
         for value in signal:
-            c.evaluate(1, {'s': value}, (0, 1), (0, 1), 100)
+            c.evaluate(1, {'s': value}, (0, 1), (0, 1))
             conductance = [c.network[a][b]['Y'] for a, b in c.network.edges()]
             mean_conductance += [sum(conductance) / len(conductance)]
 
