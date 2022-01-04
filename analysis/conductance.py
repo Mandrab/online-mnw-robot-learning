@@ -28,12 +28,12 @@ def period_length(
     -----------
     samples:
         the signal's values
-    max_distance:
-        max distance between the start of two periods. In other words, the max
-        accepted period length
     min_length:
         min length of the signal to be considered repeated (e.g. has [1,2,3,1]
         to be considered repeated?)
+    max_distance:
+        max distance between the start of two periods. In other words, the max
+        accepted period length
     tolerance:
         accepted distance between the two values (e.g. if 1.5 and 1.4 should be
         or not considered the same)
@@ -74,7 +74,8 @@ def average_conductance(controller):
     avg_conductances = []
     stimulus = {'s': max(sensor_range)}
     for _ in iterations:
-        controller.evaluate(delay, stimulus, sensor_range, motors_range, 1)
+        c.load = 1
+        controller.evaluate(delay, stimulus, sensor_range, motors_range)
         avg_conductances += [
             sum([
                     controller.network[n1][n2]['Y']
@@ -130,8 +131,16 @@ plt.show()
 
 ################################################################################
 # CONDUCTANCE ANALYSIS IN DENSITY CHANGES
+# The graphs show the behaviour of the conductance in networks generated with
+# different densities.
+# It is visible that there is an increase in the average conductivity for values
+# near to the 'critical value'. This is due to the fact that, with the increase
+# in conductivity, the network decrease its resistance and thus less tension
+# fall at its sides. This bring to a different response of the networks to the
+# same (continuous) inputs.
 
-fig, ax = plt.subplots()
+fig = plt.figure(figsize=(10, 8))
+ax, *axs = fig.subplots(2, 1)
 
 densities = {
     4.94: (100, 45, 10),
@@ -144,26 +153,31 @@ densities = {
 delay = 0.1
 iterations = range(50)
 
+max_conductances = []
+
 for density, (wires, size, length) in densities.items():
-    print(density, wires * length * length / (size * size))
     graph, c, _1, _2 = generate(Datasheet(
         wires_count=wires,
         Lx=size, Ly=size,
         mean_length=length, std_length=length * 0.35
     ))
     conductances = average_conductance(c)
+    max_conductances += [max(conductances)]
     ax.plot(conductances, label=f'Density {density}')
 
-ax.set_xlabel('iterations')
-ax.set_ylabel('average conductivity')
+ax.set(xlabel='iterations', ylabel='average conductivity')
 ax.legend(loc='upper right')
 
-plt.title(
+ax = next(iter(axs))
+ax.bar(list(map(str, densities.keys())), max_conductances)
+ax.set(xlabel='densities', ylabel='max average conductivity')
+
+fig.suptitle(
     'Average conductance after continuous stimulation'
     'in networks with different densities'
 )
-plt.show()
 
+plt.show()
 
 ################################################################################
 # CONDUCTANCE ANALYSIS IN FREQUENCY CHANGES
@@ -182,7 +196,8 @@ for delay in delay_range:
     c.network = graph.copy()
     conductances = []
     for _ in range(iterations):
-        c.evaluate(delay, {'s': sensor_range[1]}, sensor_range, motors_range, 1)
+        c.load = 1
+        c.evaluate(delay, {'s': sensor_range[1]}, sensor_range, motors_range)
         conductances += [
             sum(
                 [c.network[n1][n2]['Y'] < 0.01 for n1, n2 in c.network.edges()]
