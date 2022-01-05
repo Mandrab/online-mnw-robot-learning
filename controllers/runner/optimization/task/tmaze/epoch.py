@@ -7,11 +7,11 @@ from world.Colors import Colors
 from robot.epuck import EPuck
 from world.Manager import Manager
 
-INITIAL_POSITION = [0, 3e-5, 0.4]
+INITIAL_POSITION = [0, 3e-5, 0.8]
 INITIAL_ROTATION = [0, -1, 0, 0]
 
-BLACK_START = Colors.BLACK, [0, 2e-5, 0.25], [0, -1, 0.25]
-WHITE_START = Colors.WHITE, [0, -1, 0.25], [0, 2e-5, 0.25]
+BLACK_START = Colors.BLACK, [0, 2e-5, 0.4], [0, -1, 0.4]
+WHITE_START = Colors.WHITE, [0, -1, 0.4], [0, 2e-5, 0.4]
 
 
 class Epoch(Base):

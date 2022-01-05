@@ -4,7 +4,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation 1 0 0 4.71238898038469
-  position 3.9603091291864205e-20 1.7982722205262143 -9.982416118860048e-17
+  position 0.008109990088866093 2.403874633540555 0.23577270070046175
   follow "e-puck"
   followType "None"
 }
@@ -14,7 +14,7 @@ Background {
   ]
 }
 DEF evolvable E-puck {
-  translation 0 2e-05 0.4
+  translation 0 2e-05 0.8
   rotation 0 -1 0 0
   controller "runner"
   supervisor TRUE
@@ -25,15 +25,15 @@ DEF evolvable E-puck {
   ]
 }
 RectangleArena {
-  floorSize 1.1 1.1
+  translation 0 0 0.2
+  floorSize 1.1 1.5
   floorAppearance PBRAppearance {
     baseColor 0.2 0.2 0.2
     metalness 0
   }
 }
 DEF dark_floor Solid {
-  translation 0 -1 0.25
-  scale 0.5 0.5 0.5
+  translation 0 -1 0.4
   children [
     Shape {
       appearance PBRAppearance {
@@ -41,7 +41,7 @@ DEF dark_floor Solid {
         metalness 0
       }
       geometry Plane {
-        size 0.4 1
+        size 0.2 1
       }
       castShadows FALSE
     }
@@ -49,15 +49,14 @@ DEF dark_floor Solid {
   name "black start"
 }
 DEF light_floor Solid {
-  translation 0 -1 0.25
-  scale 0.51 0.51 0.51
+  translation 0 -1 0.4
   children [
     Shape {
       appearance PBRAppearance {
         metalness 0
       }
       geometry Plane {
-        size 0.4 1
+        size 0.2 1
       }
       castShadows FALSE
     }
@@ -117,21 +116,21 @@ Wall {
   size 1 0.1 0.01
 }
 Wall {
-  translation 0 0 0.5
+  translation 0 0 0.9
   name "south wall"
   size 0.22 0.1 0.01
 }
 Wall {
-  translation -0.105 0 0.125
+  translation -0.105 0 0.325
   rotation 0 1 0 1.5708
   name "vertical left wall"
-  size 0.75 0.1 0.01
+  size 1.15 0.1 0.01
 }
 Wall {
-  translation 0.105 0 0.125
+  translation 0.105 0 0.325
   rotation 0 1 0 1.5708
   name "vertical right wall"
-  size 0.75 0.1 0.01
+  size 1.15 0.1 0.01
 }
 Wall {
   translation 0.3 0 -0.25
