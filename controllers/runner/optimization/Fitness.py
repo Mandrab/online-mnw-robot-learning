@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from robot.epuck import EPuck
+from robot.body import EPuck
 
 
 class Fitness:
@@ -17,9 +17,9 @@ class Fitness:
         Update the fitness measure by looking at the actual robot state.
         To be called after each simulation step.
         """
-        pass
+        NotImplemented()
 
     @abstractmethod
     def value(self) -> float:
         """Get fitness measured so far."""
-        pass
+        return NotImplemented()
