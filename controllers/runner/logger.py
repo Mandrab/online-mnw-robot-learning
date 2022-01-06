@@ -1,11 +1,17 @@
 import logging
 
+NAME = 'online-mnw-robot-learning'
 FORMAT = '[%(asctime)s %(levelname)s]\t %(message)s'
 
-logger = logging.getLogger('online-mnw-robot-learning')
 
-formatter = logging.Formatter(FORMAT)
+def set_logger(path: str) -> logging:
+    default = logging.getLogger(NAME)
 
-fileHandler = logging.FileHandler('log')
-fileHandler.setFormatter(formatter)
-logger.addHandler(fileHandler)
+    formatter = logging.Formatter(FORMAT)
+
+    handler = logging.FileHandler(path)
+    handler.setFormatter(formatter)
+    default.addHandler(handler)
+
+
+logger = logging.getLogger(NAME)
