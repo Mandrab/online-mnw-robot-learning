@@ -1,4 +1,4 @@
-from optimization.task.Task import Task
+from optimization.task.task import Task
 from optimization.task.tmaze.fitness import Fitness
 from optimization.task.tmaze.simulations import live
 

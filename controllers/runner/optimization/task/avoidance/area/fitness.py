@@ -1,11 +1,11 @@
 from functools import reduce
 from math import sqrt
 from operator import sub
-from optimization.Fitness import Fitness as Base
+from optimization.fitness import Fitness as Base
 from robot.component import grounds
-from robot.component.Motor import Motor
+from robot.component.motor import Motor
 from utils import adapt
-from world.Colors import Colors
+from world.colors import Colors
 
 
 PENALTY = 100

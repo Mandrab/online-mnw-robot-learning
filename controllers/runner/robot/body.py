@@ -1,6 +1,6 @@
 from controller import Supervisor
 from robot.component import sensor, enable
-from robot.component.Motor import Motor
+from robot.component.motor import Motor
 from utils import Frequency
 from typing import Iterable
 

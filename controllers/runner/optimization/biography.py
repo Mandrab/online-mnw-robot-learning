@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from optimization.Fitness import Fitness
+from optimization.fitness import Fitness
 from typing import List, Dict
 
 

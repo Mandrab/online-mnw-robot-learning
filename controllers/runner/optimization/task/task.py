@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from optimization.Fitness import Fitness
+from optimization.fitness import Fitness
 from optimization.individual import Individual
 from robot.body import EPuck
 from typing import Callable, Tuple

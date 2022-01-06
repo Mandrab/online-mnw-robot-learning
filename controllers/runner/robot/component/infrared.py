@@ -1,4 +1,4 @@
-from .Sensor import Sensor
+from .sensor import Sensor
 from scipy.interpolate import interp1d
 from typing import Tuple
 from utils import adapt

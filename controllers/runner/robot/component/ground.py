@@ -1,4 +1,4 @@
-from .Sensor import Sensor
+from .sensor import Sensor
 from typing import Tuple
 
 

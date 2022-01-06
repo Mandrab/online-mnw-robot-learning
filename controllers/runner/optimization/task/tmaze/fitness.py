@@ -1,7 +1,7 @@
-from optimization.Fitness import Fitness as Base
+from optimization.fitness import Fitness as Base
 from robot.component import grounds
 from utils import adapt
-from world.Colors import Colors
+from world.colors import Colors
 
 
 class Fitness(Base):

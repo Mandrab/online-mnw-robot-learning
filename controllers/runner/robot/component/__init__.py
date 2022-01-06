@@ -1,7 +1,7 @@
 from controller import Robot
-from .Ground import GroundSensor
-from .Infrared import IRSensor
-from .Sensor import Sensor
+from .ground import GroundSensor
+from .infrared import IRSensor
+from .sensor import Sensor
 from typing import Iterable, Callable
 
 

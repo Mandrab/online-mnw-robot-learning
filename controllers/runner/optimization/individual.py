@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from logger import logger
-from optimization.Fitness import Fitness
+from optimization.fitness import Fitness
 from optimization.biography import Biography
 from robot.robot import Robot, run
 from robot.thalamus import evolve as evolve_thalamus, random as random_thalamus

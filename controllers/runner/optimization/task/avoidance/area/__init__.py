@@ -1,4 +1,4 @@
-from optimization.task.Task import Task
+from optimization.task.task import Task
 from optimization.task.avoidance.simulations import supplier
 from optimization.task.avoidance.area.fitness import Fitness
 

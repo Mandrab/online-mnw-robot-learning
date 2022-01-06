@@ -1,8 +1,8 @@
 from functools import reduce
 from math import sqrt
 from operator import sub
-from optimization.Fitness import Fitness as Base
-from robot.component.Motor import Motor
+from optimization.fitness import Fitness as Base
+from robot.component.motor import Motor
 from utils import adapt
 
 

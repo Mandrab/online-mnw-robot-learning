@@ -3,8 +3,8 @@ import random
 from logger import logger
 from optimization.individual import Individual
 from robot.robot import run
-from world.Colors import Colors
-from world.Manager import Manager
+from world.colors import Colors
+from world.manager import Manager
 
 DURATION = 200
 

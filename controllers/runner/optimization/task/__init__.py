@@ -1,5 +1,5 @@
 from enum import Enum
-from .Task import Task
+from .task import Task
 from .avoidance.area import task_description as area_avoidance
 from .avoidance.collision import task_description as collision_avoidance
 from .run import task_description as run

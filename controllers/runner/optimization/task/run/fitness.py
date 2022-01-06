@@ -1,7 +1,7 @@
 from functools import reduce
 from math import sqrt
 from operator import add
-from optimization.Fitness import Fitness as Base
+from optimization.fitness import Fitness as Base
 from robot.body import EPuck
 
 

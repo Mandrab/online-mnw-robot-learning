@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from functools import reduce
 from logger import logger
 from optimization.individual import Individual, evolve
-from optimization.task.Task import Task
+from optimization.task.task import Task
 from robot.robot import describe
 from typing import Any
 

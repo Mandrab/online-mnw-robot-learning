@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from nanowire_network_simulator import stimulate
 from robot.body import EPuck
 from robot.cortex import Cortex, describe as cortex2str
-from robot.component.Motor import Motor
+from robot.component.motor import Motor
 from robot.thalamus import Thalamus, describe as thalamus2str
 from typing import Dict, Tuple
 from utils import adapt
