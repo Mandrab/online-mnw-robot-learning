@@ -1,15 +1,6 @@
-import os
-
 from config import *
-from datetime import datetime
 from optimization.simulation import optimize
 from optimization.utils import import_simulations, new_simulations, save
-
-
-# create the folder for saving the simulation files
-CONFIGURATIONS_LOCATION = '../../res/configuration'
-SAVING_FOLDER = datetime.today().strftime('%Y-%m-%d.%H%M%S%f')
-os.mkdir(path := os.path.join(CONFIGURATIONS_LOCATION, SAVING_FOLDER))
 
 
 # import simulations from the 'controllers' folder
@@ -22,7 +13,7 @@ if not simulations:
 
 # run simulations of different devices and save the best scoring configurations
 for index, individual in enumerate(map(optimize, simulations)):
-    file_format = str(path) + '/{name}' + f'.{index}.dat'
+    file_format = str(save_path) + '/{name}' + f'.{index}.dat'
     save(individual.elite, file_format)
 
 
