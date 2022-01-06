@@ -1,100 +1,30 @@
-import random
-
-from optimization.task.Tasks import Tasks
-from robot.conductor import Conductor
-from robot.epuck import EPuck
-from nanowire_network_simulator import minimum_viable_network as generator
-from nanowire_network_simulator.model.device import Datasheet
-from networkx import Graph
-from optimization.Epoch import Epoch
-from typing import Dict, Tuple
+from dataclasses import dataclass
+from optimization.individual import Individual
+from optimization.task.Task import Task
 
 
+@dataclass(frozen=True)
 class Simulation:
     """
-    Simulate a robot moving in an environment with a with a given controller.
-    Evaluate its behaviour and call for its optimization.
+    Codify the information needed for the evolution of an individual. Only the
+    data of the best individual are maintained, while the others are discarded.
+    Note that this class does not want to represent a step in the evolution,
+    instead, it aims to define its starting or ending point. The step approach
+    can be however obtained setting a epoch count and an epoch duration of 1.
     """
-    # minimum fitness needed to evolve an epoch instead of creating a new one
-    MINIMUM_FITNESS = 30.0
 
-    # optional motor load specific to the given run
-    motor_load = None
+    elite: Individual
+    goal_task: Task
+    epochs_count: int
+    epoch_duration: int
+    evolution_threshold: float
 
-    best_epoch: Epoch = None
 
-    def __init__(
-            self,
-            robot: EPuck,
-            datasheet: Datasheet,
-            network: Tuple[Graph, Dict, Dict] = None,
-            task_type: Tasks = Tasks.COLLISION_AVOIDANCE
-    ):
-        """
-        Setup the simulation creating a controller network and assigning it to
-        the robot.
-        If the network variable is not None, the simulator will use that
-        controller for the first run. In that case, an evaluation duration is
-        needed.
-        """
+def update_elite(elite: Individual, instance: Simulation) -> Simulation:
+    """Update a previous simulation with a new elite individual."""
 
-        # create/get a device that is represented by the given datasheet
-        graph, wires = generator(datasheet) if network is None else network[:2]
-
-        # crate the controller to interact with the device and set it
-        robot.conductor = Conductor(graph, datasheet, wires)
-
-        # save the epoch utils, the robot reference and the best epoch
-        _, self.new_epoch, self.evolve_epoch, _ = task_type.value
-        self.robot, self.best_epoch = robot, self.new_epoch(robot)
-
-        # if specified, set connections
-        if network is not None:
-            self.best_epoch.controller.sensors = network[2]['inputs']
-            self.best_epoch.controller.actuators = network[2]['outputs']
-            self.motor_load = network[2]['load']
-
-    def initialize(self):
-        # set controller random seed
-        random.seed(self.best_epoch.controller.datasheet.seed)
-
-        # set robot motors load if specified
-        if self.motor_load is not None:
-            self.robot.motors_load = self.motor_load
-
-    def simulate(self, duration: int):
-        """Evaluate the controller behaviour running different connections"""
-
-        if self.best_epoch.evaluator.value() < self.MINIMUM_FITNESS:
-            # setup a new simulation's epoch
-            epoch = self.new_epoch(self.robot)
-        else:
-            # evolve best network
-            epoch = self.evolve_epoch(self.best_epoch)
-
-        # iterate for the epoch duration
-        for _ in range(duration):
-            epoch.step()
-
-        # if the connection is better than the best one, start to evolve it
-        if self.best_epoch.evaluator.value() <= epoch.evaluator.value():
-            self.best_epoch = epoch
-
-        print('fitness:', epoch.evaluator.value())
-
-    def __str__(self):
-        """Return a custom representation of the object."""
-
-        graph = self.best_epoch.controller.network
-        data = self.best_epoch.controller.datasheet
-        area = data.Lx * data.Ly
-        density = data.wires_count * data.mean_length ** 2 / area
-        cc_density = graph.number_of_nodes() * data.mean_length ** 2 / area
-
-        load = self.motor_load if self.motor_load else self.robot.motors_load
-
-        return str(
-            f'Creation density: {density}, ' +
-            f'Connected component density: {cc_density}, ' +
-            'Motors load: {:.0e}'.format(load)
-        )
+    return Simulation(
+        elite, instance.goal_task,
+        instance.epochs_count, instance.epoch_duration,
+        instance.evolution_threshold
+    )
