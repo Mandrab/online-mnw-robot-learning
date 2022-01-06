@@ -1,49 +1,62 @@
 import json
 
 from nanowire_network_simulator import backup
+from nanowire_network_simulator.model.device import Datasheet
 from nanowire_network_simulator.model.device.datasheet import factory as ds
-from optimization.Epoch import Epoch
-from optimization.Simulation import Simulation
-from optimization.task.Tasks import Tasks
+from optimization.biography import Biography
+from optimization.individual import Individual
+from optimization.simulation import Simulation
+from optimization.task import Task
 from os import listdir
 from os.path import join, isfile, exists
-from robot.conductor import Conductor
-from robot.epuck import EPuck
-from typing import Iterable, List, Tuple
+from robot.cortex import new as new_cortex
+from robot.thalamus import random as random_thalamus
+from robot.body import EPuck
+from typing import Iterable, Tuple
 
 DEVICE_SIZE = 50
 WIRES_LENGTH = 10.0
 READING_FOLDER = 'controllers/'
 
 
+def individual(data: Tuple[EPuck, float, Datasheet, Task]) -> Individual:
+    robot, load, datasheet, task = data
+    cortex = new_cortex(datasheet)
+    thalamus = random_thalamus(cortex, robot, load)
+    biography = Biography(task.evaluator(robot))
+    return Individual(robot, cortex, thalamus, biography)
+
+
 def new_simulations(
         robot: EPuck,
-        configurations: List[Tuple[float, float, int]],
-        size: int = DEVICE_SIZE,
-        wires_length: float = WIRES_LENGTH,
-        task_type: Tasks = Tasks.COLLISION_AVOIDANCE
+        simulation_configuration: Tuple[Task, int, int, float],
+        device_configurations: Iterable[Tuple[float, float, int]],
+        size: int = DEVICE_SIZE, wires_length: float = WIRES_LENGTH,
 ) -> Iterable[Simulation]:
     """
     Generate a simulations set with each instance using a device with a
-    different nano-wires density and seed.
+    different nano-wires density, seed and load.
     """
 
-    def generate(setting):
+    task, epoch_count, epoch_duration, e_threshold = simulation_configuration
+
+    def generate(setting: Tuple[float, float, int]):
         """Create device datasheet and use it to instantiate the simulation."""
-        density, motors_load, seed = setting
+
+        density, load, seed = setting
         datasheet = ds.from_density(density, size, wires_length, seed)
-        simulation = Simulation(robot, datasheet, task_type=task_type)
-        simulation.motor_load = motors_load
-        return simulation
+
+        elite = individual((robot, load, datasheet, task))
+        return Simulation(elite, task, epoch_count, epoch_duration, e_threshold)
 
     # lazily generate a simulation for each setting and return them
-    return map(generate, configurations)
+    return map(generate, device_configurations)
 
 
 def import_simulations(
         robot: EPuck,
+        simulation_configuration: Tuple[Task, int, int, float],
         folder: str = READING_FOLDER,
-        task_type: Tasks = Tasks.COLLISION_AVOIDANCE
 ) -> Iterable[Simulation]:
     """
     Check if there are simulations files in the given folder.
@@ -79,24 +92,27 @@ def import_simulations(
     # convert files to python data
     chunks = map(lambda _: backup.read(*_), chunks)
 
+    task, epoch_count, epoch_duration, e_threshold = simulation_configuration
+
     # instantiate simulation with the given controller/device
     def simulation(settings: Tuple) -> Simulation:
         graph, datasheet, wires, io = settings
-        return Simulation(robot, datasheet, (graph, wires, io), task_type)
+        elite = individual((robot, io['load'], datasheet, task))
+        return Simulation(elite, task, epoch_count, epoch_duration, e_threshold)
 
     # return a lazy mapping to the simulations
     return map(simulation, chunks)
 
 
-def save_epoch(epoch: Epoch, file_format: str = '{name}.dat'):
+def save(instance: Individual, file_format: str = '{name}.dat'):
     """Save epoch information into files with the given format name"""
 
-    c: Conductor = epoch.controller
+    c, t = instance.cortex, instance.thalamus
 
     # save controller characteristics
     backup.save(
         c.datasheet, c.network, c.wires,
-        dict(inputs=c.sensors, outputs=c.actuators, load=c.load),
+        dict(inputs=t.sensors, outputs=t.motors, load=t.sensitivity),
         file_format.format(name='datasheet'),
         file_format.format(name='network'),
         file_format.format(name='wires'),
@@ -105,6 +121,6 @@ def save_epoch(epoch: Epoch, file_format: str = '{name}.dat'):
 
     # save sensor/motor states during the simulation
     with open(file_format.format(name='stimulus'), 'w') as file:
-        json.dump(epoch.stimulus, file)
+        json.dump(instance.biography.stimulus, file)
     with open(file_format.format(name='response'), 'w') as file:
-        json.dump(epoch.response, file)
+        json.dump(instance.biography.response, file)
