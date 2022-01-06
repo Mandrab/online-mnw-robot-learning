@@ -29,8 +29,8 @@ def random(cortex: Cortex, body: EPuck, load: float) -> Thalamus:
     """Instantiate a random thalamus to connect the robot body to the brain."""
 
     # select actuator and sensors nodes from the available ones
-    motors = random_nodes(cortex.network, set(), len(body.motors))
-    illegal = minimum_distance_selection(motors, 2, True)(cortex.network, [], -1)
+    motors = random_nodes((graph := cortex.network), set(), len(body.motors))
+    illegal = minimum_distance_selection(motors, 2, True)(graph, [], -1)
     sensors = list(random_nodes(cortex.network, illegal, len(body.sensors)))
 
     # map nodes and transducers
