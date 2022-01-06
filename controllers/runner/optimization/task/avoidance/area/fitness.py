@@ -1,7 +1,7 @@
 from functools import reduce
 from math import sqrt
 from operator import sub
-from optimization.Fitness import Fitness
+from optimization.Fitness import Fitness as Base
 from robot.component import grounds
 from robot.component.Motor import Motor
 from utils import adapt
@@ -11,7 +11,7 @@ from world.Colors import Colors
 PENALTY = 100
 
 
-class AreaAvoidance(Fitness):
+class Fitness(Base):
     """
     Calculate the fitness depending on area avoidance capabilities. At each step
     the evaluator calculate fitness according to the following formula:

@@ -1,10 +1,10 @@
-from optimization.Fitness import Fitness
+from optimization.Fitness import Fitness as Base
 from robot.component import grounds
 from utils import adapt
 from world.Colors import Colors
 
 
-class TMaze(Fitness):
+class Fitness(Base):
     """
     Calculate the fitness depending on the capability of reach the end of the
     maze and staying there as long as possible. At each step the evaluator

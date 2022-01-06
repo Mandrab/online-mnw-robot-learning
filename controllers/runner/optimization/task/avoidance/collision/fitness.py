@@ -1,12 +1,12 @@
 from functools import reduce
 from math import sqrt
 from operator import sub
-from optimization.Fitness import Fitness
+from optimization.Fitness import Fitness as Base
 from robot.component.Motor import Motor
 from utils import adapt
 
 
-class CollisionAvoidance(Fitness):
+class Fitness(Base):
     """Calculate the fitness depending on collision avoidance capabilities"""
 
     fitness: float = 0

@@ -1,19 +1,19 @@
 from functools import reduce
 from math import sqrt
 from operator import add
-from optimization.Fitness import Fitness
-from robot.epuck import EPuck
+from optimization.Fitness import Fitness as Base
+from robot.body import EPuck
 
 
-class Distance(Fitness):
+class Fitness(Base):
     """Calculate the distance travelled by the robot"""
 
     # travelled distance
-    distance: float = .0
+    distance: float = 0.0
 
     def __init__(self, robot: EPuck):
         """Initialize the evaluator and save the robot instance"""
-        Fitness.__init__(self, robot)
+        Base.__init__(self, robot)
 
         # get robot node and get its position field
         self.translation = robot.getFromDef('evolvable').getField('translation')
