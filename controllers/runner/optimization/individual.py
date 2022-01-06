@@ -31,7 +31,7 @@ def live(individual: Individual, duration: int):
         individual.biography.stimulus.append(stimulus)
         individual.biography.response.append(response)
 
-    logger.info('fitness:', individual.biography.evaluator.value())
+    logger.info(f'fitness: {individual.biography.evaluator.value()}')
 
 
 def evolve(
