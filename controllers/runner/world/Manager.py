@@ -1,4 +1,4 @@
-from robot.epuck import EPuck
+from robot.body import EPuck
 from typing import List
 
 
