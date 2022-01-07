@@ -3,12 +3,13 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import scipy.stats as stats
 
-from robot.conductor import Conductor
+from robot.cortex import Cortex
 from nanowire_network_simulator import backup, stimulate, Evolution, plot
 from os import listdir
 from os.path import join, isfile
 from scipy.signal import savgol_filter
-from analysis import collapse_history
+from analysis import collapse_history, evaluate
+from robot.thalamus import Thalamus
 
 DIRECTORY = 'connections/controllers_proximity/'
 CONFIGURATION_INDEX = 0
@@ -50,8 +51,7 @@ actuators = connections['outputs']
 
 def file_import(name):
     with open(name, 'r') as file:
-        result = json.loads(file.read())
-    return result
+        return json.loads(file.read())
 
 
 # get sensors readings and motors outputs
@@ -229,21 +229,21 @@ plt.show()
 inputs = [(i, 0) for i in sensors.values()]
 outputs = {(i, 100) for i in actuators.values()}
 
-c = Conductor(
-    graph, datasheet, wires,
-    sensors=sensors, actuators=dict(actuators)
-)
+cortex = Cortex(graph, datasheet, wires)
+thalamus = Thalamus(sensors, actuators, sensitivity=100)
 
 
 def break_sensor(name: str):
     # reset the network state
     for _ in range(100):
-        c.evaluate(1e3, {'ps0': 0.0}, IR_RANGE, MOTOR_RANGE, 100)
+        evaluate(cortex, thalamus, {'ps0': 0.0}, 1e3, IR_RANGE, MOTOR_RANGE)
 
     commands = []
     for stimulus in i_signals:
         stimulus = {k: v for k, v in stimulus.items() if k != name}
-        commands += [c.evaluate(0.1, stimulus, IR_RANGE, MOTOR_RANGE, 100)]
+        commands += [
+            evaluate(cortex, thalamus, stimulus, 0.1, IR_RANGE, MOTOR_RANGE)
+        ]
 
     return commands
 
@@ -365,7 +365,7 @@ for _ in range(100):
 
 resistances = []
 for i_signal in i_signals:
-    c.evaluate(0.1, i_signal, IR_RANGE, MOTOR_RANGE, 100)
+    evaluate(cortex, thalamus, i_signal, 0.1, IR_RANGE, MOTOR_RANGE)
     resistances += [{
         motor_name: {
             sensor_name: nx.resistance_distance(

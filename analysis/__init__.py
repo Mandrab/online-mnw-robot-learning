@@ -82,18 +82,20 @@ def evaluate(
         cortex: Cortex,
         thalamus: Thalamus,
         stimulus: Dict[str, float],
-        time: float
+        time: float,
+        i_range: Tuple[float, float] = sensor_range,
+        o_range: Tuple[float, float] = motors_range
 ):
     graph, working_range = cortex.network, cortex.working_range
 
     read = {thalamus.sensors[s]: v for s, v in stimulus.items()}
-    read = [(k, adapt(v, sensor_range, working_range)) for k, v in read.items()]
+    read = [(k, adapt(v, i_range, working_range)) for k, v in read.items()]
     load = [(pin, thalamus.sensitivity) for pin in thalamus.motors.values()]
 
     stimulate(graph, cortex.datasheet, time, read, load, set())
 
     outs = [(m, graph.nodes[p]['V']) for m, p in thalamus.motors.items()]
-    return {k: adapt(v, working_range, motors_range) for k, v in outs}
+    return {k: adapt(v, working_range, o_range) for k, v in outs}
 
 
 logger.propagate = False
