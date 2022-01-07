@@ -29,7 +29,7 @@ def new(datasheet: Datasheet) -> Cortex:
     """Get a device represented by the given datasheet and initialize it."""
 
     graph, wires = minimum_viable_network(datasheet)
-    initialize_graph_attributes(graph,set(), set(), datasheet.Y_min)
+    initialize_graph_attributes(graph, set(), set(), datasheet.Y_min)
     voltage_initialization(graph, {next(iter(graph.nodes))}, set())
     return Cortex(graph, datasheet, wires)
 
