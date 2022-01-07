@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 
 from analysis import *
+from networkx import Graph
 
 
 ################################################################################
@@ -16,12 +17,20 @@ from analysis import *
 # oscillate in a chaotic way. This happens, for example, for the 0.4 Hz
 # frequency. An analysis of the 'conductance-signal' shows indeed that no
 # repetition appears in it, at least in the short period.
+# Note: if we stimulate every 0.1s, alternating high and low inputs and
+# increasing the time between the high ones (e.g. high, low, ..., low, high,
+# etc.), the values for which the behaviour is seen are a bit lower. This is
+# probably due to imprecision in the simulator. However, the behaviour is the
+# same (order, chaos, order), and the difference can thus be ignored.
+# Finally, the behaviour of the conductance depends also from the topology of
+# the network. This make the system harder to configure and a overall critic
+# value hard to find.
 
 def period_length(
-        samples,
+        samples: Iterable[float],
         min_length: int,
         max_length: int,
-        tolerance: float = 0.0
+        tolerance: float = .0
 ):
     """
     Parameters:
@@ -51,7 +60,7 @@ def period_length(
         considered a repetition/period)
     """
     for distance in range(1, max_length + 1):
-        if len(samples) - distance < min_length:
+        if len(list(samples)) - distance < min_length:
             return -1
         diffs = [a-b for a, b in zip(samples, samples[distance:])]
         if len(diffs) > 0 and all(abs(d) <= tolerance for d in diffs):
@@ -65,29 +74,21 @@ ax = main.subplots(1, 1)
 axs = iter(other.subplots(4, 2))
 single_ax, zoom_ax = None, None
 
-delay_range = [1, 2.5, 3, 10]
+delay_range = [1.0, 2.5, 3.0, 10.0]
 colors = ['b', 'tab:orange', 'g', 'r']
 iterations = range(250)
 
 
-def average_conductance(controller):
-    avg_conductances = []
-    stimulus = {'s': max(sensor_range)}
-    for _ in iterations:
-        c.load = 1
-        controller.evaluate(delay, stimulus, sensor_range, motors_range)
-        avg_conductances += [
-            sum([
-                    controller.network[n1][n2]['Y']
-                    for n1, n2 in controller.network.edges()
-            ]) / controller.network.number_of_edges()
-        ]
-    return avg_conductances
+def average_conductance(cortex: Cortex, thalamus: Thalamus) -> Iterable[float]:
+    def step(_: int, g: Graph = cortex.network) -> float:
+        evaluate(cortex, thalamus, {'s': max(sensor_range)}, delay)
+        return sum(g[n1][n2]['Y'] for n1, n2 in g.edges) / g.number_of_edges()
+    return list(map(step, iterations))
 
 
 for delay, color in zip(delay_range, colors):
-    c.network = graph.copy()
-    conductances = average_conductance(c)
+    cortex, thalamus = generate(load=1, seed=1234)
+    conductances = average_conductance(cortex, thalamus)
     ax.plot(conductances[:50], color=color, label=f'{round(1 / delay, 2)}Hz')
     single_ax, zoom_ax = next(axs)
     single_ax.plot(conductances[:30], color=color)
@@ -100,12 +101,9 @@ for delay, color in zip(delay_range, colors):
     position.x0 = 0.5
     zoom_ax.set_position(position)
 
-    print('Period length (-1 = no period): ', period_length(
-        conductances[50:],
-        min_length=10,
-        max_length=1000,
-        tolerance=max(conductances[50:]) * 0.01  # can differ 1% of max value
-    ))
+    tolerance = max(conductances[50:]) * .01   # can differ 1% of max value
+    period = period_length(conductances[50:], 100, 250, tolerance)
+    print('Period length: ' + ('not periodic' if period == -1 else str(period)))
 
 position = ax.get_position()
 position.x0 = 0.2
@@ -127,7 +125,6 @@ plt.title(
     y=4.8, x=-1.1
 )
 plt.show()
-
 
 ################################################################################
 # CONDUCTANCE ANALYSIS IN DENSITY CHANGES
@@ -156,12 +153,12 @@ iterations = range(50)
 max_conductances = []
 
 for density, (wires, size, length) in densities.items():
-    graph, c, _1, _2 = generate(Datasheet(
+    cortex, thalamus = generate(Datasheet(
         wires_count=wires,
         Lx=size, Ly=size,
         mean_length=length, std_length=length * 0.35
-    ))
-    conductances = average_conductance(c)
+    ), load=1)
+    conductances = average_conductance(cortex, thalamus)
     max_conductances += [max(conductances)]
     ax.plot(conductances, label=f'Density {density}')
 
@@ -186,38 +183,32 @@ plt.show()
 # This exclude the 'stability-reaching' period, discarding the first iterations'
 # results.
 
-plt.figure()
+ax = plt.figure().subplots()
 
-delay_range = [_ / 100.0 for _ in range(1, 1750, 1)]
+delay_range = [_ / 100.0 for _ in range(1, 1750)]
 iterations = 250
-stability_discard = 200
+discard = 200   # discard initial values when the network converge to stability
+labels_count = round(len(delay_range) / 7)
 
 for delay in delay_range:
-    c.network = graph.copy()
-    conductances = []
-    for _ in range(iterations):
-        c.load = 1
-        c.evaluate(delay, {'s': sensor_range[1]}, sensor_range, motors_range)
-        conductances += [
-            sum(
-                [c.network[n1][n2]['Y'] < 0.01 for n1, n2 in c.network.edges()]
-            ) / c.network.number_of_edges()
-        ]
-    conductances = conductances[stability_discard:]
-    plt.plot(
-        [delay] * (iterations - stability_discard),
-        conductances,
-        'ko',
-        markersize=1
-    )
+    cortex, thalamus = generate(load=1, seed=1234)
 
-plt.ylabel('average conductivity')
-plt.xlabel('relaxation time/frequency [s/Hz]')
-labels = [
-    (i, f'{d}/{round(1.0/d, 2)}')
-    for i, d in enumerate(delay_range) if not i % 350
-]
+    def step(_: int, g: Graph = cortex.network) -> float:
+        evaluate(cortex, thalamus, {'s': sensor_range[1]}, delay)
+        return sum(g[a][b]['Y'] < .01 for a, b in g.edges) / g.number_of_edges()
+    conductances = list(map(step, range(iterations)))[discard:]
+    ax.plot([delay] * (iterations - discard), conductances, 'ko', markersize=1)
+
+ax.set(xlabel='relaxation time/frequency [s/Hz]', ylabel='average conductivity')
+labels = [f'{d} s\n{round(1.0/d, 2)} Hz' for d in delay_range]
+labels = [(i, l) for i, l in enumerate(labels) if i % labels_count == 0]
 positions = [p for p, _ in labels]
 labels = [l for _, l in labels]
+
+plt.title(
+    'Average conductance after continuous stimulation\n'
+    'at different frequencies'
+)
 plt.xticks(positions, labels)
+plt.tight_layout(pad=1.5)
 plt.show()

@@ -1,5 +1,6 @@
 import random
 
+from logger import logger
 from robot.component import IRSensor
 from robot.component.motor import Motor
 from functools import reduce
@@ -7,14 +8,16 @@ from nanowire_network_simulator.model.device import Datasheet
 from nanowire_network_simulator import stimulate
 from robot.cortex import new as new_cortex, Cortex
 from robot.thalamus import random as random_thalamus, Thalamus
-from typing import Iterable, Dict
+from typing import Iterable, Dict, Tuple
 from utils import adapt
 
-random.seed(1234)
-
-
-class Placeholder:
-    pass
+default_datasheet: Datasheet = Datasheet(
+    wires_count=100,
+    Lx=30, Ly=30,
+    mean_length=10, std_length=10 * 0.35
+)
+sensor_range = IRSensor.range(IRSensor())
+motors_range = Motor.range(reverse=False)
 
 
 def collapse_history(data: Iterable):
@@ -26,11 +29,22 @@ def collapse_history(data: Iterable):
     return reduce(lambda a, b: {k: a.get(k, []) + [b[k]] for k in b}, data, {})
 
 
-def generate(data: Datasheet, load: float = 0):
+class Placeholder:
+    pass
+
+
+def generate(
+        data: Datasheet = default_datasheet,
+        load: float = 0,
+        seed: int = None
+) -> Tuple[Cortex, Thalamus]:
     """
     Generate a device, a conductor and a set of connections to instantiate and
     perform experiments in a shorter and cleaner way.
     """
+    if seed:
+        random.seed(seed)
+
     cortex = new_cortex(data)
 
     placeholder = Placeholder()
@@ -42,7 +56,11 @@ def generate(data: Datasheet, load: float = 0):
     return cortex, thalamus
 
 
-def copy(cortex: Cortex, thalamus: Thalamus, load: float = None):
+def copy(
+        cortex: Cortex,
+        thalamus: Thalamus,
+        load: float = None
+) -> Tuple[Cortex, Thalamus]:
     """
     Generate a device, a conductor and a set of connections to instantiate and
     perform experiments in a shorter and cleaner way.
@@ -63,27 +81,19 @@ def copy(cortex: Cortex, thalamus: Thalamus, load: float = None):
 def evaluate(
         cortex: Cortex,
         thalamus: Thalamus,
-        input: Dict[str, float],
+        stimulus: Dict[str, float],
         time: float
 ):
-    graph, motors, range = cortex.network, thalamus.motors, cortex.working_range
+    graph, working_range = cortex.network, cortex.working_range
 
-    read = {thalamus.sensors[s]: v for s, v in input.items()}
-    read = [(k, adapt(v, sensor_range, range)) for k, v in read.items()]
-    load = [(pin, thalamus.sensitivity) for pin in motors.values()]
+    read = {thalamus.sensors[s]: v for s, v in stimulus.items()}
+    read = [(k, adapt(v, sensor_range, working_range)) for k, v in read.items()]
+    load = [(pin, thalamus.sensitivity) for pin in thalamus.motors.values()]
 
     stimulate(graph, cortex.datasheet, time, read, load, set())
 
-    outs = [(m, graph.nodes[p]['V']) for m, p in motors.items()]
-    return {k: adapt(v, range, motors_range) for k, v in outs}
+    outs = [(m, graph.nodes[p]['V']) for m, p in thalamus.motors.items()]
+    return {k: adapt(v, working_range, motors_range) for k, v in outs}
 
 
-datasheet = Datasheet(
-    wires_count=100,
-    Lx=30, Ly=30,
-    mean_length=10, std_length=10 * 0.35
-)
-cortex, thalamus = generate(datasheet)
-
-sensor_range = IRSensor.range(IRSensor())
-motors_range = Motor.range(reverse=False)
+logger.propagate = False
