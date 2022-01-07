@@ -39,9 +39,9 @@ from analysis import *
 # a person or animal get used to harsh life conditions, responding weakly to
 # stimulus that it started to get used to.
 
-def network_states(signal, cortex, thalamus):
+def network_states(signal: Iterable[float]):
     # stimulate the first graph with the signal
-    cortex, thalamus = copy(cortex, thalamus, load=100)
+    cortex, thalamus = generate(load=100, seed=1234)
 
     for value in signal:
         value = adapt(value, out_range=sensor_range)
@@ -51,7 +51,7 @@ def network_states(signal, cortex, thalamus):
     return sum(conductance) / len(conductance), max(conductance)
 
 
-def __influence(iteration_distances, cortex, thalamus):
+def __influence(iteration_distances):
     fig = plt.figure(figsize=(12, 10))
     main, other = fig.subfigures(2, 1, height_ratios=[2, 3])
 
@@ -79,8 +79,8 @@ def __influence(iteration_distances, cortex, thalamus):
 
     for distance in iteration_distances:
         s1, s2 = signals(distance)
-        statistics_1 += [network_states(s1, cortex, thalamus)]
-        statistics_2 += [network_states(s2, cortex, thalamus)]
+        statistics_1 += [network_states(s1)]
+        statistics_2 += [network_states(s2)]
 
     def collapse(a, b): return tuple([e[0] + [e[1]] for e in zip(a, b)])
     statistics_1 = reduce(collapse, statistics_1, ([], [], []))
@@ -116,7 +116,7 @@ def __influence(iteration_distances, cortex, thalamus):
         mean_conductance = []
 
         # stimulate the first graph with the signal
-        cortex, thalamus = copy(cortex, thalamus, load=100)
+        cortex, thalamus = generate(load=100, seed=1234)
 
         for value in signal:
             value = adapt(value, out_range=sensor_range)
@@ -132,16 +132,17 @@ def __influence(iteration_distances, cortex, thalamus):
         left_ax.set(ylabel='Conductance')
 
         plot.conductance_map(fig, right_ax, Evolution(
-            datasheet,
+            default_datasheet,
             wires_dict={}, delta_time=0.1, grounds=set(),
             loads={(a, 1) for a in thalamus.motors.values()},
             network_instances=[
                 (cortex.network, [(s, 1) for s in thalamus.sensors.values()])
-            ]))
+            ]
+         ))
 
     plt.suptitle('Network conductance according to different input sequences')
     plt.subplots_adjust(wspace=.35, hspace=.45)
     plt.show()
 
 
-__influence([*range(0, 25, 1)], cortex, thalamus)
+__influence([*range(0, 25, 1)])
