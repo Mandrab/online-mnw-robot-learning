@@ -1,15 +1,20 @@
 import random
 
 from robot.component import IRSensor
-from robot.component.Motor import Motor
-from robot.conductor import Conductor
+from robot.component.motor import Motor
 from functools import reduce
 from nanowire_network_simulator.model.device import Datasheet
-from nanowire_network_simulator import minimum_viable_network, random_nodes
-from nanowire_network_simulator import minimum_distance_selection
-from typing import Iterable
+from nanowire_network_simulator import stimulate
+from robot.cortex import new as new_cortex, Cortex
+from robot.thalamus import random as random_thalamus, Thalamus
+from typing import Iterable, Dict
+from utils import adapt
 
 random.seed(1234)
+
+
+class Placeholder:
+    pass
 
 
 def collapse_history(data: Iterable):
@@ -21,26 +26,56 @@ def collapse_history(data: Iterable):
     return reduce(lambda a, b: {k: a.get(k, []) + [b[k]] for k in b}, data, {})
 
 
-def generate(data: Datasheet):
+def generate(data: Datasheet, load: float = 0):
+    """
+    Generate a device, a conductor and a set of connections to instantiate and
+    perform experiments in a shorter and cleaner way.
+    """
+    cortex = new_cortex(data)
+
+    placeholder = Placeholder()
+    placeholder.sensors = ['s']
+    placeholder.motors = ['m']
+
+    thalamus = random_thalamus(cortex, placeholder, load)
+
+    return cortex, thalamus
+
+
+def copy(cortex: Cortex, thalamus: Thalamus, load: float = None):
     """
     Generate a device, a conductor and a set of connections to instantiate and
     perform experiments in a shorter and cleaner way.
     """
 
-    network, _ = minimum_viable_network(data)
+    cortex = Cortex(cortex.network.copy(), cortex.datasheet)
 
-    conductor = Conductor(network, data)
+    placeholder = Placeholder()
+    placeholder.sensors = ['s']
+    placeholder.motors = ['m']
 
-    motors = random_nodes(network, set())
-    conductor.actuators = dict(zip(['m'], motors))
+    load = load if load else thalamus.sensitivity
+    thalamus = Thalamus(thalamus.sensors, thalamus.motors, load)
 
-    neighbor = minimum_distance_selection(motors, 2, True)(network, list(), -1)
-    inputs = [*random_nodes(network, neighbor)]
-    conductor.sensors = dict(zip(['s'], inputs))
+    return cortex, thalamus
 
-    conductor.initialize()
 
-    return network, conductor, motors, inputs
+def evaluate(
+        cortex: Cortex,
+        thalamus: Thalamus,
+        input: Dict[str, float],
+        time: float
+):
+    graph, motors, range = cortex.network, thalamus.motors, cortex.working_range
+
+    read = {thalamus.sensors[s]: v for s, v in input.items()}
+    read = [(k, adapt(v, sensor_range, range)) for k, v in read.items()]
+    load = [(pin, thalamus.sensitivity) for pin in motors.values()]
+
+    stimulate(graph, cortex.datasheet, time, read, load, set())
+
+    outs = [(m, graph.nodes[p]['V']) for m, p in motors.items()]
+    return {k: adapt(v, range, motors_range) for k, v in outs}
 
 
 datasheet = Datasheet(
@@ -48,7 +83,7 @@ datasheet = Datasheet(
     Lx=30, Ly=30,
     mean_length=10, std_length=10 * 0.35
 )
-graph, c, actuators, sensors = generate(datasheet)
+cortex, thalamus = generate(datasheet)
 
 sensor_range = IRSensor.range(IRSensor())
 motors_range = Motor.range(reverse=False)
