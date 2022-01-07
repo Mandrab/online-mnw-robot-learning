@@ -29,10 +29,6 @@ def collapse_history(data: Iterable):
     return reduce(lambda a, b: {k: a.get(k, []) + [b[k]] for k in b}, data, {})
 
 
-class Placeholder:
-    pass
-
-
 def generate(
         data: Datasheet = default_datasheet,
         load: float = 0,
@@ -47,33 +43,13 @@ def generate(
 
     cortex = new_cortex(data)
 
+    class Placeholder:
+        pass
     placeholder = Placeholder()
     placeholder.sensors = ['s']
     placeholder.motors = ['m']
 
     thalamus = random_thalamus(cortex, placeholder, load)
-
-    return cortex, thalamus
-
-
-def copy(
-        cortex: Cortex,
-        thalamus: Thalamus,
-        load: float = None
-) -> Tuple[Cortex, Thalamus]:
-    """
-    Generate a device, a conductor and a set of connections to instantiate and
-    perform experiments in a shorter and cleaner way.
-    """
-
-    cortex = Cortex(cortex.network.copy(), cortex.datasheet)
-
-    placeholder = Placeholder()
-    placeholder.sensors = ['s']
-    placeholder.motors = ['m']
-
-    load = load if load else thalamus.sensitivity
-    thalamus = Thalamus(thalamus.sensors, thalamus.motors, load)
 
     return cortex, thalamus
 
