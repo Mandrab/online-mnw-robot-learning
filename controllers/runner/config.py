@@ -26,7 +26,7 @@ import random
 
 from datetime import datetime
 from itertools import product
-from logger import logger, set_logger
+from logger import logger, Settings, setup
 from optimization.task import Tasks, Task
 from robot.body import EPuck
 
@@ -79,7 +79,7 @@ CONFIGURATIONS_LOCATION = '../../res/configuration'
 SAVING_FOLDER = datetime.today().strftime('%Y-%m-%d.%H%M%S%f')
 os.mkdir(save_path := os.path.join(CONFIGURATIONS_LOCATION, SAVING_FOLDER))
 
-set_logger(os.path.join(save_path, 'log'))
+setup(logger, Settings(path=save_path, plot_mode=Settings.Mode.SHOW))
 logger.info(
     '-' * 80 + '\n' +
     f'Running simulation of task `{task_name}`\n' +
