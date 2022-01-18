@@ -80,4 +80,4 @@ def log_plot(settings: Settings, plt: plot):
     plt.savefig(plot_name)
 
 
-logger: logging.Logger = logging.getLogger(NAME)
+logger = logging.getLogger(NAME)
