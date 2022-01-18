@@ -5,6 +5,7 @@ venv/
 *.dat
 *.mp4
 *.pyc
+*.png
 *.wbproj
 log
 # EXCEPTIONS
