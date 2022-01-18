@@ -1,0 +1,47 @@
+@startuml robot_classdiagram
+
+hide methods
+
+' robot individual
+class Robot
+class Cortex {
+    network: Graph
+    datasheet: Datasheet
+    wires: Dict
+    working_range: Tuple[float, float]
+}
+class EPuck
+class Thalamus {
+    sensors: Dict[str, int]
+    motors: Dict[str, int]
+    sensitivity: float = 1e6
+}
+class Frequency {
+   hz_value: float
+}
+
+' components
+class Motor
+class Sensor
+class GroundSensor
+class IRSensor
+
+Robot o-- Cortex
+Robot o-- EPuck
+Robot o-- Thalamus
+
+EPuck *-- Sensor
+EPuck *-- Motor
+EPuck *-- Frequency
+
+Sensor <|-- GroundSensor
+Sensor <|-- IRSensor
+
+hide Robot members
+hide EPuck members
+hide Motor members
+hide Sensor members
+hide GroundSensor members
+hide IRSensor members
+
+@enduml
