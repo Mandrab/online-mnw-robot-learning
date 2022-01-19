@@ -1,7 +1,6 @@
 import json
 
 from nanowire_network_simulator import backup
-from nanowire_network_simulator.model.device import Datasheet
 from nanowire_network_simulator.model.device.datasheet import factory as ds
 from optimization.biography import Biography
 from optimization.individual import Individual
@@ -9,22 +8,14 @@ from optimization.simulation import Simulation
 from optimization.task import Task
 from os import listdir
 from os.path import join, isfile, exists
-from robot.cortex import new as new_cortex
-from robot.thalamus import random as random_thalamus
+from robot.cortex import new as new_cortex, Cortex
+from robot.thalamus import random as random_thalamus, Thalamus
 from robot.body import EPuck
 from typing import Iterable, Tuple
 
 DEVICE_SIZE = 50
 WIRES_LENGTH = 10.0
 READING_FOLDER = 'controllers/'
-
-
-def individual(data: Tuple[EPuck, float, Datasheet, Task]) -> Individual:
-    robot, load, datasheet, task = data
-    cortex = new_cortex(datasheet)
-    thalamus = random_thalamus(cortex, robot, load)
-    biography = Biography(task.evaluator(robot))
-    return Individual(robot, cortex, thalamus, biography)
 
 
 def new_simulations(
@@ -46,7 +37,11 @@ def new_simulations(
         density, load, seed = setting
         datasheet = ds.from_density(density, size, wires_length, seed)
 
-        elite = individual((robot, load, datasheet, task))
+        cortex = new_cortex(datasheet)
+        thalamus = random_thalamus(cortex, robot, load)
+        biography = Biography(task.evaluator(robot))
+        elite = Individual(robot, cortex, thalamus, biography)
+
         return Simulation(elite, task, epoch_count, epoch_duration, e_threshold)
 
     # lazily generate a simulation for each setting and return them
@@ -97,7 +92,12 @@ def import_simulations(
     # instantiate simulation with the given controller/device
     def simulation(settings: Tuple) -> Simulation:
         graph, datasheet, wires, io = settings
-        elite = individual((robot, io['load'], datasheet, task))
+
+        cortex = Cortex(graph, datasheet, wires)
+        thalamus = Thalamus(io['inputs'], io['outputs'], io['load'])
+        biography = Biography(task.evaluator(robot))
+        elite = Individual(robot, cortex, thalamus, biography)
+
         return Simulation(elite, task, epoch_count, epoch_duration, e_threshold)
 
     # return a lazy mapping to the simulations
