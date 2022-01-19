@@ -21,12 +21,14 @@ The required process is the following:
              \
                -- seed -- device --[evolution path N]-- best connection, fitness
 """
+import logging
 import os
 import random
 
 from datetime import datetime
 from itertools import product
 from logger import logger, Settings, setup
+from nanowire_network_simulator import LOGGER_NAME as NNS_LOGGER_NAME
 from optimization.task import Tasks, Task
 from robot.body import EPuck
 
@@ -80,8 +82,9 @@ SAVING_FOLDER = datetime.today().strftime('%Y-%m-%d.%H%M%S%f')
 os.mkdir(save_path := os.path.join(CONFIGURATIONS_LOCATION, SAVING_FOLDER))
 
 setup(logger, Settings(path=save_path, plot_mode=Settings.Mode.SHOW))
+setup(logging.getLogger(NNS_LOGGER_NAME), Settings(path=save_path))
 logger.info(
-    '-' * 80 + '\n' +
+    '-' * 47 + '\n' +
     f'Running simulation of task `{task_name}`\n' +
     f'Tested densities: {sorted(set(densities))}\n' +
     f'Tested loads: [{", ".join(map("{:.0e}".format, loads))}]\n' +
