@@ -67,7 +67,7 @@ def setup(instance: logging.Logger, settings: Settings):
 def log_plot(settings: Settings, plt: plot):
     """
     Logs a matplotlib plot. The logging follows the configurations specified in
-    the 'configuration' parameter and plots the given figure, 'plt'.
+    the 'settings' parameter and plots the given figure, 'plt'.
 
     :parameter settings: the settings for the plot
     :parameter plt is the matplotlib plot/figure
@@ -77,15 +77,28 @@ def log_plot(settings: Settings, plt: plot):
         return plt.close()
     elif settings.plot_mode == Settings.Mode.SHOW:
         return plt.show()
-    elif settings.plot_mode == Settings.Mode.ALL:
-        plt.show()
 
     plot_name = settings.path + settings.plot_file.format(idx=settings.counter)
     settings.counter += 1
     plt.savefig(plot_name)
 
+    if settings.plot_mode == Settings.Mode.ALL:
+        plt.show()
+
 
 def log_cortex_plot(settings: Settings, robot: Robot):
+    """
+    Logs the cortex state of an individual. The logging follows the
+    configurations specified in the 'settings' parameter and plots the graph
+    representation of the network.
+
+    :parameter settings: the settings for the plot
+    :parameter robot the 'owner' of the cortex to plot
+    """
+
+    if settings.plot_mode == Settings.Mode.NONE:
+        return
+
     body, cortex, thalamus = robot.body, robot.cortex, robot.thalamus
     evolution = Evolution(
         cortex.datasheet,
