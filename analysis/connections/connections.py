@@ -316,7 +316,7 @@ plt.show()
 e = Evolution(datasheet, wires, -1, set(), outputs, [(graph, inputs)])
 
 fig, ax = plt.subplots(figsize=(9.2, 5))
-plot.conductance_map(fig, ax, e)
+plot.conductance_distribution(fig, ax, e)
 
 # invert dictionary from str -> int to int -> str
 labels = {}
