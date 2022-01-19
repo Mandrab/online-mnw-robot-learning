@@ -46,9 +46,12 @@ def live(instance: Individual, duration: int):
             # (re)set initial color of evaluator utils
             instance.biography.evaluator.initial_color = starting_color
 
+        # run the individual and save the biography for the step
         stimulus, response = run(instance)
         instance.biography.evaluator.update()
         instance.biography.stimulus.append(stimulus)
         instance.biography.response.append(response)
+
+        logger.cortex_plot(instance)
 
     logger.info('fitness: ' + str(instance.biography.evaluator.value()))

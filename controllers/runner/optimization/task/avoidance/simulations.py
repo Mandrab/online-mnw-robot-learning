@@ -46,10 +46,13 @@ def supplier(
                     world_manager.move(a, new_p, can_intersect=False)
                 world_manager.commit(ensure=True)
 
+            # run the individual and save the biography for the step
             stimulus, response = run(instance)
             instance.biography.evaluator.update()
             instance.biography.stimulus.append(stimulus)
             instance.biography.response.append(response)
+
+            logger.cortex_plot(instance)
 
         logger.info(f'fitness: {instance.biography.evaluator.value()}')
 

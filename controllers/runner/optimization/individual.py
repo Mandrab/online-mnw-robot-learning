@@ -26,10 +26,14 @@ def live(individual: Individual, duration: int):
 
     # iterate for the epoch duration
     for _ in range(duration):
+
+        # run the individual and save the biography for the step
         stimulus, response = run(individual)
         individual.biography.evaluator.update()
         individual.biography.stimulus.append(stimulus)
         individual.biography.response.append(response)
+
+        logger.cortex_plot(individual)
 
     logger.info(f'fitness: {individual.biography.evaluator.value()}')
 
