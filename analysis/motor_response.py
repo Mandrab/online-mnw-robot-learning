@@ -69,14 +69,13 @@ def __influence(values):
             default_datasheet,
             wires_dict={}, delta_time=s, grounds=set(),
             loads={(a, 1) for a in thalamus.motors.values()},
-            network_instances=[
-                (cortex.network, [
-                    (s, sensor_range[1])
-                    for s in thalamus.sensors.values()]
-                )
-            ])
+            network_instances=[(
+                cortex.network,
+                [(s, sensor_range[1]) for s in thalamus.sensors.values()]
+            )]
+        )
 
-        plot.conductance_map(fig, ax, e)
+        plot.conductance_distribution(fig, ax, e)
         ax.set_title(f'Conductance in {1 / s} Hz updated network')
 
     values_ax.set(xlabel='Sensors signals', ylabel='Motor outputs')
@@ -145,7 +144,7 @@ def __influence(values):
                 ])
             ])
 
-        plot.conductance_map(fig, ax, e)
+        plot.conductance_distribution(fig, ax, e)
         ax.set_title(f'Conductance in network with {value} Ohm load')
 
     values_ax.set(xlabel='Sensors signals', ylabel='Motor outputs')
@@ -207,7 +206,7 @@ def __influence(values):
                 ])
             ])
 
-        plot.conductance_map(fig, ax, e)
+        plot.conductance_distribution(fig, ax, e)
         ax.set_title(f'Conductance in network with {value.wires_count} wires')
 
     values_ax.set(xlabel='Sensors signals', ylabel='Motor outputs')
