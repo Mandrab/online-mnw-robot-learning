@@ -4,6 +4,10 @@ import logging
 import matplotlib.pyplot as plot
 import os
 
+from itertools import product
+from nanowire_network_simulator import Evolution, plot as plot_utils
+from robot.robot import Robot
+
 NAME = 'online-mnw-robot-learning'
 
 
@@ -46,12 +50,13 @@ def setup(instance: logging.Logger, settings: Settings):
     """
     Define/Set an output file for the logs. The file is specified by the logging
     settings. Moreover, set the logging style/format and the graph-plot
-    function.
+    functions.
 
     :parameter instance: of the logger to set
     :parameter settings: settings to apply to the logger
     """
     logger.plot = lambda plt: log_plot(settings, plt)
+    logger.cortex_plot = lambda robot: log_cortex_plot(settings, robot)
 
     file_path = os.path.join(settings.path, settings.log_file)
     handler = logging.FileHandler(file_path)
@@ -78,6 +83,19 @@ def log_plot(settings: Settings, plt: plot):
     plot_name = settings.path + settings.plot_file.format(idx=settings.counter)
     settings.counter += 1
     plt.savefig(plot_name)
+
+
+def log_cortex_plot(settings: Settings, robot: Robot):
+    body, cortex, thalamus = robot.body, robot.cortex, robot.thalamus
+    evolution = Evolution(
+        cortex.datasheet,
+        cortex.wires,
+        body.run_frequency.s,
+        loads=set(product(thalamus.motors.values(), [thalamus.sensitivity])),
+        network_instances=[(cortex.network, list())]
+    )
+    plt = plot_utils.plot(evolution, plot_utils.conductance_distribution)
+    log_plot(settings, plt)
 
 
 logger = logging.getLogger(NAME)
