@@ -81,8 +81,8 @@ CONFIGURATIONS_LOCATION = '../../res/configuration'
 SAVING_FOLDER = datetime.today().strftime('%Y-%m-%d.%H%M%S%f')
 os.mkdir(save_path := os.path.join(CONFIGURATIONS_LOCATION, SAVING_FOLDER))
 
-setup(logger, Settings(path=save_path, plot_mode=Settings.Mode.SHOW))
-setup(logging.getLogger(NNS_LOGGER_NAME), Settings(path=save_path))
+setup(logger, Settings(path=save_path + '/', plot_mode=Settings.Mode.SHOW))
+setup(logging.getLogger(NNS_LOGGER_NAME), Settings(path=save_path + '/'))
 logger.info(
     '-' * 47 + '\n' +
     f'Running simulation of task `{task_name}`\n' +
