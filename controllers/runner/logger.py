@@ -55,8 +55,8 @@ def setup(instance: logging.Logger, settings: Settings):
     :parameter instance: of the logger to set
     :parameter settings: settings to apply to the logger
     """
-    logger.plot = lambda plt: log_plot(settings, plt)
-    logger.cortex_plot = lambda robot: log_cortex_plot(settings, robot)
+    instance.plot = lambda plt: log_plot(settings, plt)
+    instance.cortex_plot = lambda robot: log_cortex_plot(settings, robot)
 
     file_path = os.path.join(settings.path, settings.log_file)
     handler = logging.FileHandler(file_path)
