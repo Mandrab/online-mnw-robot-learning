@@ -44,7 +44,7 @@ task_name: str = task.name
 task: Task = task.value
 
 # set if the world should have a dynamic behaviour (moving objects / obstacles)
-# TODO task.value[0].dynamic = False
+task.life_manager.dynamic = False
 
 # minimum fitness needed to evolve a configuration instead of creating a new one
 evolution_threshold = 100.0

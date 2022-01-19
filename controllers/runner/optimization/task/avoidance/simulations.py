@@ -14,7 +14,7 @@ UPDATE_TIME = 100
 def supplier(
         objects: Iterable[str],
         force_in_arena: Callable[[float], float],
-        dynamic: bool = False  # TODO
+        dynamic: bool = False
 ) -> Callable[[Individual, int], None]:
     """Returns a life management that can work with movable objects."""
 
@@ -40,7 +40,7 @@ def supplier(
                 delta = [[random() - 0.5, 0, random() - 0.5] for _ in range(6)]
                 delta = [[_ * multiplier for _ in p] for p in delta]
 
-            if dynamic:
+            if live.dynamic:
                 for a, p, d in zip(objects, positions, delta):
                     new_p = [*map(force_in_arena, map(sum, zip(p, d)))]
                     world_manager.move(a, new_p, can_intersect=False)
@@ -55,5 +55,7 @@ def supplier(
             logger.cortex_plot(instance)
 
         logger.info(f'fitness: {instance.biography.evaluator.value()}')
+
+    live.dynamic = dynamic
 
     return live
