@@ -17,7 +17,7 @@ class Robot:
     thalamus: Thalamus
 
 
-def run(instance: Robot) -> Tuple[Dict, Dict]:
+def run(instance: Robot) -> Tuple[Dict[str, float], Dict[str, float]]:
     """
     Execute a simulation step, stimulating the network with the sensors signals.
     Evaluate its response and use it to control the motors.
@@ -27,7 +27,7 @@ def run(instance: Robot) -> Tuple[Dict, Dict]:
     graph, datasheet = cortex.network, cortex.datasheet
     sensors, motors = thalamus.sensors, thalamus.motors
 
-    # webots has stopped/paused the simulation todo
+    # webots has stopped/paused the simulation
     if body.step(body.run_frequency.ms) == -1:
         return dict(), dict()
 
@@ -55,7 +55,7 @@ def run(instance: Robot) -> Tuple[Dict, Dict]:
         motor.speed = adapt(value, out_range=Motor.range(reverse=True))
 
     # return data for reference
-    return dict(reads), outs
+    return dict(zip(sensors.keys(), dict(reads).values())), outs
 
 
 def describe(robot: Robot):
