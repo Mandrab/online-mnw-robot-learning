@@ -25,7 +25,7 @@ def list_to_dict(data_dict, keys, f=lambda _: _):
 
 ALPHA_PARAMETER = 0.05
 
-with open(f'density/fitness.mw1.20211212.141649.json') as file:
+with open(f'fitness.mw1.20211212.141649.json') as file:
     data = json.load(file)
 
 fig = plt.figure(figsize=(10, 6))
@@ -85,7 +85,7 @@ plt.show()
 _0, fitness_file_name, *_1 = *sys.argv, None
 fitness_file_name = fitness_file_name or 'fitness.mw1.20211220.153556'
 
-with open(f'density/{fitness_file_name}.json') as file:
+with open(f'{fitness_file_name}.json') as file:
     data = json.load(file)
 
 fig = plt.figure(figsize=(10, 10))
