@@ -131,7 +131,7 @@ def __influence(iteration_distances):
         left_ax.tick_params(axis='y', labelcolor='tab:red')
         left_ax.set(ylabel='Conductance')
 
-        plot.conductance_map(fig, right_ax, Evolution(
+        plot.conductance_distribution(fig, right_ax, Evolution(
             default_datasheet,
             wires_dict={}, delta_time=0.1, grounds=set(),
             loads={(a, 1) for a in thalamus.motors.values()},
