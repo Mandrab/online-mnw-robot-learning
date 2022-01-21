@@ -2,17 +2,17 @@
 # Generate a partial template of the run simulation
 
 # configurations files
-CONFIGS=$(cat controllers/runner/config/simulation.py)
-ROBOT=$(cat controllers/runner/robot/epuck.py)
+CONFIGS=$(cat controllers/runner/config.py)
+ROBOT=$(cat controllers/runner/robot/body.py)
 UTILS=$(cat controllers/runner/optimization/utils.py)
 
 # get fields from configs
 DURATION=$(cat <<<"$CONFIGS" | awk -F 'epoch_duration = ' '$2{print $2}')
 EPOCHS=$(cat <<<"$CONFIGS" | awk -F 'epoch_count = ' '$2{print $2}')
-FITNESS=$(cat <<<"$CONFIGS" | awk -F 'MINIMUM_FITNESS = ' '$2{print $2}')
+FITNESS=$(cat <<<"$CONFIGS" | awk -F 'evolution_threshold = ' '$2{print $2}')
 REPLICA=$(cat <<<"$CONFIGS" | awk -F 'replica_count = ' '$2{print $2}')
 SEED=$(echo "$CONFIGS" | awk -F 'random.seed[(]' '$2{sub(")", ""); print $2}')
-TASK=$(cat <<<"$CONFIGS" | awk -F 'task = Tasks.' '$2{print $2}')
+TASK=$(cat <<<"$CONFIGS" | awk -F 'task: Tasks = Tasks.' '$2{print $2}')
 
 # get other fields
 FREQUENCY=$(cat <<<"$ROBOT" | awk -F 'hz_value=' '$2{sub(")", ""); print $2}')
@@ -27,7 +27,6 @@ END_DATE=$(grep -F '[' "$1" | tail -n 1 | awk -F '[|[[:space:]]' '{print $2}')
 END_TIME=$(grep -F '[' "$1" | tail -n 1 | awk '{print $2}')
 DENSITIES=$(awk -F 'densities: ' '$2{print $2}' < "$1")
 LOADS=$(awk -F 'loads: ' '$2{print $2}' < "$1")
-WORLD_FILE=$(awk -F 'Running simulation in ' '$2{print $2}' < "$1")
 
 # create readme file
 echo "\
@@ -39,7 +38,7 @@ End time: $END_TIME
 Configuration:
     1. task and world:
       - random seed: $SEED
-      - world: $WORLD_FILE
+      - world:
       - task: $TASK
     2. optimization:
       - replicas: $REPLICA
@@ -60,5 +59,5 @@ Configuration:
     5. others:
       - git-head hash: $GIT_HASH
 --------------------------------------------------------------------------------
-$(grep '^[fitness|Creation]' < "$1")
+$(grep '[fitness|Creation]' "$1" | awk -F '   ' '$2{print$2}')
 "
