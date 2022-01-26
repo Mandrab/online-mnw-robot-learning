@@ -6,7 +6,7 @@ import os
 
 from itertools import product
 from nanowire_network_simulator import Evolution, plot as plot_utils
-from robot.robot import Robot
+from robot.robot import Robot, unroll
 
 NAME = 'online-mnw-robot-learning'
 
@@ -99,12 +99,12 @@ def log_cortex_plot(settings: Settings, robot: Robot):
     if settings.plot_mode == Settings.Mode.NONE:
         return
 
-    body, cortex, thalamus = robot.body, robot.cortex, robot.thalamus
+    body, cortex, pyramid, thalamus = unroll(robot)
     evolution = Evolution(
         cortex.datasheet,
         cortex.wires,
         body.run_frequency.s,
-        loads=set(product(thalamus.motors.values(), [thalamus.sensitivity])),
+        loads=set(product(pyramid.mapping.values(), [pyramid.sensitivity])),
         network_instances=[(cortex.network, list())]
     )
     plt = plot_utils.plot(evolution, plot_utils.conductance_distribution)
