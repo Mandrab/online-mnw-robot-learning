@@ -79,7 +79,7 @@ def evolve_connections(
     return Thalamus(mapping, parent.attenuation)
 
 
-def describe(instance: Thalamus):
+def describe(instance: Thalamus) -> str:
     """Return a custom string representation of the object."""
 
-    return str('Sensor signal attenuation: {:.0e}'.format(instance.attenuation))
+    return f'Sensor signal attenuation: {instance.attenuation * 100}%'
