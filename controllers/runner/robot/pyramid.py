@@ -37,3 +37,9 @@ def evolve_sensitivity(parent: Pyramid) -> Pyramid:
 
     value = max(0.0, parent.sensitivity * gauss(1, 0.2))
     return Pyramid(parent.mapping, value)
+
+
+def describe(instance: Pyramid) -> str:
+    """Return a custom string representation of the object."""
+
+    return 'Motor load: {:.0e}'.format(instance.sensitivity)
