@@ -98,7 +98,8 @@ def import_simulations(
 
         cortex = Cortex(graph, datasheet, wires)
         pyramid = Pyramid(io['outputs'], io['load'])
-        thalamus = Thalamus(io['inputs'], io.get('attenuation', 0.0))
+        attenuation = dict(zip(inputs := io['inputs'], [.0] * len(inputs)))
+        thalamus = Thalamus(inputs, io.get('attenuation', attenuation))
         biography = Biography(task.evaluator(robot))
         elite = Individual(robot, cortex, pyramid, thalamus, biography)
 
@@ -120,7 +121,7 @@ def save(instance: Individual, file_format: str = '{name}.dat'):
             inputs=thalamus.mapping,
             outputs=pyramid.mapping,
             load=pyramid.sensitivity,
-            attenuation=thalamus.attenuation
+            attenuation=thalamus.multiplier
         ),
         file_format.format(name='datasheet'),
         file_format.format(name='network'),
