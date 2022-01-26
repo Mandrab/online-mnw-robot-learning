@@ -56,6 +56,9 @@ def run(instance: Robot) -> Tuple[Dict[str, float], Dict[str, float]]:
     reads = [(sensors[k], v) for k, v in reads.items() if k in sensors]
     reads = [(k, adapt(v, out_range=cortex.working_range)) for k, v in reads]
 
+    # attenuate the sensor signal according to thalamus definition
+    reads = [(k, v * (1 - thalamus.attenuation)) for k, v in reads]
+
     # define the pin-resistance/load pairs for the motors
     loads = [(pin, pyramid.sensitivity) for pin in nodes(motors)]
 
