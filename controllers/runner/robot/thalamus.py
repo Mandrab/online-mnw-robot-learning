@@ -31,7 +31,12 @@ class Thalamus:
     attenuation: float = 0.0
 
 
-def random(body: EPuck, cortex: Cortex, pyramid: Pyramid) -> Thalamus:
+def random(
+        body: EPuck,
+        cortex: Cortex,
+        pyramid: Pyramid,
+        attenuation: float = 0.0
+) -> Thalamus:
     """Instantiate a random thalamus to connect the robot body to the brain."""
 
     # select sensors nodes from the available ones
@@ -40,7 +45,7 @@ def random(body: EPuck, cortex: Cortex, pyramid: Pyramid) -> Thalamus:
     sensors = list(random_nodes(network, illegal, len(body.sensors)))
 
     # map nodes and transducers
-    return Thalamus(dict(zip(body.sensors, sensors)))
+    return Thalamus(dict(zip(body.sensors, sensors)), attenuation)
 
 
 def evolve_attenuation(parent: Thalamus) -> Thalamus:
