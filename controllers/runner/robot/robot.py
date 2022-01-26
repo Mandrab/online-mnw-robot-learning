@@ -49,15 +49,13 @@ def run(instance: Robot) -> Tuple[Dict[str, float], Dict[str, float]]:
     if body.step(body.run_frequency.ms) == -1:
         return dict(), dict()
 
-    # get normalized sensors readings: [0, 1]
-    reads = {s: s.read(normalize=True) for s in body.sensors}
-
-    # filter to get used sensors and get their readings in the correct range
-    reads = [(sensors[k], v) for k, v in reads.items() if k in sensors]
+    # get normalized sensors readings (range [0, 1]) and adapt to range [0-10]
+    reads = [(s, s.read(normalize=True)) for s in body.sensors]
     reads = [(k, adapt(v, out_range=cortex.working_range)) for k, v in reads]
 
-    # attenuate the sensor signal according to thalamus definition
-    reads = [(k, v * (1 - thalamus.attenuation)) for k, v in reads]
+    # attenuate the signals and filter non used sensors
+    reads = [(k, v * (1 - thalamus.multiplier.get(k, 0.0))) for k, v in reads]
+    reads = [(sensors[k], v) for k, v in reads if k in sensors]
 
     # define the pin-resistance/load pairs for the motors
     loads = [(pin, pyramid.sensitivity) for pin in nodes(motors)]
