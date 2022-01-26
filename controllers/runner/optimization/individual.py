@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from logger import logger
 from optimization.fitness import Fitness
 from optimization.biography import Biography
-from robot.robot import Robot, run
-from robot.thalamus import evolve as evolve_thalamus, random as random_thalamus
+from robot.robot import Robot, run, unroll
+from robot.thalamus import evolve_connections, evolve_attenuation, random
 
 
 @dataclass(frozen=True)
@@ -48,9 +48,10 @@ def evolve(
     otherwise generate a random new one.
     """
 
-    cortex, body, load = parent.cortex, parent.body, parent.thalamus.sensitivity
+    body, cortex, pyramid, thalamus = unroll(parent)
     if parent.fitness >= evolution_threshold:
-        thalamus = evolve_thalamus(cortex, parent.thalamus)
+        thalamus = evolve_connections(cortex, pyramid, thalamus)
+        thalamus = evolve_attenuation(thalamus)
     else:
-        thalamus = random_thalamus(cortex, body, load)
-    return Individual(body, cortex, thalamus, Biography(evaluator))
+        thalamus = random(body, cortex, pyramid)
+    return Individual(body, cortex, pyramid, thalamus, Biography(evaluator))
