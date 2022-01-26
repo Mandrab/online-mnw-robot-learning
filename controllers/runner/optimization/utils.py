@@ -8,9 +8,11 @@ from optimization.simulation import Simulation
 from optimization.task import Task
 from os import listdir
 from os.path import join, isfile, exists
-from robot.cortex import new as new_cortex, Cortex
-from robot.thalamus import random as random_thalamus, Thalamus
+from robot.robot import unroll
 from robot.body import EPuck
+from robot.cortex import new as new_cortex, Cortex
+from robot.pyramid import random as random_pyramid, Pyramid
+from robot.thalamus import random as random_thalamus, Thalamus
 from typing import Iterable, Tuple
 
 DEVICE_SIZE = 50
@@ -38,9 +40,10 @@ def new_simulations(
         datasheet = ds.from_density(density, size, wires_length, seed)
 
         cortex = new_cortex(datasheet)
-        thalamus = random_thalamus(cortex, robot, load)
+        pyramid = random_pyramid(robot, cortex, load)
+        thalamus = random_thalamus(robot, cortex, pyramid)
         biography = Biography(task.evaluator(robot))
-        elite = Individual(robot, cortex, thalamus, biography)
+        elite = Individual(robot, cortex, pyramid, thalamus, biography)
 
         return Simulation(elite, task, epoch_count, epoch_duration, e_threshold)
 
@@ -94,9 +97,10 @@ def import_simulations(
         graph, datasheet, wires, io = settings
 
         cortex = Cortex(graph, datasheet, wires)
-        thalamus = Thalamus(io['inputs'], io['outputs'], io['load'])
+        pyramid = Pyramid(io['outputs'], io['load'])
+        thalamus = Thalamus(io['inputs'])
         biography = Biography(task.evaluator(robot))
-        elite = Individual(robot, cortex, thalamus, biography)
+        elite = Individual(robot, cortex, pyramid, thalamus, biography)
 
         return Simulation(elite, task, epoch_count, epoch_duration, e_threshold)
 
@@ -107,12 +111,16 @@ def import_simulations(
 def save(instance: Individual, file_format: str = '{name}.dat'):
     """Save epoch information into files with the given format name"""
 
-    c, t = instance.cortex, instance.thalamus
+    _, cortex, pyramid, thalamus = unroll(instance)
 
     # save controller characteristics
     backup.save(
-        c.datasheet, c.network, c.wires,
-        dict(inputs=t.sensors, outputs=t.motors, load=t.sensitivity),
+        cortex.datasheet, cortex.network, cortex.wires,
+        dict(
+            inputs=thalamus.mapping,
+            outputs=pyramid.mapping,
+            load=pyramid.sensitivity
+        ),
         file_format.format(name='datasheet'),
         file_format.format(name='network'),
         file_format.format(name='wires'),
