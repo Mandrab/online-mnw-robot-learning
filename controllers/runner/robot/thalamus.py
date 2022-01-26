@@ -6,6 +6,7 @@ from robot.cortex import Cortex
 from robot.body import EPuck
 from robot.fiber import Fiber, nodes
 from robot.pyramid import Pyramid
+from typing import Dict
 
 
 @dataclass(frozen=True)
@@ -20,22 +21,21 @@ class Thalamus:
     # mappings that represents the sensors -> network-nodes relation
     mapping: Fiber = field(default_factory=dict)
 
-    # sensor/input signal attenuation. This represents the speculated property
+    # sensor/input signal multiplier. This represents the speculated property
     # of the thalamus to work as a low-pass filter and thus to perform some kind
-    # of pre-processing. In the given system, it represents a dampening/
-    # attenuation of the input signal.
-    # A value of 0 means that the signal is directly forwarded to the node of
-    # the network. An higher value cause the input signal to be lowered in its
-    # intensity. The value should be in the range [0-1] as to be easily
-    # multiplied to the input value to get the attenuation.
-    attenuation: float = 0.0
+    # of pre-processing. In the given system, it represents a positive or
+    # negative attenuation of the input signal.
+    # A value of 1 means that the signal is directly forwarded to the node of
+    # the network. An higher value cause the input signal to be increased in its
+    # intensity. The minimum value is 0, for which the signal is inhibited.
+    multiplier: Dict[str, float] = field(default_factory=dict)
 
 
 def random(
         body: EPuck,
         cortex: Cortex,
         pyramid: Pyramid,
-        attenuation: float = 0.0
+        standard_multiplier: float = 1.0
 ) -> Thalamus:
     """Instantiate a random thalamus to connect the robot body to the brain."""
 
@@ -43,6 +43,7 @@ def random(
     network, motors = cortex.network, set(nodes(pyramid.mapping))
     illegal = minimum_distance_selection(motors, 2, True)(network, [], -1)
     sensors = list(random_nodes(network, illegal, len(body.sensors)))
+    attenuation = dict((name, standard_multiplier) for name in body.sensors)
 
     # map nodes and transducers
     return Thalamus(dict(zip(body.sensors, sensors)), attenuation)
@@ -54,7 +55,8 @@ def evolve_attenuation(parent: Thalamus) -> Thalamus:
     gaussian mutation method.
     """
 
-    attenuation = min(1.0, max(0.0, parent.attenuation + gauss(0, 0.2)))
+    def update(v: float) -> float: return max(0.0, v * gauss(1, 0.2))
+    attenuation = dict((k, update(v)) for k, v in parent.multiplier.items())
     return Thalamus(parent.mapping, attenuation)
 
 
@@ -76,10 +78,11 @@ def evolve_connections(
         probability=0.3, minimum_mutants=1, maximum_mutants=4,
         viable_node_selection=selector
     )))
-    return Thalamus(mapping, parent.attenuation)
+    return Thalamus(mapping, parent.multiplier)
 
 
 def describe(instance: Thalamus) -> str:
     """Return a custom string representation of the object."""
 
-    return f'Sensor signal attenuation: {instance.attenuation * 100}%'
+    average = sum(instance.multiplier.values()) / len(instance.multiplier)
+    return f'Average sensor signal multiplication: {average * 100}%'
