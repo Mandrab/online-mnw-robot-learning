@@ -3,6 +3,8 @@ from nanowire_network_simulator import stimulate
 from robot.body import EPuck
 from robot.cortex import Cortex, describe as cortex2str
 from robot.component.motor import Motor
+from robot.fiber import nodes
+from robot.pyramid import Pyramid
 from robot.thalamus import Thalamus, describe as thalamus2str
 from typing import Dict, Tuple
 from utils import adapt
@@ -10,11 +12,27 @@ from utils import adapt
 
 @dataclass(frozen=True)
 class Robot:
-    """Represents the join of cortex, thalamus and body."""
+    """
+    Represents the body of the robot with its control system. The body parameter
+    represents the part of the individual that are not involved in performing
+    computations (e.g., motors). Although the sensors may be seen as an
+    exception, those are included in the body abstraction. The cortex contains
+    the nanowire-neural-network and consists in the main control center of the
+    robot. The pyramid contains the descending motor pathways that control the
+    actuators. The thalamus contains the ascending sensor pathways that bring
+    the signals to the cortex.
+    """
 
     body: EPuck
     cortex: Cortex
+    pyramid: Pyramid
     thalamus: Thalamus
+
+
+def unroll(instance: Robot) -> Tuple[EPuck, Cortex, Pyramid, Thalamus]:
+    """Return the tuple representing the robot"""
+
+    return instance.body, instance.cortex, instance.pyramid, instance.thalamus
 
 
 def run(instance: Robot) -> Tuple[Dict[str, float], Dict[str, float]]:
@@ -23,9 +41,9 @@ def run(instance: Robot) -> Tuple[Dict[str, float], Dict[str, float]]:
     Evaluate its response and use it to control the motors.
     """
 
-    body, cortex, thalamus = instance.body, instance.cortex, instance.thalamus
-    graph, datasheet = cortex.network, cortex.datasheet
-    sensors, motors = thalamus.sensors, thalamus.motors
+    body, cortex, pyramid, thalamus = unroll(instance)
+    network, datasheet = cortex.network, cortex.datasheet
+    sensors, motors = thalamus.mapping, pyramid.mapping
 
     # webots has stopped/paused the simulation
     if body.step(body.run_frequency.ms) == -1:
@@ -39,15 +57,15 @@ def run(instance: Robot) -> Tuple[Dict[str, float], Dict[str, float]]:
     reads = [(k, adapt(v, out_range=cortex.working_range)) for k, v in reads]
 
     # define the pin-resistance/load pairs for the motors
-    loads = [(pin, thalamus.sensitivity) for pin in motors.values()]
+    loads = [(pin, pyramid.sensitivity) for pin in nodes(motors)]
 
     # stimulate the network with the sensors inputs
-    stimulate(graph, datasheet, body.run_frequency.s, reads, loads, set())
+    stimulate(network, datasheet, body.run_frequency.s, reads, loads, set())
 
     # extract outputs from network and remap output values from 0, 10 to:
     #   -6.28, 6.28 for distance: 10 = far -> 6.28 = move straight
     #   6.28, -6.28 for proximity: 10 = near -> -6.28 = go away
-    outs = [(motor, graph.nodes[pin]['V']) for motor, pin in motors.items()]
+    outs = [(motor, network.nodes[pin]['V']) for motor, pin in motors.items()]
     outs = {k: adapt(v, in_range=cortex.working_range) for k, v in outs}
 
     # set the motors' speed according to its response
