@@ -35,8 +35,7 @@ def random(body: EPuck, cortex: Cortex, sensitivity: float) -> Pyramid:
 def evolve_sensitivity(parent: Pyramid) -> Pyramid:
     """Evolve the sensitivity of the motors/actuators (i.e., their load)."""
 
-    value = max(0.0, parent.sensitivity * gauss(1, 0.2))
-    return Pyramid(parent.mapping, value)
+    return Pyramid(parent.mapping, max(0.0, parent.sensitivity * gauss(1, 0.2)))
 
 
 def describe(instance: Pyramid) -> str:
