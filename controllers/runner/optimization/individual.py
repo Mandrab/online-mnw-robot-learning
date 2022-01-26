@@ -3,7 +3,7 @@ from logger import logger
 from optimization.fitness import Fitness
 from optimization.biography import Biography
 from robot.robot import Robot, run, unroll
-from robot.thalamus import evolve_connections, evolve_attenuation, random
+from robot.thalamus import evolve_connections, evolve_multiplier, random
 
 
 @dataclass(frozen=True)
@@ -51,7 +51,7 @@ def evolve(
     body, cortex, pyramid, thalamus = unroll(parent)
     if parent.fitness >= evolution_threshold:
         thalamus = evolve_connections(cortex, pyramid, thalamus)
-        thalamus = evolve_attenuation(thalamus)
+        thalamus = evolve_multiplier(thalamus)
     else:
         thalamus = random(body, cortex, pyramid)
     return Individual(body, cortex, pyramid, thalamus, Biography(evaluator))

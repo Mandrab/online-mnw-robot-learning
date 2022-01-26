@@ -45,21 +45,22 @@ def random(
     network, motors = cortex.network, set(nodes(pyramid.mapping))
     illegal = minimum_distance_selection(motors, 2, True)(network, [], -1)
     sensors = list(random_nodes(network, illegal, len(body.sensors)))
-    attenuation = {s: 1.0 + abs(gauss(0, 5)) for s in body.sensors}
+    multiplier = {s: 1.0 + abs(gauss(0, 5)) for s in body.sensors}
 
     # map nodes and transducers
-    return Thalamus(dict(zip(body.sensors, sensors)), attenuation)
+    return Thalamus(dict(zip(body.sensors, sensors)), multiplier)
 
 
-def evolve_attenuation(parent: Thalamus) -> Thalamus:
+def evolve_multiplier(parent: Thalamus) -> Thalamus:
     """
-    Evolve the attenuation of the sensors' inputs. The evolution uses the
+    Evolve the multiplier of the sensors' inputs. The evolution uses the
     gaussian mutation method.
     """
 
     def update(value: float) -> float: return max(0.0, value * gauss(1, 0.1))
-    attenuation = dict((k, update(v)) for k, v in parent.multiplier.items())
-    return Thalamus(parent.mapping, attenuation)
+    multiplier = dict((k, update(v)) for k, v in parent.multiplier.items())
+
+    return Thalamus(parent.mapping, multiplier)
 
 
 def evolve_connections(
