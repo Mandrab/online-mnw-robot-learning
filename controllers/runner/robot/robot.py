@@ -4,7 +4,7 @@ from robot.body import EPuck
 from robot.cortex import Cortex, describe as cortex2str
 from robot.component.motor import Motor
 from robot.fiber import nodes
-from robot.pyramid import Pyramid
+from robot.pyramid import Pyramid, describe as pyramid2str
 from robot.thalamus import Thalamus, describe as thalamus2str
 from typing import Dict, Tuple
 from utils import adapt
@@ -79,7 +79,11 @@ def run(instance: Robot) -> Tuple[Dict[str, float], Dict[str, float]]:
     return dict(zip(sensors.keys(), dict(reads).values())), outs
 
 
-def describe(robot: Robot):
+def describe(robot: Robot) -> str:
     """Return a custom string representation of the object."""
 
-    return str(cortex2str(robot.cortex) + ' ' + thalamus2str(robot.thalamus))
+    return ', '.join([
+        cortex2str(robot.cortex),
+        pyramid2str(robot.pyramid),
+        thalamus2str(robot.thalamus)
+    ])
