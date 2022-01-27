@@ -34,30 +34,35 @@ class Thalamus:
 def random(
         body: EPuck,
         cortex: Cortex,
-        pyramid: Pyramid
+        pyramid: Pyramid,
+        sigma: float = 0.3
 ) -> Thalamus:
     """
     Instantiate a random thalamus to connect the robot body to the brain. The
-    sensor multiplier is randomly chosen through use of a wide gaussian.
+    sensor multiplier is randomly chosen through use of a wide gaussian. The
+    default and suggested sigma is 0.3 for collision avoidance and t-maze tasks,
+    while ~2.5 for area avoidance (it needs the sensor to highly stimulate).
     """
 
     # select sensors nodes from the available ones
     network, motors = cortex.network, set(nodes(pyramid.mapping))
     illegal = minimum_distance_selection(motors, 2, True)(network, [], -1)
     sensors = list(random_nodes(network, illegal, len(body.sensors)))
-    multiplier = {s: abs(gauss(1, 0.2)) for s in body.sensors}
+    multiplier = {s: abs(gauss(1, sigma)) for s in body.sensors}
 
     # map nodes and transducers
     return Thalamus(dict(zip(body.sensors, sensors)), multiplier)
 
 
-def evolve_multiplier(parent: Thalamus) -> Thalamus:
+def evolve_multiplier(parent: Thalamus, sigma: float = 0.1) -> Thalamus:
     """
     Evolve the multiplier of the sensors' inputs. The evolution uses the
-    gaussian mutation method.
+    gaussian mutation method. The default and suggested sigma is 0.1 for
+    collision avoidance and t-maze tasks, while ~1.0 for area avoidance (it
+    needs the sensor to highly stimulate the network).
     """
 
-    def update(value: float) -> float: return max(0.0, value + gauss(0, 0.1))
+    def update(value: float) -> float: return max(0.0, value + gauss(0, sigma))
     multiplier = dict((k, update(v)) for k, v in parent.multiplier.items())
 
     return Thalamus(parent.mapping, multiplier)
