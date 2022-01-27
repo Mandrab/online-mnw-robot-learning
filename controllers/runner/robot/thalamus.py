@@ -45,7 +45,7 @@ def random(
     network, motors = cortex.network, set(nodes(pyramid.mapping))
     illegal = minimum_distance_selection(motors, 2, True)(network, [], -1)
     sensors = list(random_nodes(network, illegal, len(body.sensors)))
-    multiplier = {s: 1.0 + abs(gauss(0, 5)) for s in body.sensors}
+    multiplier = {s: abs(gauss(1, 0.2)) for s in body.sensors}
 
     # map nodes and transducers
     return Thalamus(dict(zip(body.sensors, sensors)), multiplier)
@@ -57,7 +57,7 @@ def evolve_multiplier(parent: Thalamus) -> Thalamus:
     gaussian mutation method.
     """
 
-    def update(value: float) -> float: return max(0.0, value * gauss(1, 0.1))
+    def update(value: float) -> float: return max(0.0, value + gauss(0, 0.1))
     multiplier = dict((k, update(v)) for k, v in parent.multiplier.items())
 
     return Thalamus(parent.mapping, multiplier)
