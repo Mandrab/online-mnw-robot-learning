@@ -22,7 +22,7 @@ READING_FOLDER = 'controllers/'
 
 def new_simulations(
         robot: EPuck,
-        simulation_configuration: Tuple[Task, int, int, float],
+        simulation_configuration: Tuple[Task, int, int],
         device_configurations: Iterable[Tuple[float, float, int]],
         size: int = DEVICE_SIZE, wires_length: float = WIRES_LENGTH,
 ) -> Iterable[Simulation]:
@@ -31,7 +31,7 @@ def new_simulations(
     different nano-wires density, seed and load.
     """
 
-    task, epoch_count, epoch_duration, e_threshold = simulation_configuration
+    task, epoch_count, epoch_duration = simulation_configuration
 
     def generate(setting: Tuple[float, float, int]):
         """Create device datasheet and use it to instantiate the simulation."""
@@ -45,7 +45,7 @@ def new_simulations(
         biography = Biography(task.evaluator(robot))
         elite = Individual(robot, cortex, pyramid, thalamus, biography)
 
-        return Simulation(elite, task, epoch_count, epoch_duration, e_threshold)
+        return Simulation(elite, task, epoch_count, epoch_duration)
 
     # lazily generate a simulation for each setting and return them
     return map(generate, device_configurations)
@@ -53,7 +53,7 @@ def new_simulations(
 
 def import_simulations(
         robot: EPuck,
-        simulation_configuration: Tuple[Task, int, int, float],
+        simulation_configuration: Tuple[Task, int, int],
         folder: str = READING_FOLDER,
 ) -> Iterable[Simulation]:
     """
@@ -90,7 +90,7 @@ def import_simulations(
     # convert files to python data
     chunks = map(lambda _: backup.read(*_), chunks)
 
-    task, epoch_count, epoch_duration, e_threshold = simulation_configuration
+    task, epoch_count, epoch_duration = simulation_configuration
 
     # instantiate simulation with the given controller/device
     def simulation(settings: Tuple) -> Simulation:
@@ -103,7 +103,7 @@ def import_simulations(
         biography = Biography(task.evaluator(robot))
         elite = Individual(robot, cortex, pyramid, thalamus, biography)
 
-        return Simulation(elite, task, epoch_count, epoch_duration, e_threshold)
+        return Simulation(elite, task, epoch_count, epoch_duration)
 
     # return a lazy mapping to the simulations
     return map(simulation, chunks)
