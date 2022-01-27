@@ -64,7 +64,7 @@ DEF light_floor Solid {
   name "white start"
 }
 Solid {
-  translation -0.38 2e-05 -0.38
+  translation 0.38 2e-05 -0.38
   children [
     Shape {
       appearance PBRAppearance {
@@ -79,7 +79,7 @@ Solid {
   name "light end"
 }
 Solid {
-  translation 0.38 2e-05 -0.38
+  translation -0.38 2e-05 -0.38
   children [
     Shape {
       appearance PBRAppearance {
