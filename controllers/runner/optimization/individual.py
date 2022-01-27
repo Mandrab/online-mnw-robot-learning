@@ -41,6 +41,7 @@ def live(individual: Individual, duration: int):
 def evolve(
         parent: Individual,
         evolution_threshold: float,
+        mutation_sigma: float,
         evaluator: Fitness
 ) -> Individual:
     """
@@ -51,7 +52,7 @@ def evolve(
     body, cortex, pyramid, thalamus = unroll(parent)
     if parent.fitness >= evolution_threshold:
         thalamus = evolve_connections(cortex, pyramid, thalamus)
-        thalamus = evolve_multiplier(thalamus)
+        thalamus = evolve_multiplier(thalamus, mutation_sigma)
     else:
-        thalamus = random(body, cortex, pyramid)
+        thalamus = random(body, cortex, pyramid, mutation_sigma)
     return Individual(body, cortex, pyramid, thalamus, Biography(evaluator))
