@@ -59,5 +59,5 @@ Configuration:
     5. others:
       - git-head hash: $GIT_HASH
 --------------------------------------------------------------------------------
-$(grep '[fitness|Creation]' "$1" | awk -F '   ' '$2{print$2}')
+$(grep '[fitness|Creation]' "$1" | awk -F '\\][ |\t]+' '$2{print$2}')
 "
