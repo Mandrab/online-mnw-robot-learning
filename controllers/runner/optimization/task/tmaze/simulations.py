@@ -1,18 +1,19 @@
-import random
-
+from itertools import cycle
 from logger import logger
 from optimization.individual import Individual
 from robot.robot import run
 from world.colors import Colors
 from world.manager import Manager
 
-DURATION = 200
+DURATION = 250
 
 INITIAL_POSITION = [0, 3e-5, 0.8]
 INITIAL_ROTATION = [0, -1, 0, 0]
 
-BLACK_START = Colors.BLACK, [0, 2e-5, 0.4], [0, -1, 0.4]
-WHITE_START = Colors.WHITE, [0, -1, 0.4], [0, 2e-5, 0.4]
+STARTS = cycle([
+    (Colors.BLACK, [0, 2e-5, 0.4], [0, -1, 0.4]),   # black start
+    (Colors.WHITE, [0, -1, 0.4], [0, 2e-5, 0.4])    # white start
+])
 
 
 def live(instance: Individual, duration: int):
@@ -37,9 +38,7 @@ def live(instance: Individual, duration: int):
             world_manager.commit()
 
             # randomly set a floor as starting one (basically, hide the other)
-            starting_color, black_position, white_position = BLACK_START
-            if random.randint(0, 1):
-                starting_color, black_position, white_position = WHITE_START
+            starting_color, black_position, white_position = next(STARTS)
             world_manager.move('light_floor', white_position)
             world_manager.move('dark_floor', black_position)
 
