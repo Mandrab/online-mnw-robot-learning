@@ -23,7 +23,6 @@ class Simulation:
     goal_task: Task
     epochs_count: int
     epoch_duration: int
-    evolution_threshold: float
 
 
 def optimize(instance: Simulation) -> Simulation:
@@ -49,8 +48,10 @@ def optimize(instance: Simulation) -> Simulation:
         """
 
         # get the challenger individual (may or not be an evolution of elite)
-        evaluator = instance.goal_task.evaluator(elite.body)
-        challenger = evolve(elite, instance.evolution_threshold, evaluator)
+        task = instance.goal_task
+        evaluator = task.evaluator(elite.body)
+        threshold, sigma = task.evolution_threshold, task.mutation_sigma
+        challenger = evolve(elite, threshold, sigma, evaluator)
 
         # restore simulation to starting point
         challenger.body.simulationReset()
@@ -69,7 +70,8 @@ def update_elite(elite: Individual, instance: Simulation) -> Simulation:
     """Update a previous simulation with a new elite individual."""
 
     return Simulation(
-        elite, instance.goal_task,
-        instance.epochs_count, instance.epoch_duration,
-        instance.evolution_threshold
+        elite,
+        instance.goal_task,
+        instance.epochs_count,
+        instance.epoch_duration
     )
