@@ -12,3 +12,6 @@ class Task:
     life_manager: Callable[[Individual, int], None]
     evaluator: Callable[[EPuck], Fitness]
     sensors: Tuple[str]
+    evolution_threshold: float
+    creation_sigma: float
+    mutation_sigma: float
