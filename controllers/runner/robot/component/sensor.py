@@ -10,23 +10,26 @@ class Sensor(str):
     methods.
     """
 
-    # the robot that it is working for/in
+    # the robot that it is part of
     robot: Robot
 
     @abstractmethod
-    def range(self, **_) -> Tuple[float, float]:
+    def range(self) -> Tuple[float, float]:
         """Returns the sensor working output range."""
         return NotImplemented()
 
-    def read(self, normalize: bool = False, **_) -> float:
+    def read(self, normalize: bool = False) -> float:
         """Returns the sensor reading."""
+
         value = self.robot.getDevice(self).getValue()
-        return adapt(value, self.range(), (0, 1)) if normalize else value
+        return adapt(value, self.range()) if normalize else value
 
     def enable(self, update_frequency: int = 1):
         """Enable the sensors to perceive information at the given frequency."""
+
         self.robot.getDevice(self).enable(update_frequency)
 
     def exists(self) -> bool:
         """Check if the given device is available on the given robot."""
-        return not self.robot.getDevice(self) is None
+
+        return self.robot.getDevice(self) is not None

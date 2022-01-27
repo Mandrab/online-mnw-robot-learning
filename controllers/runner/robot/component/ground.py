@@ -1,8 +1,4 @@
-from .sensor import Sensor
-from typing import Tuple
+from robot.component.infrared import IRSensor
 
-
-class GroundSensor(Sensor):
-    """Represents a robot ground sensor"""
-
-    def range(self, **_) -> Tuple[float, float]: return 0, 4095
+GroundSensor = IRSensor
+"""Represents a robot ground sensor"""
