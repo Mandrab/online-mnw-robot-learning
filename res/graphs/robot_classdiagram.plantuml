@@ -4,20 +4,22 @@ hide methods
 
 ' robot individual
 class Robot
+hide Robot members
 class Cortex {
     network: Graph
     datasheet: Datasheet
-    wires: Dict
+    wires: Dict[str, Any]
     working_range: Tuple[float, float]
 }
-class EPuck
-class Thalamus {
-    sensors: Dict[str, int]
-    motors: Dict[str, int]
-    sensitivity: float = 1e6
+class EPuck {
+    run_frequency: Frequency
 }
-class Frequency {
-   hz_value: float
+class Fiber
+class Pyramid {
+    sensitivity: float
+}
+class Thalamus {
+    multiplier: Dict[str, float]
 }
 
 ' components
@@ -28,17 +30,20 @@ class IRSensor
 
 Robot o-- Cortex
 Robot o-- EPuck
+Robot o-- Pyramid
 Robot o-- Thalamus
 
 EPuck *-- Sensor
 EPuck *-- Motor
-EPuck *-- Frequency
+
+Pyramid *-- Fiber
+Thalamus *-- Fiber
 
 Sensor <|-- GroundSensor
 Sensor <|-- IRSensor
 
-hide Robot members
-hide EPuck members
+hide Fiber members
+
 hide Motor members
 hide Sensor members
 hide GroundSensor members
