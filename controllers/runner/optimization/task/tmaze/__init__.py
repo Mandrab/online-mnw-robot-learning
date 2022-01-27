@@ -4,4 +4,4 @@ from optimization.task.tmaze.simulations import live
 
 sensors = tuple([f'gs{_}' for _ in range(1)] + [f'ps{_}' for _ in [0, 7]])
 
-task_description = Task(live, Fitness, sensors)
+task_description = Task(live, Fitness, sensors, 40.0, 0.3, 0.1)

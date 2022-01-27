@@ -8,4 +8,4 @@ live = supplier(
     lambda _: min(max(_, -2.5), 2.5)
 )
 
-task_description = Task(live, Fitness, sensors)
+task_description = Task(live, Fitness, sensors, 90.0, 2.5, 1.0)
