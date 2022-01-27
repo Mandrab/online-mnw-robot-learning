@@ -2,31 +2,33 @@
 # Generate a partial template of the run simulation
 
 # configurations files
-CONFIGS=$(cat controllers/runner/config.py)
-ROBOT=$(cat controllers/runner/robot/body.py)
-UTILS=$(cat controllers/runner/optimization/utils.py)
+CONFIGS="controllers/runner/config.py"
+ROBOT="controllers/runner/robot/body.py"
+SENSOR="controllers/runner/robot/component/infrared.py"
+UTILS="controllers/runner/optimization/utils.py"
 
 # get fields from configs
-DURATION=$(cat <<<"$CONFIGS" | awk -F 'epoch_duration = ' '$2{print $2}')
-EPOCHS=$(cat <<<"$CONFIGS" | awk -F 'epoch_count = ' '$2{print $2}')
-FITNESS=$(cat <<<"$CONFIGS" | awk -F 'evolution_threshold = ' '$2{print $2}')
-REPLICA=$(cat <<<"$CONFIGS" | awk -F 'replica_count = ' '$2{print $2}')
-SEED=$(echo "$CONFIGS" | awk -F 'random.seed[(]' '$2{sub(")", ""); print $2}')
-TASK=$(cat <<<"$CONFIGS" | awk -F 'task: Tasks = Tasks.' '$2{print $2}')
+DURATION=$(awk -F 'epoch_duration = ' '$2{print $2}' $CONFIGS)
+EPOCHS=$(awk -F 'epoch_count = ' '$2{print $2}' $CONFIGS)
+FITNESS=$(awk -F 'evolution_threshold = ' '$2{print $2}'  $CONFIGS)
+REPLICA=$(awk -F 'replica_count = ' '$2{print $2}' $CONFIGS)
+SEED=$(awk -F 'random.seed[(]' '$2{sub(")", ""); print $2}' $CONFIGS)
+TASK=$(awk -F 'task: Tasks = Tasks.' '$2{print $2}' $CONFIGS)
 
 # get other fields
-FREQUENCY=$(cat <<<"$ROBOT" | awk -F 'hz_value=' '$2{sub(")", ""); print $2}')
-LENGTH=$(cat <<<"$UTILS" | awk -F 'WIRES_LENGTH = ' '$2{print $2}')
-SIZE=$(cat <<<"$UTILS" | awk -F 'DEVICE_SIZE = ' '$2{print $2}')
+FREQUENCY=$(awk -F 'hz_value=' '$2{sub(")", ""); print $2}' $ROBOT)
+LENGTH=$(awk -F 'WIRES_LENGTH = ' '$2{print $2}' $UTILS)
+SIZE=$(awk -F 'DEVICE_SIZE = ' '$2{print $2}' $UTILS)
 GIT_HASH=$(git rev-parse HEAD)
+SENSOR_RANGE=$(awk -F 'return ' '$2{print $2}' $SENSOR)
 
 # data from log file
 START_DATE=$(grep -F '[' "$1" | head -n 1 | awk -F '[|[[:space:]]' '{print $2}')
 START_TIME=$(grep -F '[' "$1" | head -n 1 | awk '{print $2}')
 END_DATE=$(grep -F '[' "$1" | tail -n 1 | awk -F '[|[[:space:]]' '{print $2}')
 END_TIME=$(grep -F '[' "$1" | tail -n 1 | awk '{print $2}')
-DENSITIES=$(awk -F 'densities: ' '$2{print $2}' < "$1")
-LOADS=$(awk -F 'loads: ' '$2{print $2}' < "$1")
+DENSITIES=$(awk -F 'densities: ' '$2{print $2}' "$1")
+LOADS=$(awk -F 'loads: ' '$2{print $2}' "$1")
 
 # create readme file
 echo "\
@@ -48,7 +50,7 @@ Configuration:
       - minimum fitness to evolve: $FITNESS
     3. robot characteristics:
       - epuck freq: $FREQUENCY Hz
-      - sensors range:
+      - sensors range: [$SENSOR_RANGE]
       - motor range:
       - actuators resistances: $LOADS
     4. network:
