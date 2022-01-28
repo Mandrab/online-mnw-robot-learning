@@ -30,7 +30,7 @@ def period_length(
         samples: Iterable[float],
         min_length: int,
         max_length: int,
-        tolerance: float = .0
+        tolerance_threshold: float = .0
 ):
     """
     Parameters:
@@ -63,7 +63,7 @@ def period_length(
         if len(list(samples)) - distance < min_length:
             return -1
         diffs = [a-b for a, b in zip(samples, samples[distance:])]
-        if len(diffs) > 0 and all(abs(d) <= tolerance for d in diffs):
+        if len(diffs) > 0 and all(abs(d) <= tolerance_threshold for d in diffs):
             return distance
     return -1
 
@@ -79,16 +79,20 @@ colors = ['b', 'tab:orange', 'g', 'r']
 iterations = range(250)
 
 
-def average_conductance(cortex: Cortex, thalamus: Thalamus) -> Iterable[float]:
-    def step(_: int, g: Graph = cortex.network) -> float:
-        evaluate(cortex, thalamus, {'s': max(sensor_range)}, delay)
+def average_conductance(
+        cortex: Cortex,
+        pyramid: Pyramid,
+        thalamus: Thalamus
+) -> Iterable[float]:
+    def avg_conductance(_: int, g: Graph = cortex.network) -> float:
+        evaluate(cortex, pyramid, thalamus, {'s': max(sensor_range)}, delay)
         return sum(g[n1][n2]['Y'] for n1, n2 in g.edges) / g.number_of_edges()
-    return list(map(step, iterations))
+    return list(map(avg_conductance, iterations))
 
 
 for delay, color in zip(delay_range, colors):
-    cortex, thalamus = generate(load=1, seed=1234)
-    conductances = average_conductance(cortex, thalamus)
+    cortex, pyramid, thalamus = generate(load=1, seed=1234)
+    conductances = average_conductance(cortex, pyramid, thalamus)
     ax.plot(conductances[:50], color=color, label=f'{round(1 / delay, 2)}Hz')
     single_ax, zoom_ax = next(axs)
     single_ax.plot(conductances[:30], color=color)
@@ -153,12 +157,12 @@ iterations = range(50)
 max_conductances = []
 
 for density, (wires, size, length) in densities.items():
-    cortex, thalamus = generate(Datasheet(
+    cortex, pyramid, thalamus = generate(Datasheet(
         wires_count=wires,
         Lx=size, Ly=size,
         mean_length=length, std_length=length * 0.35
     ), load=1)
-    conductances = average_conductance(cortex, thalamus)
+    conductances = average_conductance(cortex, pyramid, thalamus)
     max_conductances += [max(conductances)]
     ax.plot(conductances, label=f'Density {density}')
 
@@ -182,6 +186,8 @@ plt.show()
 # This plot, for different frequencies, the values of the attractor.
 # This exclude the 'stability-reaching' period, discarding the first iterations'
 # results.
+# Note: it seems that with low stimulation the critical point move, but against
+# my reasoning, it moves towards lower frequencies.
 
 ax = plt.figure().subplots()
 
@@ -190,14 +196,15 @@ iterations = 250
 discard = 200   # discard initial values when the network converge to stability
 labels_count = round(len(delay_range) / 7)
 
-for delay in delay_range:
-    cortex, thalamus = generate(load=1, seed=1234)
+for index, delay in enumerate(delay_range):
+    datasheet = Datasheet(100, Ly=200, Lx=200)
+    cortex, pyramid, thalamus = generate(datasheet, load=1, seed=1234)
 
     def step(_: int, g: Graph = cortex.network) -> float:
-        evaluate(cortex, thalamus, {'s': sensor_range[1]}, delay)
-        return sum(g[a][b]['Y'] < .01 for a, b in g.edges) / g.number_of_edges()
+        evaluate(cortex, pyramid, thalamus, {'s': max(sensor_range)}, delay)
+        return sum(g[a][b]['Y'] for a, b in g.edges) / g.number_of_edges()
     conductances = list(map(step, range(iterations)))[discard:]
-    ax.plot([delay] * (iterations - discard), conductances, 'ko', markersize=1)
+    ax.plot([index] * (iterations - discard), conductances, 'ko', markersize=1)
 
 ax.set(xlabel='relaxation time/frequency [s/Hz]', ylabel='average conductivity')
 labels = [f'{d} s\n{round(1.0/d, 2)} Hz' for d in delay_range]
