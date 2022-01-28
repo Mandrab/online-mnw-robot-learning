@@ -1,8 +1,79 @@
 import matplotlib.pyplot as plt
 
+from analysis import *
 from nanowire_network_simulator import plot, Evolution
 from nanowire_network_simulator.model.device import Datasheet as Ds
-from analysis import *
+from typing import List, Callable, Any
+
+
+################################################################################
+# UTILITIES
+
+def influence(
+        superior_title: str,
+        title_supplier: Callable[[Any], str],
+        label_supplier: Callable[[Any], str],
+        xye_supplier: Callable[[Any], Tuple[
+            Iterable[int], Iterable[Dict[str, float]], Evolution]
+        ],
+        values: List[Any]
+):
+    """
+    Plot graphs to represent the influence of a specific parameter on the output
+    signal to control the motor.
+    """
+
+    fig, axs = plt.subplots(len(values) + 1, 1, figsize=(7, 16))
+    values_ax, *axs = axs
+
+    for ax, value in zip(axs, values):
+        x, y, e = xye_supplier(value)
+        values_ax.plot(x, y, label=label_supplier(value))
+
+        plot.conductance_distribution(fig, ax, e)
+        ax.set_title(title_supplier(value))
+
+    values_ax.set(xlabel='Sensors signals', ylabel='Motor outputs')
+    values_ax.legend()
+
+    plt.subplots_adjust(top=0.95, bottom=0.03, hspace=0.4)
+    plt.suptitle(superior_title)
+    plt.show()
+
+
+def stimulation_values(
+        cortex: Cortex,
+        pyramid: Pyramid,
+        thalamus: Thalamus,
+        time: float = 0.1
+) -> Tuple[Iterable[int], Iterable[Dict[str, float]], Evolution]:
+    """
+    Stimulate the network and return the sequence of outputs signals and the
+    evolution dataclass.
+    """
+
+    def step(i): return evaluate(cortex, pyramid, thalamus, {'s': i}, time)
+
+    io = {
+        i: [v for v in step(i).values()][0]
+        for i in range(*sensor_range, 128)
+    }
+
+    # make data
+    x: List[int] = [*io.keys()]
+    y: List[Dict[str, float]] = [*io.values()]
+
+    e = Evolution(
+        default_datasheet,
+        wires_dict={}, delta_time=time, grounds=set(),
+        loads={(a, pyramid.sensitivity) for a in nodes(pyramid.mapping)},
+        network_instances=[(
+            cortex.network,
+            [(s, sensor_range[1]) for s in nodes(thalamus.mapping)]
+        )]
+    )
+
+    return x, y, e
 
 
 ################################################################################
@@ -44,52 +115,13 @@ from analysis import *
 # change their behaviour runtime due to the higher number of highly-variable
 # wires, possibly increasing capabilities.
 
-
-def __influence(values):
-    fig, axs = plt.subplots(len(values) + 1, 1, figsize=(7, 16))
-    values_ax, *axs = axs
-
-    for ax, s in zip(axs, values):
-        # avoid modify the graph
-        cortex, thalamus = generate(load=100, seed=1234)
-        def step(i): return evaluate(cortex, thalamus, {'s': i}, s)
-
-        io = {
-            i: [v for v in step(i).values()][0]
-            for i in range(*sensor_range, 128)
-        }
-
-        # make data
-        x = [*io.keys()]
-        y = [*io.values()]
-
-        values_ax.plot(x, y, label=f'frequency {1.0 / s} Hz')
-
-        e = Evolution(
-            default_datasheet,
-            wires_dict={}, delta_time=s, grounds=set(),
-            loads={(a, 1) for a in thalamus.motors.values()},
-            network_instances=[(
-                cortex.network,
-                [(s, sensor_range[1]) for s in thalamus.sensors.values()]
-            )]
-        )
-
-        plot.conductance_distribution(fig, ax, e)
-        ax.set_title(f'Conductance in {1 / s} Hz updated network')
-
-    values_ax.set(xlabel='Sensors signals', ylabel='Motor outputs')
-    values_ax.legend()
-
-    plt.subplots_adjust(top=0.95, bottom=0.03, hspace=0.4)
-
-    plt.suptitle(
-        'Analysis of the update frequency influence in the signal propagation'
-    )
-    plt.show()
-
-
-__influence([0.1, 5, 10])
+influence(
+    'Analysis of the update frequency influence in the signal propagation',
+    lambda s: f'Conductance in {1 / s} Hz updated network',
+    lambda s: f'frequency {1.0 / s} Hz',
+    lambda s: stimulation_values(*generate(load=100, seed=1234), time=s),
+    values=[0.1, 5, 10]
+)
 
 
 ################################################################################
@@ -113,51 +145,13 @@ __influence([0.1, 5, 10])
 # however complicate the hardware solution. A more evolutionary oriented ways is
 # to find a balance of the two properties.
 
-def __influence(values):
-    fig, axs = plt.subplots(len(values) + 1, 1, figsize=(7, 16))
-    values_ax, *axs = axs
-
-    for ax, value in zip(axs, values):
-        # avoid modify the graph
-        cortex, thalamus = generate(load=value, seed=1234)
-        def step(i): return evaluate(cortex, thalamus, {'s': i}, 0.1)
-
-        io = {
-            i: [v for v in step(i).values()][0]
-            for i in range(*sensor_range, 128)
-        }
-
-        # make data
-        x = [*io.keys()]
-        y = [*io.values()]
-
-        values_ax.plot(x, y, label=f'resistance {value} Ohm')
-
-        e = Evolution(
-            default_datasheet,
-            wires_dict={}, delta_time=value, grounds=set(),
-            loads={(a, value) for a in thalamus.motors.values()},
-            network_instances=[
-                (cortex.network, [
-                    (s, sensor_range[1])
-                    for s in thalamus.sensors.values()
-                ])
-            ])
-
-        plot.conductance_distribution(fig, ax, e)
-        ax.set_title(f'Conductance in network with {value} Ohm load')
-
-    values_ax.set(xlabel='Sensors signals', ylabel='Motor outputs')
-    values_ax.legend()
-
-    plt.subplots_adjust(top=0.95, bottom=0.03, hspace=0.4)
-    plt.suptitle(
-        'Analysis of the motor resistance influence in the signal propagation'
-    )
-    plt.show()
-
-
-__influence([1, 100, 10000])
+influence(
+    'Analysis of the motor resistance influence in the signal propagation',
+    lambda _: f'Conductance in network with {_} Ohm load',
+    lambda _: f'resistance {_} Ohm',
+    lambda _: stimulation_values(*generate(load=_, seed=1234)),
+    values=[1, 100, 10000]
+)
 
 
 ################################################################################
@@ -176,51 +170,15 @@ __influence([1, 100, 10000])
 # of a correct density should then seek for a balance between the output values
 # and the network plasticity.
 
-def __influence(values):
-    fig, axs = plt.subplots(len(values) + 1, 1, figsize=(7, 16))
-    values_ax, *axs = axs
+datasheets = [
+    Ds(wires_count, Lx=30, Ly=30, mean_length=10, std_length=10 * 0.35)
+    for wires_count in [100, 300, 500]
+]
 
-    for ax, value in zip(axs, values):
-        cortex, thalamus = generate(value, load=50)
-        def step(i): return evaluate(cortex, thalamus, {'s': i}, 0.1)
-
-        io = {
-            i: [v for v in step(i).values()][0]
-            for i in range(*sensor_range, 128)
-        }
-
-        # make data
-        x = [*io.keys()]
-        y = [*io.values()]
-
-        values_ax.plot(x, y, label=f'wires {value.wires_count}')
-
-        e = Evolution(
-            default_datasheet,
-            wires_dict={}, delta_time=value, grounds=set(),
-            loads={(a, value) for a in thalamus.motors.values()},
-            network_instances=[
-                (cortex.network, [
-                    (s, sensor_range[1])
-                    for s in thalamus.sensors.values()
-                ])
-            ])
-
-        plot.conductance_distribution(fig, ax, e)
-        ax.set_title(f'Conductance in network with {value.wires_count} wires')
-
-    values_ax.set(xlabel='Sensors signals', ylabel='Motor outputs')
-    values_ax.legend()
-
-    plt.subplots_adjust(top=0.95, bottom=0.03, hspace=0.4)
-    plt.suptitle(
-        'Analysis of the wires density influence in the signal propagation'
-    )
-    plt.show()
-
-
-__influence([
-    Ds(wires_count=100, Lx=30, Ly=30, mean_length=10, std_length=10 * 0.35),
-    Ds(wires_count=300, Lx=30, Ly=30, mean_length=10, std_length=10 * 0.35),
-    Ds(wires_count=500, Lx=30, Ly=30, mean_length=10, std_length=10 * 0.35)
-])
+influence(
+    'Analysis of the wires density influence in the signal propagation',
+    lambda _: f'Conductance in network with {_.wires_count} wires',
+    lambda _: f'wires {_.wires_count}',
+    lambda _: stimulation_values(*generate(_, load=50)),
+    values=datasheets
+)
