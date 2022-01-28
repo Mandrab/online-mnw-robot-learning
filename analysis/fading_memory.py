@@ -41,17 +41,17 @@ from analysis import *
 
 def network_states(signal: Iterable[float]):
     # stimulate the first graph with the signal
-    cortex, thalamus = generate(load=100, seed=1234)
+    cortex, pyramid, thalamus = generate(load=100, seed=1234)
 
     for value in signal:
         value = adapt(value, out_range=sensor_range)
-        evaluate(cortex, thalamus, {'s': value}, 1)
+        evaluate(cortex, pyramid, thalamus, {'s': value}, 1)
 
     conductance = [cortex.network[a][b]['Y'] for a, b in cortex.network.edges()]
     return sum(conductance) / len(conductance), max(conductance)
 
 
-def __influence(iteration_distances):
+def influence(iteration_distances):
     fig = plt.figure(figsize=(12, 10))
     main, other = fig.subfigures(2, 1, height_ratios=[2, 3])
 
@@ -116,11 +116,11 @@ def __influence(iteration_distances):
         mean_conductance = []
 
         # stimulate the first graph with the signal
-        cortex, thalamus = generate(load=100, seed=1234)
+        cortex, pyramid, thalamus = generate(load=100, seed=1234)
 
         for value in signal:
             value = adapt(value, out_range=sensor_range)
-            evaluate(cortex, thalamus, {'s': value}, 1)
+            evaluate(cortex, pyramid, thalamus, {'s': value}, 1)
             conductance = [
                 cortex.network[a][b]['Y']
                 for a, b in cortex.network.edges()
@@ -130,13 +130,14 @@ def __influence(iteration_distances):
         left_ax.plot(mean_conductance, color='tab:red', label='conductance')
         left_ax.tick_params(axis='y', labelcolor='tab:red')
         left_ax.set(ylabel='Conductance')
+        left_ax.set_ylim(top=14e-3)
 
         plot.conductance_distribution(fig, right_ax, Evolution(
             default_datasheet,
             wires_dict={}, delta_time=0.1, grounds=set(),
-            loads={(a, 1) for a in thalamus.motors.values()},
+            loads={(a, 1) for a in nodes(pyramid.mapping)},
             network_instances=[
-                (cortex.network, [(s, 1) for s in thalamus.sensors.values()])
+                (cortex.network, [(s, 1) for s in nodes(thalamus.mapping)])
             ]
          ))
 
@@ -145,4 +146,4 @@ def __influence(iteration_distances):
     plt.show()
 
 
-__influence([*range(0, 25, 1)])
+influence([*range(0, 25)])
