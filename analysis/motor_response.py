@@ -16,29 +16,41 @@ def influence(
         xye_supplier: Callable[[Any], Tuple[
             Iterable[int], Iterable[Dict[str, float]], Evolution]
         ],
-        values: List[Any]
+        values: List[Any],
+        detailers: List[Callable[[Any, Any, Evolution], None]]
 ):
     """
     Plot graphs to represent the influence of a specific parameter on the output
     signal to control the motor.
     """
 
-    fig, axs = plt.subplots(len(values) + 1, 1, figsize=(7, 16))
-    values_ax, *axs = axs
-
-    for ax, value in zip(axs, values):
+    def apply(
+            value: Any
+    ) -> Tuple[Iterable[int], Iterable[Dict[str, float]], Evolution, str, str]:
         x, y, e = xye_supplier(value)
-        values_ax.plot(x, y, label=label_supplier(value))
+        return x, y, e, label_supplier(value), title_supplier(value)
 
-        plot.conductance_distribution(fig, ax, e)
-        ax.set_title(title_supplier(value))
+    values, count = list(map(apply, values)), len(values)
 
-    values_ax.set(xlabel='Sensors signals', ylabel='Motor outputs')
-    values_ax.legend()
-
-    plt.subplots_adjust(top=0.95, bottom=0.03, hspace=0.4)
+    _, ax_ = plt.subplots()
+    for x_, y_, _0, label_, _1 in values:
+        ax_.plot(x_, y_, label=label_)
+    ax_.set(xlabel='Sensor input signal', ylabel='Motor rotation speed (rad/s)')
+    ax_.legend()
     plt.suptitle(superior_title)
     plt.show()
+
+    def details(detailer):
+        fig = plt.figure(figsize=(5 * count, 5))
+        axs = map(lambda _: plt.subplot(1, count, _), range(1, 1 + count))
+        for ax, (x, y, e, label, title) in zip(axs, values):
+            detailer(fig, ax, e)
+            ax.set_title(title)
+        plt.tight_layout()
+        plt.subplots_adjust(bottom=0.05, top=0.85)
+        plt.suptitle(superior_title)
+        plt.show()
+    list(map(details, detailers))
 
 
 def stimulation_values(
@@ -52,7 +64,14 @@ def stimulation_values(
     evolution dataclass.
     """
 
-    def step(i): return evaluate(cortex, pyramid, thalamus, {'s': i}, time)
+    loads = {(a, pyramid.sensitivity) for a in nodes(pyramid.mapping)}
+    e = Evolution(default_datasheet, dict(), time, loads=loads)
+
+    def step(i):
+        output = evaluate(cortex, pyramid, thalamus, {'s': i}, time)
+        stimulus = [(thalamus.mapping['s'], adapt(i, sensor_range))]
+        e.append(cortex.network, stimulus)
+        return output
 
     io = {
         i: [v for v in step(i).values()][0]
@@ -62,16 +81,6 @@ def stimulation_values(
     # make data
     x: List[int] = [*io.keys()]
     y: List[Dict[str, float]] = [*io.values()]
-
-    e = Evolution(
-        default_datasheet,
-        wires_dict={}, delta_time=time, grounds=set(),
-        loads={(a, pyramid.sensitivity) for a in nodes(pyramid.mapping)},
-        network_instances=[(
-            cortex.network,
-            [(s, sensor_range[1]) for s in nodes(thalamus.mapping)]
-        )]
-    )
 
     return x, y, e
 
@@ -120,7 +129,8 @@ influence(
     lambda s: f'Conductance in {1 / s} Hz updated network',
     lambda s: f'frequency {1.0 / s} Hz',
     lambda s: stimulation_values(*generate(load=100, seed=1234), time=s),
-    values=[0.1, 5, 10]
+    values=[0.1, 5, 10],
+    detailers=[plot.conductance_distribution, plot.network_conductance]
 )
 
 
@@ -150,7 +160,8 @@ influence(
     lambda _: f'Conductance in network with {_} Ohm load',
     lambda _: f'resistance {_} Ohm',
     lambda _: stimulation_values(*generate(load=_, seed=1234)),
-    values=[1, 100, 10000]
+    values=[1, 100, 10000],
+    detailers=[plot.conductance_distribution, plot.network_conductance]
 )
 
 
@@ -180,5 +191,6 @@ influence(
     lambda _: f'Conductance in network with {_.wires_count} wires',
     lambda _: f'wires {_.wires_count}',
     lambda _: stimulation_values(*generate(_, load=50)),
-    values=datasheets
+    values=datasheets,
+    detailers=[plot.conductance_distribution, plot.network_conductance]
 )
