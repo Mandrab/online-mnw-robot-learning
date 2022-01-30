@@ -69,7 +69,7 @@ def stimulation_values(
 
     def step(i):
         output = evaluate(cortex, pyramid, thalamus, {'s': i}, time)
-        stimulus = [(thalamus.mapping['s'], adapt(i, sensor_range))]
+        stimulus = [(thalamus.mapping['s'], adapt(i, sensor_range, (0, 10)))]
         e.append(cortex.network, stimulus)
         return output
 
