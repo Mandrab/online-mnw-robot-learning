@@ -79,7 +79,7 @@ def import_simulations(
         return []
 
     # sort them by simulation index (pre-extension)
-    files = sorted(files, key=lambda _: _.split('.')[-2])
+    files = sorted(files, key=lambda _: int(_.split('.')[-2]))
 
     # take chunks of 6 (number of simulations files)
     chunks = map(lambda i: sorted(files[i*6:][:6]), range(int(len(files) / 6)))
