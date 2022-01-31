@@ -98,8 +98,8 @@ def import_simulations(
 
         cortex = Cortex(graph, datasheet, wires)
         pyramid = Pyramid(io['outputs'], io['load'])
-        attenuation = dict(zip(inputs := io['inputs'], [.0] * len(inputs)))
-        thalamus = Thalamus(inputs, io.get('attenuation', attenuation))
+        multiplier = dict(zip(inputs := io['inputs'], [.0] * len(inputs)))
+        thalamus = Thalamus(inputs, io.get('multiplier', multiplier))
         biography = Biography(task.evaluator(robot))
         elite = Individual(robot, cortex, pyramid, thalamus, biography)
 
