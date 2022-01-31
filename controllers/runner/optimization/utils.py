@@ -121,7 +121,7 @@ def save(instance: Individual, file_format: str = '{name}.dat'):
             inputs=thalamus.mapping,
             outputs=pyramid.mapping,
             load=pyramid.sensitivity,
-            attenuation=thalamus.multiplier
+            multiplier=thalamus.multiplier
         ),
         file_format.format(name='datasheet'),
         file_format.format(name='network'),
