@@ -12,9 +12,9 @@ from typing import List, Callable, Any
 def influence(
         superior_title: str,
         title_supplier: Callable[[Any], str],
-        label_supplier: Callable[[Any], str],
+        labeler: Callable[[Any], str],
         xye_supplier: Callable[[Any], Tuple[
-            Iterable[int], Iterable[Dict[str, float]], Evolution]
+            Iterable[float], Iterable[Dict[str, float]], Evolution]
         ],
         values: List[Any],
         detailers: List[Callable[[Any, Any, Evolution], None]]
@@ -24,18 +24,13 @@ def influence(
     signal to control the motor.
     """
 
-    def apply(
-            value: Any
-    ) -> Tuple[Iterable[int], Iterable[Dict[str, float]], Evolution, str, str]:
-        x, y, e = xye_supplier(value)
-        return x, y, e, label_supplier(value), title_supplier(value)
-
+    def apply(v: Any): return *xye_supplier(v), labeler(v), title_supplier(v)
     values, count = list(map(apply, values)), len(values)
 
     _, ax_ = plt.subplots()
     for x_, y_, _0, label_, _1 in values:
         ax_.plot(x_, y_, label=label_)
-    ax_.set(xlabel='Sensor input signal', ylabel='Motor rotation speed (rad/s)')
+    ax_.set(xlabel='Input signal (V)', ylabel='Motor rotation speed (rad/s)')
     ax_.legend()
     plt.suptitle(superior_title)
     plt.show()
@@ -58,7 +53,7 @@ def stimulation_values(
         pyramid: Pyramid,
         thalamus: Thalamus,
         time: float = 0.1
-) -> Tuple[Iterable[int], Iterable[Dict[str, float]], Evolution]:
+) -> Tuple[Iterable[float], Iterable[Dict[str, float]], Evolution]:
     """
     Stimulate the network and return the sequence of outputs signals and the
     evolution dataclass.
@@ -79,7 +74,7 @@ def stimulation_values(
     }
 
     # make data
-    x: List[int] = [*io.keys()]
+    x: List[float] = [adapt(s, sensor_range, (0, 10)) for s in io.keys()]
     y: List[Dict[str, float]] = [*io.values()]
 
     return x, y, e
