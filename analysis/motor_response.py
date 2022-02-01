@@ -1,4 +1,6 @@
+import matplotlib.patches as ptc
 import matplotlib.pyplot as plt
+import matplotlib.ticker as tkr
 
 from analysis import *
 from nanowire_network_simulator import plot, Evolution
@@ -181,11 +183,33 @@ datasheets = [
     for wires_count in [100, 300, 500]
 ]
 
+
+def detailer(fig, ax, e: Evolution):
+    plot.network_conductance(fig, ax, e)
+    xs = [i * 0.1 for i in range(len(e.network_instances))]
+    avg_conductance = [
+        sum(g[a][b]['Y'] for a, b in g.edges) / g.number_of_edges()
+        for g, _ in e.network_instances
+    ]
+    print(avg_conductance)
+    ax = fig.axes[-1]
+    ax.plot(xs, avg_conductance, color='y')
+
+    patches = [
+        ptc.Patch(color='r', label='Input voltage'),
+        ptc.Patch(color='b', label='Network conductance'),
+        ptc.Patch(color='y', label='Average nodes conductance')
+    ]
+    ax.legend(handles=patches, loc='upper left')
+    plt.yscale('log', base=2)
+    ax.yaxis.set_major_formatter(tkr.FormatStrFormatter('%.3f'))
+
+
 influence(
     'Analysis of the wires density influence in the signal propagation',
     lambda _: f'Conductance in network with {_.wires_count} wires',
     lambda _: f'wires {_.wires_count}',
-    lambda _: stimulation_values(*generate(_, load=50)),
+    lambda _: stimulation_values(*generate(_, load=50), time=0.1),
     values=datasheets,
-    detailers=[plot.conductance_distribution, plot.network_conductance]
+    detailers=[plot.conductance_distribution, detailer]
 )
