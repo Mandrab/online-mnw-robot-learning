@@ -192,7 +192,7 @@ plt.show()
 
 ax1, ax2 = plt.figure(figsize=(10, 5)).subplots(1, 2)
 
-delay_range = [_ / 100.0 for _ in range(1, 1750, 50)]
+delay_range = [_ / 100.0 for _ in range(1, 1750)]
 iterations = 250
 discard = 200   # discard initial values when the network converge to stability
 labels_count = round(len(delay_range) / 7)
