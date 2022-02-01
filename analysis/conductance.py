@@ -218,8 +218,8 @@ for index, delay in enumerate(delay_range):
     ax2.plot(xs, avg, 'C0o', markersize=1)
     ax2.set_title('Average network conductance')
 
-ax1.set(xlabel='stimulation frequency [Hz]', ylabel='average conductivity [S]')
-ax2.set(xlabel='stimulation frequency [Hz]', ylabel='average conductivity [S]')
+ax1.set(xlabel='Stimulation Frequency [Hz]', ylabel='Conductance [S]')
+ax2.set(xlabel='Stimulation Frequency [Hz]', ylabel='Conductance [S]')
 labels = [str(round(1.0/d, 2)) for d in delay_range]
 labels = [(i, l) for i, l in enumerate(labels) if i % labels_count == 0]
 positions, labels = [p for p, _ in labels], [l for _, l in labels]
