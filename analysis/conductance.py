@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import networkx as nx
 
 from analysis import *
 from networkx import Graph
@@ -74,7 +75,7 @@ ax = main.subplots(1, 1)
 axs = iter(other.subplots(4, 2))
 single_ax, zoom_ax = None, None
 
-delay_range = [1.0, 2.5, 3.0, 10.0]
+delay_range = [1.0, 2.5, 5.0, 10.0]
 colors = ['b', 'tab:orange', 'g', 'r']
 iterations = range(250)
 
@@ -189,33 +190,46 @@ plt.show()
 # Note: it seems that with low stimulation the critical point move, but against
 # my reasoning, it moves towards lower frequencies.
 
-ax = plt.figure().subplots()
+ax1, ax2 = plt.figure(figsize=(10, 5)).subplots(1, 2)
 
-delay_range = [_ / 100.0 for _ in range(1, 1750)]
+delay_range = [_ / 100.0 for _ in range(1, 1750, 50)]
 iterations = 250
 discard = 200   # discard initial values when the network converge to stability
 labels_count = round(len(delay_range) / 7)
 
 for index, delay in enumerate(delay_range):
-    datasheet = Datasheet(100, Ly=200, Lx=200)
+    datasheet = Datasheet(100, Ly=150, Lx=150)
     cortex, pyramid, thalamus = generate(datasheet, load=1, seed=1234)
 
-    def step(_: int, g: Graph = cortex.network) -> float:
+    def step(_: int, g: Graph = cortex.network) -> Tuple[float, float]:
         evaluate(cortex, pyramid, thalamus, {'s': max(sensor_range)}, delay)
-        return sum(g[a][b]['Y'] for a, b in g.edges) / g.number_of_edges()
-    conductances = list(map(step, range(iterations)))[discard:]
-    ax.plot([index] * (iterations - discard), conductances, 'ko', markersize=1)
+        return 1 / nx.resistance_distance(
+                g, thalamus.mapping['s'], pyramid.mapping['m'],
+                weight='Y', invert_weight=False
+            ), sum(g[a][b]['Y'] for a, b in g.edges) / g.number_of_edges()
+    path, avg = reduce(
+        lambda a, b: (a[0] + [b[0]], a[1] + [b[1]]),
+        map(step, range(iterations)), ([], [])
+    )
+    path, avg = path[discard:], avg[discard:]
+    xs = [index] * len(path)
+    ax1.plot(xs, path, 'C0o', markersize=1)
+    ax1.set_title('I/O path conductance')
+    ax2.plot(xs, avg, 'C0o', markersize=1)
+    ax2.set_title('Average network conductance')
 
-ax.set(xlabel='relaxation time/frequency [s/Hz]', ylabel='average conductivity')
-labels = [f'{d} s\n{round(1.0/d, 2)} Hz' for d in delay_range]
+ax1.set(xlabel='stimulation frequency [Hz]', ylabel='average conductivity [S]')
+ax2.set(xlabel='stimulation frequency [Hz]', ylabel='average conductivity [S]')
+labels = [str(round(1.0/d, 2)) for d in delay_range]
 labels = [(i, l) for i, l in enumerate(labels) if i % labels_count == 0]
-positions = [p for p, _ in labels]
-labels = [l for _, l in labels]
+positions, labels = [p for p, _ in labels], [l for _, l in labels]
+ax1.set_xticks(positions)
+ax1.set_xticklabels(labels)
+ax2.set_xticks(positions)
+ax2.set_xticklabels(labels)
 
-plt.title(
-    'Average conductance after continuous stimulation\n'
-    'at different frequencies'
+plt.suptitle(
+    'Conductance after continuous stimulation at different frequencies'
 )
-plt.xticks(positions, labels)
 plt.tight_layout(pad=1.5)
 plt.show()
