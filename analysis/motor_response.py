@@ -37,11 +37,11 @@ def influence(
     plt.suptitle(superior_title)
     plt.show()
 
-    def details(detailer):
+    def details(detailer_function):
         fig = plt.figure(figsize=(5 * count, 5))
         axs = map(lambda _: plt.subplot(1, count, _), range(1, 1 + count))
         for ax, (x, y, e, label, title) in zip(axs, values):
-            detailer(fig, ax, e)
+            detailer_function(fig, ax, e)
             ax.set_title(title)
         plt.tight_layout()
         plt.subplots_adjust(bottom=0.05, top=0.85)
@@ -191,7 +191,6 @@ def detailer(fig, ax, e: Evolution):
         sum(g[a][b]['Y'] for a, b in g.edges) / g.number_of_edges()
         for g, _ in e.network_instances
     ]
-    print(avg_conductance)
     ax = fig.axes[-1]
     ax.plot(xs, avg_conductance, color='y')
 
