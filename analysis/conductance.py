@@ -153,18 +153,26 @@ densities = {
     6.25: (400, 80, 10)
 }
 delay = 0.1
+replicas = 30
 iterations = range(50)
 
 max_conductances = []
 
-for density, (wires, size, length) in densities.items():
-    cortex, pyramid, thalamus = generate(Datasheet(
-        wires_count=wires,
-        Lx=size, Ly=size,
-        mean_length=length, std_length=length * 0.35
-    ), load=1)
-    conductances = average_conductance(cortex, pyramid, thalamus)
-    max_conductances += [max(conductances)]
+for density, (wires, s, l) in densities.items():
+    conductances = []
+
+    for _ in range(replicas):
+        ds = Datasheet(wires, Lx=s, Ly=s, mean_length=l, std_length=l * 0.35)
+        cortex, pyramid, thalamus = generate(ds, load=1)
+
+        # get avg conductance in multiple iterations
+        conductance = list(average_conductance(cortex, pyramid, thalamus))
+        conductance = sum(conductance) / len(conductance)
+
+        # add the replica avg conductance
+        conductances += [conductance]
+
+    max_conductances += [sum(conductances) / len(conductances)]
     ax.plot(conductances, label=f'Density {density}')
 
 ax.set(xlabel='iterations', ylabel='average conductivity')
@@ -175,7 +183,7 @@ ax.bar(list(map(str, densities.keys())), max_conductances)
 ax.set(xlabel='densities', ylabel='max average conductivity')
 
 fig.suptitle(
-    'Average conductance after continuous stimulation'
+    'Average conductance after continuous stimulation '
     'in networks with different densities'
 )
 
