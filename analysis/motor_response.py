@@ -121,13 +121,27 @@ def stimulation_values(
 # change their behaviour runtime due to the higher number of highly-variable
 # wires, possibly increasing capabilities.
 
+counter: int = 0
+
+
+def detailer(fig, ax, e: Evolution):
+    """Plot the conductance distribution at penultimate state"""
+    e = Evolution(
+        e.datasheet, e.wires_dict, e.delta_time, e.grounds, e.loads,
+        [e.network_instances[-2]]
+    )
+    plot.conductance_distribution(fig, ax, e)
+
+
 influence(
     'Analysis of the update frequency influence in the signal propagation',
     lambda s: f'Conductance in {1 / s} Hz updated network',
     lambda s: f'frequency {1.0 / s} Hz',
     lambda s: stimulation_values(*generate(load=100, seed=1234), time=s),
     values=[0.1, 5, 10],
-    detailers=[plot.conductance_distribution, plot.network_conductance]
+    detailers=[
+        plot.conductance_distribution, detailer, plot.network_conductance
+    ]
 )
 
 
