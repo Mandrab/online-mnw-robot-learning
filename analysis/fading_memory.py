@@ -4,9 +4,11 @@ its recent history.
 """
 import math
 import matplotlib.pyplot as plt
+import networkx as nx
 
-from nanowire_network_simulator import plot, Evolution
 from analysis import *
+from nanowire_network_simulator import plot, Evolution
+from typing import Any
 
 
 ################################################################################
@@ -39,111 +41,97 @@ from analysis import *
 # a person or animal get used to harsh life conditions, responding weakly to
 # stimulus that it started to get used to.
 
-def network_states(signal: Iterable[float]):
+def io_path_conductance(signal: Iterable[float]):
     # stimulate the first graph with the signal
-    cortex, pyramid, thalamus = generate(load=100, seed=1234)
+    c, p, t = generate(load=100, seed=1234)
 
     for value in signal:
-        value = adapt(value, out_range=sensor_range)
-        evaluate(cortex, pyramid, thalamus, {'s': value}, 1)
+        evaluate(c, p, t, {'s': value}, 1, i_range=(0, 1))
 
-    conductance = [cortex.network[a][b]['Y'] for a, b in cortex.network.edges()]
-    return sum(conductance) / len(conductance), max(conductance)
+    n, i, o = c.network, t.mapping['s'], p.mapping['m']
+    return 1 / nx.resistance_distance(n, i, o, weight='Y', invert_weight=False)
 
 
-def influence(iteration_distances):
-    fig = plt.figure(figsize=(12, 10))
-    main, other = fig.subfigures(2, 1, height_ratios=[2, 3])
+def signals(spacing: int) -> Any:
+    # represent on input signal at one moment in the time
+    sin = [math.sin(_ / 10.0) for _ in range(0, 30, 4)]
 
-    def signals(spacing):
-        # represent on input signal at one moment in the time
-        sin = [math.sin(_ / 10.0) for _ in range(0, 30, 4)]
+    # add padding and final encounter
+    signal_1 = [.0] * 75 + sin + [.0] * spacing + sin[:int(len(sin) * .75)]
 
-        # add padding
-        signal_1 = [.0] * 75 + sin + [.0] * spacing
+    # create a second signal and make it of the same length as signal_1
+    signal_2 = sin[:int(len(sin) * .75)]
+    signal_2 = [.0] * (len(signal_1) - len(signal_2)) + signal_2
 
-        # add final encounter
-        signal_1 += sin[:int(len(sin) * .75)]
+    return signal_1, signal_2
 
-        # create a second signal
-        signal_2 = sin[:int(len(sin) * .75)]
 
-        # make them of the same length
-        signal_2 = [.0] * (len(signal_1) - len(signal_2)) + signal_2
+def influence(distances):
+    def sum_states(a, b): return a + [io_path_conductance(b)]
 
-        return signal_1, signal_2
+    c, p, t = generate(load=100, seed=1234)
+    ys = []
+    for value in (signal := [10.0] * 20 + [0.0] * 30):
+        evaluate(c, p, t, {'s': value}, 1, i_range=(0, 10))
+        ys += [1 / nx.resistance_distance(
+            c.network, t.mapping['s'], p.mapping['m'],
+            weight='Y', invert_weight=False
+        )]
 
-    # calculate min, max and avg conductance in the network
-    statistics_1 = []
-    statistics_2 = []
+    _, ax = plt.subplots()
+    ax.set_title('I/O path conductance when subject to a signal')
+    ax.set(xlabel='Time distance [s]', ylabel='Voltage [V]')
+    ax.plot(range(50), signal, color='tab:red')
+    ax = ax.twinx()
+    ax.plot(range(50), ys, color='tab:blue')
+    ax.set_ylabel('Conductance [S]')
+    plt.show()
 
-    for distance in iteration_distances:
-        s1, s2 = signals(distance)
-        statistics_1 += [network_states(s1)]
-        statistics_2 += [network_states(s2)]
+    signal_1s = map(next, map(iter, map(signals, distances)))
+    statistics = reduce(sum_states, signal_1s, list())
 
-    def collapse(a, b): return tuple([e[0] + [e[1]] for e in zip(a, b)])
-    statistics_1 = reduce(collapse, statistics_1, ([], [], []))
-    statistics_2 = reduce(collapse, statistics_2, ([], [], []))
+    _, ax = plt.subplots()
+    ax.set_title(
+        'I/O path conductance when stimulated\n' +
+        'with two signals happening at different time distances'
+    )
+    ax.set(xlabel='Time distance [s]', ylabel='Conductance [S]')
+    ax.plot(distances, statistics)
+    plt.show()
 
-    for ax, r1, r2, label in zip(
-            main.subplots(1, 2), statistics_1, statistics_2,
-            ('Average conductance', 'Maximum conductance')
-    ):
-        ax.plot(iteration_distances, r1, color='b', label='signal 1')
-        ax.plot(iteration_distances, r2, color='r', label='signal 2')
-        ax.legend(loc='center right')
-        ax.set_yscale('log')
-        ax.set(title=label, xlabel='Time distance [s]', ylabel='Conductance')
-
-    plot_distance = iteration_distances[3]
-    for signal, (left_ax, right_ax) in zip(
-            signals(plot_distance), iter(other.subplots(2, 2))
-    ):
-        # plot signal
-        left_ax.plot([_ * 10 for _ in signal], label='voltage')
-        left_ax.tick_params(axis='y', labelcolor='tab:blue')
-        left_ax.set(
-            title=f'Input signal',
-            xlabel='Iterations', ylabel='Voltage'
-        )
-        left_ax.set_xlim([70, len(signal)])
+    fig = plt.figure(figsize=(12, 6))
+    ax = [[plt.subplot(2, 2, i + 2 * r) for i in range(1, 3)] for r in range(2)]
+    for s, (lax, rax) in zip(signals(distances[3]), ax):
+        lax.plot([_ * 10 for _ in s], label='voltage', color='tab:blue')
+        lax.tick_params(axis='y', labelcolor='tab:blue')
+        lax.set(title=f'Input signal', xlabel='Time [s]', ylabel='Voltage')
+        lax.set_xlim(left=70)
 
         # create second scale
-        left_ax = left_ax.twinx()
-
-        # save average conductance
-        mean_conductance = []
+        lax = lax.twinx()
 
         # stimulate the first graph with the signal
-        cortex, pyramid, thalamus = generate(load=100, seed=1234)
+        c, p, t = generate(load=100, seed=1234)
 
-        for value in signal:
-            value = adapt(value, out_range=sensor_range)
-            evaluate(cortex, pyramid, thalamus, {'s': value}, 1)
-            conductance = [
-                cortex.network[a][b]['Y']
-                for a, b in cortex.network.edges()
-            ]
-            mean_conductance += [sum(conductance) / len(conductance)]
+        def network_avg_conductance(v):
+            evaluate(c, p, t, {'s': v}, 1, i_range=(0, 1))
+            conductance = [c.network[a][b]['Y'] for a, b in c.network.edges()]
+            return sum(conductance) / len(conductance)
 
-        left_ax.plot(mean_conductance, color='tab:red', label='conductance')
-        left_ax.tick_params(axis='y', labelcolor='tab:red')
-        left_ax.set(ylabel='Conductance')
-        left_ax.set_ylim(top=14e-3)
+        lax.plot(list(map(network_avg_conductance, s)), color='tab:red')
+        lax.tick_params(axis='y', labelcolor='tab:red')
+        lax.set(ylabel='Conductance [S]')
+        lax.set_ylim(top=14e-3)
 
-        plot.conductance_distribution(fig, right_ax, Evolution(
-            default_datasheet,
-            wires_dict={}, delta_time=0.1, grounds=set(),
-            loads={(a, 1) for a in nodes(pyramid.mapping)},
-            network_instances=[
-                (cortex.network, [(s, 1) for s in nodes(thalamus.mapping)])
-            ]
-         ))
+        plot.conductance_distribution(fig, rax, Evolution(
+            default_datasheet, {}, 0.1, set(),
+            {(a, 1) for a in nodes(p.mapping)},
+            [(c.network, [(s, 1) for s in nodes(t.mapping)])]
+        ))
 
     plt.suptitle('Network conductance according to different input sequences')
     plt.subplots_adjust(wspace=.35, hspace=.45)
     plt.show()
 
 
-influence([*range(0, 25)])
+influence(list(range(0, 25)))
