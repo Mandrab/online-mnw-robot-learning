@@ -9,6 +9,7 @@ from os import listdir
 from os.path import join, isfile
 from scipy.signal import savgol_filter
 from analysis import collapse_history, evaluate
+from robot.pyramid import Pyramid
 from robot.thalamus import Thalamus
 
 DIRECTORY = 'connections/controllers_proximity/'
@@ -47,6 +48,8 @@ io_signals = io_signals[CONFIGURATION_INDEX]
 graph, datasheet, wires, connections = others[CONFIGURATION_INDEX]
 sensors = connections['inputs']
 actuators = connections['outputs']
+multipliers = connections['multiplier']
+sensitivity = connections['load']
 
 
 def file_import(name):
@@ -230,19 +233,26 @@ inputs = [(i, 0) for i in sensors.values()]
 outputs = {(i, 100) for i in actuators.values()}
 
 cortex = Cortex(graph, datasheet, wires)
-thalamus = Thalamus(sensors, actuators, sensitivity=100)
+pyramid = Pyramid(actuators, sensitivity)
+thalamus = Thalamus(sensors, multipliers)
 
 
 def break_sensor(name: str):
     # reset the network state
     for _ in range(100):
-        evaluate(cortex, thalamus, {'ps0': 0.0}, 1e3, IR_RANGE, MOTOR_RANGE)
+        evaluate(
+            cortex, pyramid, thalamus,
+            {'ps0': 0.0}, 1e3, IR_RANGE, MOTOR_RANGE
+        )
 
     commands = []
     for stimulus in i_signals:
         stimulus = {k: v for k, v in stimulus.items() if k != name}
         commands += [
-            evaluate(cortex, thalamus, stimulus, 0.1, IR_RANGE, MOTOR_RANGE)
+            evaluate(
+                cortex, pyramid, thalamus,
+                stimulus, 0.1, IR_RANGE, MOTOR_RANGE
+            )
         ]
 
     return commands
@@ -365,7 +375,7 @@ for _ in range(100):
 
 resistances = []
 for i_signal in i_signals:
-    evaluate(cortex, thalamus, i_signal, 0.1, IR_RANGE, MOTOR_RANGE)
+    evaluate(cortex, pyramid, thalamus, i_signal, 0.1, IR_RANGE, MOTOR_RANGE)
     resistances += [{
         motor_name: {
             sensor_name: nx.resistance_distance(
