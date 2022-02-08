@@ -9,14 +9,14 @@ from itertools import chain
 from scipy.stats import wilcoxon
 
 
-def list_to_dict(data_dict, keys, f=lambda _: _):
+def list_to_dict(data_dict, key_values, f=lambda _: _):
     return dict(map(
         lambda k: (k, reduce(
             lambda a, b: a + [f(b['fitness'])],
             filter(lambda _: _['density'] == k, data_dict),
             list()
         )),
-        keys
+        key_values
     ))
 
 
@@ -37,7 +37,7 @@ densities = sorted(set(map(lambda _: _['density'], data)))
 densities = {k: [*chain(*v)] for k, v in list_to_dict(data, densities).items()}
 
 for density in densities:
-    fitness = sorted(densities[density]) # todo
+    fitness = sorted(densities[density])  # todo
     ax.plot(fitness, label=f'density {density}')
 
 ax.set(
