@@ -12,10 +12,11 @@ from analysis import collapse_history, evaluate
 from robot.pyramid import Pyramid
 from robot.thalamus import Thalamus
 
-DIRECTORY = 'connections/controllers_proximity/'
 CONFIGURATION_INDEX = 0
 PROXIMITY_MEASURE = True
-SENSOR = 'ps1'  # for proximity 'ps6', for distance 'ps1'
+DIRECTORY = f'connections/controllers_'
+DIRECTORY += 'proximity/' if PROXIMITY_MEASURE else 'distance/'
+SENSOR = 'ps6' if PROXIMITY_MEASURE else 'ps1'
 
 IR_RANGE = (65, 1550) if PROXIMITY_MEASURE else (0, 7)
 MOTOR_RANGE = (6.28, -6.28) if PROXIMITY_MEASURE else (-6.28, 6.28)
@@ -396,7 +397,7 @@ for ax, (motor_name, values) in zip(axs, collapse_history(resistances).items()):
         ylabel='Resistance', yscale='log',
         xlabel='Iteration'
     )
-    ax.legend()
+    ax.legend(ncol=3, loc='upper right')
 
 fig.suptitle('Change in resistance of sensor-motor path')
 

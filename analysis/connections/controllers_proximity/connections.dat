@@ -13,6 +13,6 @@
         "left wheel motor": 160,
         "right wheel motor": 15
     },
-    "load": 100,
+    "load": 1000000,
     "multiplier": []
 }
