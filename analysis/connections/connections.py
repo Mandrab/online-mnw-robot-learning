@@ -152,11 +152,12 @@ ax = ax.twinx()
 data = [k for k, *_ in pairs]
 lines += ax.plot(data, label=SENSOR, color='r')
 ax.set_ylabel('Distance', color='r')
+ax.tick_params(axis='y', colors='red')
 
 labels = [line.get_label() for line in lines]
 ax.legend(lines, labels, loc=0)
 
-plt.title('Sensor-Motor relation for sensor 0')
+plt.title(f'Sensor-Motor relation for sensor {SENSOR}')
 plt.show()
 
 ################################################################################
@@ -164,11 +165,10 @@ plt.show()
 # The following graph show the correlation between the sensor-motor time series.
 # The correlation is calculated as the Pearson's correlation coefficient and it
 # is almost completely positive due to the characteristic of the system: this
-# cause indeed the motor signal to rise when the distance is high (todo check),
-# making the correlation almost always positive (some cases may lead to a
-# decrease if the higher voltage cause a lower voltage at the side of a wire,
-# causing a consequent decrease in the stimulation; todo just hypothesis
-# probably wrong).
+# cause indeed the motor signal to rise when the distance is high, making the
+# correlation almost always positive (some cases may lead to a decrease if the
+# higher voltage cause a lower voltage at the side of a wire, causing a
+# consequent decrease in the stimulation; todo just hypothesis, probably wrong).
 # If this analysis better shows the signal-motor correlation, it does not
 # however guarantee the correlation. As for the previous case indeed, the
 # stimulating signal may be another one with similar trend, making the measure
@@ -276,21 +276,18 @@ left_m_ax, right_m_ax = other_fig.subplots(2, 1)
 ax = fig.subplots()
 
 for i, result in enumerate(results + [normal]):
-    label, width = (f'ps{i}', 1) if i <= 7 else ('all working', 3)
+    label, width = (f'ps{i}', 1) if i <= 7 else ('none', 3)
     left_values = smoother(result['left wheel motor'])
     right_values = smoother(result['right wheel motor'])
     left_m_ax.plot(left_values, label=label, linewidth=width)
     right_m_ax.plot(right_values, label=label, linewidth=width)
 
 left_m_ax.set(title='Left motor behaviour with broken sensors')
-left_m_ax.legend(ncol=3)
+left_m_ax.legend(loc='lower right', fontsize=9)
 right_m_ax.set(title='Right motor behaviour with broken sensors')
-right_m_ax.legend(ncol=3)
+right_m_ax.legend(loc='lower right', fontsize=9)
 
-ax.set(title='''
-    1 - Pearson\'s correlation coefficient between
-    normal and sensor-missing-generated outputs
-''')
+ax.set(title='Normal and faulted sensor response correlation')
 pcm = ax.pcolormesh(
     actuators.keys(),
     [f'ps{i}' for i in range(8)],
