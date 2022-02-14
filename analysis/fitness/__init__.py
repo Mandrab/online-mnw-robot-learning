@@ -6,8 +6,7 @@ from itertools import product
 from typing import Dict, List, Any, Callable
 
 
-def formats(v) -> str:
-    return '{v:.2f}'.format(v=v) if v < 1000 else '{v:.0e}'.format(v=v)
+def formats(v) -> str: return ('{v:.2f}' if v < 1000 else '{v:.0e}').format(v=v)
 
 
 def group(data: List[Dict], by_key: str, extract_key: str = '') -> Dict:
@@ -22,6 +21,7 @@ def transform(data: Dict[Any, List[Any]], strategy: Callable):
 
 
 def boxplot(p_title: str, x_label: str, y_label: str, data: Dict[str, List]):
+    """Create a boxplot with x = dict keys; y = dict value."""
     fig, ax = plt.subplots(figsize=(10, 10))
 
     ax.boxplot(data.values())
@@ -64,7 +64,7 @@ def statistics(data: List[Dict], by_key: str):
 
 def evolutions(data: List[Dict], by_key: str):
     """"
-    Plot the evolution of the configurations fitness according to a property
+    Plot the evolution of the configurations fitness according to a property.
     """
     fig, ax = plt.subplots()
 
@@ -72,13 +72,12 @@ def evolutions(data: List[Dict], by_key: str):
     colors = plt.get_cmap('tab10')
 
     for key_i, (k, v) in enumerate(groups.items()):
-        iteration_count = len(v[0])
-
-        for i in range(iteration_count):
+        averages = []
+        for i in range(len(v[0])):
             fitness = list(map(max, [_[:i + 1] for _ in v]))
-            average = sum(fitness) / len(fitness)
+            averages.append(sum(fitness) / len(fitness))
 
-            ax.plot(i, average, 'o', markersize=1, color=colors(key_i), label=k)
+        ax.plot(averages, color=colors(key_i), label=k)
 
     plt.title('Average fitness evolution according to iterations')
     patches = [
