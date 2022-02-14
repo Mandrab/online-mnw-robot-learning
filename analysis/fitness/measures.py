@@ -21,8 +21,9 @@ statistics(data, 'load')
 # It is visible that higher density networks tend to improve more their fitness.
 # This is probably due to the fact that the larger space of solution, although
 # complicating the search, allows for more optimised configurations. The
-# optimisation of smaller networks seems indeed more related to lucky
-# configurations. Note that the fitness is calculated as the
+# optimisation of smaller networks may indeed be more related to lucky
+# configurations. This hypothesis is due to the more abrupt improvements at some
+# iterations. Note that the fitness is calculated as the
 
 fig, ax = plt.subplots()
 
@@ -30,17 +31,19 @@ groups = group(data, 'density', 'fitness')
 groups = list(zip(groups.items(), ['tab:blue', 'tab:red', 'tab:green']))
 
 for (k, v), c in groups:
-    averages = list(map(sum, zip(*v)))
+    iteration_count = len(v[0])
 
-    for i in range(len(averages)):
-        ax.plot(i, max(averages[:i + 1]), 'o', markersize=1, color=c, label=k)
+    for i in range(iteration_count):
+        fitness = list(map(max, [_[:i + 1] for _ in v]))
+        average = sum(fitness) / len(fitness)
+
+        ax.plot(i, average, 'o', markersize=1, color=c, label=k)
 
 plt.title('Fitness evolution according to iterations')
 patches = [ptc.Patch(color=c, label=f'density {k}') for (k, _), c in groups]
 plt.legend(handles=patches, loc='lower right')
 plt.show()
 
-exit()
 ################################################################################
 # DENSITY INFLUENCE ON FITNESS
 # The creation density seems to not influence the average results particularly.
