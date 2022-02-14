@@ -1,39 +1,46 @@
 import json
-import matplotlib.pyplot as plt
+import matplotlib.patches as ptc
 
-from collections import defaultdict
+from fitness import *
 from itertools import chain
 from scipy.signal import savgol_filter
-from typing import Dict, List, Any, Callable
-
-
-def group(dataset: List[Dict], by_key: str, extract_key: str = '') -> Dict:
-    result = defaultdict(list)
-    for d in dataset:
-        result[d[by_key]].append(d if extract_key == '' else d[extract_key])
-    return result
-
-
-def transform(dataset: Dict[Any, List[Any]], strategy: Callable):
-    return {k: strategy(vs) for k, vs in dataset.items()}
-
-
-def boxplot(p_title: str, x_label: str, y_label: str, dataset: Dict[str, List]):
-    fig, ax = plt.subplots(figsize=(10, 10))
-
-    ax.boxplot(dataset.values())
-
-    ax.set(title=p_title, xlabel=x_label, ylabel=y_label)
-    ax.set_xticks([*range(len(dataset) + 2)], labels=[None, *dataset, None])
-    ax.yaxis.grid(True, linestyle='dotted')
-
-    plt.tight_layout()
-    plt.show()
 
 
 with open('fitness.2022.02.02.json') as file:
     data = json.load(file)
 
+################################################################################
+# DATA STATISTICS
+# Measures about fitness. TODO data may be to low
+
+statistics(data, 'density')
+statistics(data, 'load')
+
+################################################################################
+# ITERATIONS INFLUENCE ON FITNESS
+# It is visible that higher density networks tend to improve more their fitness.
+# This is probably due to the fact that the larger space of solution, although
+# complicating the search, allows for more optimised configurations. The
+# optimisation of smaller networks seems indeed more related to lucky
+# configurations. Note that the fitness is calculated as the
+
+fig, ax = plt.subplots()
+
+groups = group(data, 'density', 'fitness')
+groups = list(zip(groups.items(), ['tab:blue', 'tab:red', 'tab:green']))
+
+for (k, v), c in groups:
+    averages = list(map(sum, zip(*v)))
+
+    for i in range(len(averages)):
+        ax.plot(i, max(averages[:i + 1]), 'o', markersize=1, color=c, label=k)
+
+plt.title('Fitness evolution according to iterations')
+patches = [ptc.Patch(color=c, label=f'density {k}') for (k, _), c in groups]
+plt.legend(handles=patches, loc='lower right')
+plt.show()
+
+exit()
 ################################################################################
 # DENSITY INFLUENCE ON FITNESS
 # The creation density seems to not influence the average results particularly.
@@ -85,8 +92,8 @@ boxplot(title, 'Load', 'Fitness', {k: [*map(max, v)] for k, v in groups})
 fig, axs = plt.subplots(1, 3, figsize=(15, 5))
 fig.suptitle('Max fitness distribution according to connected motor loads')
 
-for ax, (k, vs) in zip(axs, group(data, 'density').items()):
-    groups = group(vs, 'load', 'fitness').items()
+for ax, (k, v) in zip(axs, group(data, 'density').items()):
+    groups = group(v, 'load', 'fitness').items()
     groups = {k: [*map(max, v)] for k, v in groups}
     ax.boxplot(groups.values())
 
