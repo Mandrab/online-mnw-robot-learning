@@ -1,5 +1,4 @@
 import json
-import matplotlib.patches as ptc
 
 from fitness import *
 from itertools import chain
@@ -17,7 +16,7 @@ statistics(data, 'density')
 statistics(data, 'load')
 
 ################################################################################
-# ITERATIONS INFLUENCE ON FITNESS
+# ITERATIONS INFLUENCE ON FITNESS - DENSITY
 # It is visible that higher density networks tend to improve more their fitness.
 # This is probably due to the fact that the larger space of solution, although
 # complicating the search, allows for more optimised configurations. The
@@ -25,24 +24,16 @@ statistics(data, 'load')
 # configurations. This hypothesis is due to the more abrupt improvements at some
 # iterations. Note that the fitness is calculated as the
 
-fig, ax = plt.subplots()
+evolutions(data, 'density')
 
-groups = group(data, 'density', 'fitness')
-groups = list(zip(groups.items(), ['tab:blue', 'tab:red', 'tab:green']))
+################################################################################
+# ITERATIONS INFLUENCE ON FITNESS - LOADS
+# Differently from the evolution of the density, the load seems to impact less
+# on the fitness. The only conclusion is that lower loads seems to perform
+# slightly better that higher ones. Nevertheless, due to the reduced population
+# (15?) this result may not be completely valid.
 
-for (k, v), c in groups:
-    iteration_count = len(v[0])
-
-    for i in range(iteration_count):
-        fitness = list(map(max, [_[:i + 1] for _ in v]))
-        average = sum(fitness) / len(fitness)
-
-        ax.plot(i, average, 'o', markersize=1, color=c, label=k)
-
-plt.title('Fitness evolution according to iterations')
-patches = [ptc.Patch(color=c, label=f'density {k}') for (k, _), c in groups]
-plt.legend(handles=patches, loc='lower right')
-plt.show()
+evolutions(data, 'load')
 
 ################################################################################
 # DENSITY INFLUENCE ON FITNESS
