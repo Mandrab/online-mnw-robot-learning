@@ -1,11 +1,12 @@
 import json
+import sys
 
 from fitness import *
 from itertools import chain
 from scipy.signal import savgol_filter
 
 
-with open('fitness.2022.02.02.json') as file:
+with open(sys.argv[1] + 'dataset.json') as file:
     data = json.load(file)
 
 ################################################################################
@@ -22,7 +23,7 @@ statistics(data, 'load')
 # complicating the search, allows for more optimised configurations. The
 # optimisation of smaller networks may indeed be more related to lucky
 # configurations. This hypothesis is due to the more abrupt improvements at some
-# iterations. Note that the fitness is calculated as the
+# iterations. Note that the fitness is calculated as the average of maximums
 
 evolutions(data, 'density')
 
@@ -31,7 +32,8 @@ evolutions(data, 'density')
 # Differently from the evolution of the density, the load seems to impact less
 # on the fitness. The only conclusion is that lower loads seems to perform
 # slightly better that higher ones. Nevertheless, due to the reduced population
-# (15?) this result may not be completely valid.
+# (15?) this result may not be completely valid. Note that the fitness is
+# calculated as the average of maximums
 
 evolutions(data, 'load')
 
@@ -54,6 +56,9 @@ boxplot(title, 'Density', 'Fitness', {k: [*chain(*v)] for k, v in groups})
 title = 'Max fitness distribution according to network creation densities'
 boxplot(title, 'Density', 'Fitness', {k: [*map(max, v)] for k, v in groups})
 
+title = 'Initial fitness distribution according to network creation densities'
+boxplot(title, 'Density', 'Fitness', {k: [_[0] for _ in v] for k, v in groups})
+
 ################################################################################
 # LOAD INFLUENCE ON FITNESS
 # Lower loads, whose make the network more sensible, seems to slightly improve
@@ -71,6 +76,9 @@ boxplot(title, 'Load', 'Fitness', {k: [*chain(*v)] for k, v in groups})
 
 title = 'Max fitness distribution according to connected motor loads'
 boxplot(title, 'Load', 'Fitness', {k: [*map(max, v)] for k, v in groups})
+
+title = 'Initial fitness distribution according to connected motor loads'
+boxplot(title, 'Density', 'Fitness', {k: [_[0] for _ in v] for k, v in groups})
 
 ################################################################################
 # DENSITY + LOAD INFLUENCE ON FITNESS
@@ -110,16 +118,16 @@ plt.show()
 # No explanation has been found for this behaviour.
 
 for i, d in enumerate(data):
-    with open(f'2022-02-02.182838773520/connections.{i}.dat') as file:
+    with open(f'{sys.argv[1]}/connections.{i}.dat') as file:
         file_data = json.load(file)
         d['multiplier'] = file_data['multiplier']
 
 
-def avg(m): return 2 * m['gs0'] / (m['ps0'] + m['ps7'])
+def proportion(m): return 2 * m['gs0'] / (m['ps0'] + m['ps7'])
 
 
 groups = {
-    k: sorted([(max(v['fitness']), avg(v['multiplier'])) for v in vs])
+    k: sorted([(max(v['fitness']), proportion(v['multiplier'])) for v in vs])
     for k, vs in group(data, 'density').items()
 }
 
