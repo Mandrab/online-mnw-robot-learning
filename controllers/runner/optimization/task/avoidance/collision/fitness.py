@@ -21,9 +21,9 @@ class Fitness(Base):
         speeds = [adapt(value, Motor.range()) for value in speeds]
 
         average_speed = sum(speeds) / 2.0
-        directions = sqrt(abs(reduce(sub, speeds)))
+        directions = 1 - abs(reduce(sub, speeds))
 
-        self.fitness += (1 - max_proximity) * (1 - directions) * average_speed
+        self.fitness += (1 - sqrt(max_proximity)) * directions * average_speed
         self.counter += 1
 
     def value(self) -> float:
