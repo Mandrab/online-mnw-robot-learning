@@ -1,3 +1,7 @@
+"""
+Converts the readme file of a run to a json dataset for an easier analysis.
+"""
+
 import itertools
 import json
 import re
