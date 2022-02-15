@@ -22,7 +22,7 @@ def transform(data: Dict[Any, List[Any]], strategy: Callable):
 
 def boxplot(p_title: str, x_label: str, y_label: str, data: Dict[str, List]):
     """Create a boxplot with x = dict keys; y = dict value."""
-    fig, ax = plt.subplots(figsize=(10, 10))
+    fig, ax = plt.subplots()
 
     ax.boxplot(data.values())
 
