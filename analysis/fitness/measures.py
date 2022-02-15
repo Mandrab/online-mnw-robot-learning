@@ -120,7 +120,7 @@ plt.show()
 for i, d in enumerate(data):
     with open(f'{sys.argv[1]}/connections.{i}.dat') as file:
         file_data = json.load(file)
-        d['multiplier'] = file_data['multiplier']
+        d['multiplier'] = file_data.get('multiplier', 1.0)
 
 
 def proportion(m): return 2 * m['gs0'] / (m['ps0'] + m['ps7'])
