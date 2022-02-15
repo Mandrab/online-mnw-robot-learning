@@ -38,6 +38,9 @@ def optimize(instance: Simulation) -> Simulation:
     # set controller random seed
     random.seed(instance.elite.cortex.datasheet.seed)
 
+    # restore simulation to starting point
+    instance.elite.body.simulationReset()
+
     # run the initial individual to obtain its fitness
     instance.goal_task.life_manager(instance.elite, instance.epoch_duration)
 
