@@ -11,9 +11,6 @@ _, input_filename, output_filename, *_ = sys.argv
 
 print(f'Converting {input_filename} to json')
 
-skip_lines = ['Generating network', 'Saving graph to file']
-description_passed = False
-
 json_objects = list()
 
 expression = 'Device density: ([0-9|\.]*), '
