@@ -26,12 +26,17 @@ with open(folder + next(_ for _ in files if _ == 'README.md')) as infile:
 
         # get sensors ranges
         if results := sensor_pattern.search(line):
-            ranges = results.groups()
-            ranges = [int(tuple_extractor.search(_).group(1)) for _ in ranges]
-            ranges = [4095 / 1550 if _ == 1550 or _ == 7 else 1 for _ in ranges]
-            ir_multiplier, *ranges = ranges
-            if ranges:
-                ground_multiplier, *_ = ranges
+            data = results.group(1).split(', ')
+            data = [float(_.removeprefix('[').removesuffix(']')) for _ in data]
+            data = [
+                4095 / 1550 if _ == 7
+                else 1 if _ == 4095             # no multiplier
+                else 0 if _ == 0 else 4095 / _  # lower bound; multiplier
+                for _ in data
+            ]
+            _, ir_multiplier, *data = data
+            if data:
+                _, ground_multiplier = data
 
 
 for filename in filter(lambda _: 'connections' in _, files):
