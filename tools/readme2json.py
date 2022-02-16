@@ -19,7 +19,7 @@ expression += 'Motor load: ([0-9|e\+]*), '
 expression += 'Average sensor signal multiplication: ([0-9|\.]*)%'
 
 head_pattern = re.compile(expression)
-head_pattern_0 = re.compile('Creation density: (.*), Connected.* density: (.*)')
+head_pattern_0 = re.compile('.* density: (.*), .* density: ([0-9|.]*)(.*)')
 head_pattern_1 = re.compile('Effective network density: (.*) wires.*')
 body_pattern = re.compile('fitness: (.*)')
 densities_pattern = re.compile(' *densities: (.*)')
@@ -56,7 +56,9 @@ with open(input_filename) as infile:
 
         # for old version of the readme files
         if results := head_pattern_0.search(line):
-            density, cc_density = results.groups()
+            density, cc_density, *results = results.groups()
+            if results:
+                load = re.search('Motors load: (.*)', results[0]).group(1)
             configuration = dict(
                 density=float(density),
                 cc_density=float(cc_density),
