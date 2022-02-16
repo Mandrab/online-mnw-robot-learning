@@ -55,7 +55,7 @@ with open(input_filename) as infile:
             json_objects.append(configuration)
 
         # for old version of the readme files
-        if results := head_pattern_0.search(line):
+        elif results := head_pattern_0.search(line):
             density, cc_density, *results = results.groups()
             if results:
                 load = re.search('Motors load: (.*)', results[0]).group(1)
@@ -69,7 +69,7 @@ with open(input_filename) as infile:
             json_objects.append(configuration)
 
         # for older version of the readme files
-        if results := head_pattern_1.search(line):
+        elif results := head_pattern_1.search(line):
             configuration = dict(
                 density=float(next(densities)),
                 cc_density=float(results.group(1)),
