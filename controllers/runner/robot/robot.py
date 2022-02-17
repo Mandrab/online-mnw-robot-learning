@@ -51,7 +51,7 @@ def run(instance: Robot) -> Tuple[Dict[str, float], Dict[str, float]]:
 
     # get normalized sensors readings (range [0, 1]) and apply multiplier
     reads = [(s, s.read(normalize=True)) for s in body.sensors]
-    reads = [(k, v * thalamus.multiplier.get(k, 0.0)) for k, v in reads]
+    reads = [(k, v * thalamus.multiplier.get(k, 1.0)) for k, v in reads]
 
     # adapt to range [0-10] and filter non used sensors
     reads = [(k, adapt(v, out_range=cortex.working_range)) for k, v in reads]
