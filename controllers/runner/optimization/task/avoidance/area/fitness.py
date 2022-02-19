@@ -1,5 +1,4 @@
 from functools import reduce
-from math import sqrt
 from operator import sub
 from optimization.fitness import Fitness as Base
 from robot.component import grounds
@@ -41,17 +40,17 @@ class Fitness(Base):
 
         # get motors velocities and make them in range 0-1
         speeds = [motor.speed for motor in self.robot.motors]
-        speeds = [adapt(value, Motor.range(), (-1, 1)) for value in speeds]
+        speeds = [adapt(value, in_range=Motor.range()) for value in speeds]
 
         # calculate average speed and direction of the robot
-        average_speed = sum(speeds) / 2.0                   # range -1, 1
-        directions = sqrt(abs(reduce(sub, speeds)))         # range 0, 1
+        average_speed = sum(speeds) / 2.0
+        directions = 1 - abs(reduce(sub, speeds))
 
         # prefer straight and fast movements
-        self.fitness += (1 - directions) * average_speed    # range -1, 1
+        self.fitness += directions * average_speed
         self.counter += 1
 
     def value(self) -> float:
         if self.counter == 0:
             return 0.0
-        return adapt(self.fitness / self.counter, (-101, 1), (0, 100))
+        return adapt(self.fitness / self.counter, (-100, 1), (0, 100))
