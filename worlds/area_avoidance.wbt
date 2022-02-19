@@ -397,7 +397,7 @@ DEF area_7 Solid {
   name "area 7 white"
 }
 DEF area_8 Solid {
-  translation 0.17 0.001 0.66
+  translation 0.37 0.001 0.66
   children [
     Shape {
       appearance PBRAppearance {
@@ -413,7 +413,7 @@ DEF area_8 Solid {
   name "area 8"
 }
 DEF area_8 Solid {
-  translation 0.17 0.002 0.66
+  translation 0.37 0.002 0.66
   children [
     Shape {
       appearance PBRAppearance {
