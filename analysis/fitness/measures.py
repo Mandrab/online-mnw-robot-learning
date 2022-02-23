@@ -73,7 +73,7 @@ boxplot(title, 'Density', 'Fitness', evolution(groups))
 
 groups = group(data, 'load', 'fitness')
 
-title = 'Fitness distribution according to network creation densities'
+title = 'Fitness distribution according to motor loads'
 boxplot(title, 'Load', 'Fitness', evolution(groups))
 
 ################################################################################
@@ -88,7 +88,10 @@ boxplot(title, 'Load', 'Fitness', evolution(groups))
 # runs results
 
 fig, axs = plt.subplots(1, 3, figsize=(15, 5))
-fig.suptitle('Max fitness distribution according to connected motor loads')
+fig.suptitle(
+    'Max fitness distribution according to ' +
+    'network creation density and connected motor loads'
+)
 
 for ax, (k, v) in zip(axs, group(data, 'density').items()):
     groups = group(v, 'load', 'fitness').items()
