@@ -2,19 +2,25 @@ import json
 import sys
 
 from fitness import *
-from itertools import chain
 from scipy.signal import savgol_filter
 
 
 with open(sys.argv[1] + 'dataset.json') as file:
     data = json.load(file)
 
+if 'area' in sys.argv[1]:
+    limits = [75, 90]
+elif 'collision' in sys.argv[1]:
+    limits = exit()
+elif 'tmaze' in sys.argv[1]:
+    limits = [40, 50]
+
 ################################################################################
 # DATA STATISTICS
 # Measures about fitness. TODO data may be to low
 
-statistics(data, 'density')
-statistics(data, 'load')
+statistics(data, 'density', limits)
+statistics(data, 'load', limits)
 
 ################################################################################
 # ITERATIONS INFLUENCE ON FITNESS - DENSITY
@@ -48,16 +54,10 @@ evolutions(data, 'load')
 #
 # note that the multiplier may influence; the fitness threshold to 40 may limit.
 
-groups = group(data, 'density', 'fitness').items()
+groups = group(data, 'density', 'fitness')
 
 title = 'Fitness distribution according to network creation densities'
-boxplot(title, 'Density', 'Fitness', {k: [*chain(*v)] for k, v in groups})
-
-title = 'Max fitness distribution according to network creation densities'
-boxplot(title, 'Density', 'Fitness', {k: [*map(max, v)] for k, v in groups})
-
-title = 'Initial fitness distribution according to network creation densities'
-boxplot(title, 'Density', 'Fitness', {k: [_[0] for _ in v] for k, v in groups})
+boxplot(title, 'Density', 'Fitness', evolution(groups))
 
 ################################################################################
 # LOAD INFLUENCE ON FITNESS
@@ -69,16 +69,10 @@ boxplot(title, 'Density', 'Fitness', {k: [_[0] for _ in v] for k, v in groups})
 #
 # note that the multiplier may influence
 
-groups = group(data, 'load', 'fitness').items()
+groups = group(data, 'load', 'fitness')
 
-title = 'Fitness distribution according to connected motor loads'
-boxplot(title, 'Load', 'Fitness', {k: [*chain(*v)] for k, v in groups})
-
-title = 'Max fitness distribution according to connected motor loads'
-boxplot(title, 'Load', 'Fitness', {k: [*map(max, v)] for k, v in groups})
-
-title = 'Initial fitness distribution according to connected motor loads'
-boxplot(title, 'Density', 'Fitness', {k: [_[0] for _ in v] for k, v in groups})
+title = 'Fitness distribution according to network creation densities'
+boxplot(title, 'Load', 'Fitness', evolution(groups))
 
 ################################################################################
 # DENSITY + LOAD INFLUENCE ON FITNESS
@@ -103,7 +97,7 @@ for ax, (k, v) in zip(axs, group(data, 'density').items()):
     ax.set_xticks([*range(len(groups) + 2)], labels=labels)
     ax.yaxis.grid(True, linestyle='dotted')
 
-    ax.set(xlabel='Fitness', ylabel='Ground/proximity sensor ratio')
+    ax.set(xlabel='Load', ylabel='Fitness')
     ax.set_title(f'Density {k}')
 
 plt.tight_layout()
@@ -116,6 +110,9 @@ plt.show()
 # connected with higher ratios (i.e., when the ground sensor is more influential
 # than the proximity one). Contrarily, high scores are related to lower ratios.
 # No explanation has been found for this behaviour.
+
+if 'tmaze' not in sys.argv[1]:
+    exit()
 
 for i, d in enumerate(data):
     with open(f'{sys.argv[1]}/connections.{i}.dat') as file:
