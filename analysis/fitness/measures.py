@@ -11,9 +11,11 @@ with open(sys.argv[1] + 'dataset.json') as file:
 if 'area' in sys.argv[1]:
     limits = [75, 90]
 elif 'collision' in sys.argv[1]:
-    limits = exit()
+    limits = [50]
 elif 'tmaze' in sys.argv[1]:
     limits = [40, 50]
+else:
+    raise Exception('range unknown')
 
 ################################################################################
 # DATA STATISTICS
