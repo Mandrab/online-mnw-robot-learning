@@ -51,24 +51,22 @@ def statistics(data: List[Dict], by_key: str, limits: List[float]):
     data = group(data, by_key)
     data = {k: [max(v['fitness']) for v in vs] for k, vs in data.items()}
 
-    def to_table(*strings) -> str:
-        return '\t\t\t| '.join(map(str, strings))
+    print('\t\t| '.join([by_key] + ['[%.1f, %.1f)' % _ for _ in ranges]))
 
-    print(to_table(by_key, '\t| '.join(['[%.1f, %.1f)' % _ for _ in ranges])))
-
-    def percentage(key_range) -> float:
-        filtered = list(filter(key_range[1], data[key_range[0]]))
-        return 100.0 * len(list(filtered)) / len(data[key_range[0]])
-
-    ranges = [lambda _: a <= _ < b for a, b in ranges]
+    def percentage(key) -> Callable[[Any], float]:
+        def _(range_membership) -> float:
+            l_bound, u_bound = range_membership
+            filtered = list(filter(lambda _: l_bound <= _ < u_bound, data[key]))
+            return 100.0 * len(list(filtered)) / len(data[key])
+        return _
 
     total = 0.0, 0.0, 0.0
     for by_key in data:
-        statistic = list(map(percentage, product([by_key], ranges)))
-        print(to_table(formats(by_key), *map(formats, statistic)))
+        statistic = list(map(percentage(by_key), ranges))
+        print('\t\t| '.join([formats(by_key), *map(formats, statistic)]))
         total = map(sum, zip(total, statistic))
 
-    print(to_table('Average', *[formats(_ / len(data)) for _ in total]))
+    print('\t\t| '.join(['Average', *[formats(_ / len(data)) for _ in total]]))
 
 
 def evolutions(data: List[Dict], by_key: str):
