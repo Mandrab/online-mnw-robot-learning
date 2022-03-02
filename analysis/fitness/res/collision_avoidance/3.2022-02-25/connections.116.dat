@@ -1,0 +1,1 @@
+{"inputs": {"ps0": 14, "ps1": 66, "ps2": 76, "ps3": 25, "ps4": 72, "ps5": 62, "ps6": 20, "ps7": 55}, "outputs": {"left wheel motor": 10, "right wheel motor": 70}, "load": 1000, "multiplier": {"ps0": 1, "ps1": 1, "ps2": 1, "ps3": 1, "ps4": 1, "ps5": 1, "ps6": 1, "ps7": 1}}
