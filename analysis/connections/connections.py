@@ -265,7 +265,7 @@ normal, *results = map(collapse_history, results)
 
 # calculate correlation between output signals
 correlations = [
-    {k: 1-stats.pearsonr(normal[k], v)[0] for k, v in dictionary.items()}
+    {k: stats.pearsonr(normal[k], v)[0] for k, v in dictionary.items()}
     for dictionary in results
 ]
 
@@ -293,7 +293,7 @@ pcm = ax.pcolormesh(
     actuators.keys(),
     [f'ps{i}' for i in range(8)],
     correlations,
-    vmin=-1, vmax=1, cmap='coolwarm'
+    vmin=-1, vmax=1, cmap='twilight'
 )
 for y, values in enumerate(correlations):
     for x, value in enumerate(values):
