@@ -32,34 +32,34 @@ LOADS=$(awk -F 'loads: ' '$2{print $2}' "$1")
 
 # create readme file
 echo "\
-EXECUTIONS RESULTS
+**EXECUTIONS RESULTS**
 Date: [$START_DATE, $END_DATE]
 Start time: $START_TIME
 End time: $END_TIME
 --------------------------------------------------------------------------------
 Configuration:
-    1. task and world:
+  1. task and world:
       - random seed: $SEED
       - world:
       - task: $TASK
-    2. optimization:
+  2. optimization:
       - replicas: $REPLICA
       - epoch count: $EPOCHS
       - epoch duration: $DURATION
       - densities: $DENSITIES
       - minimum fitness to evolve: $FITNESS
-    3. robot characteristics:
+  3. robot characteristics:
       - epuck freq: $FREQUENCY Hz
       - sensors range: [$SENSOR_RANGE]
       - motor range:
       - actuators resistances: $LOADS
-    4. network:
+  4. network:
       - network range: [0.0, 10.0]
       - device size: $SIZE
       - mean wires length: $LENGTH
       - std length: 0.35 * $LENGTH
-    5. others:
+  5. others:
       - git-head hash: $GIT_HASH
 --------------------------------------------------------------------------------
-$(grep '[fitness|Creation]' "$1" | awk -F '\\][ |\t]+' '$2{print$2}')
-"
+$(grep '[fitness|Creation]' "$1" | awk -F '\\][ |\t]+' '$2{print$2}  ')
+" | awk '{print $0"  "}'
