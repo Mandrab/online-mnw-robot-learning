@@ -8,6 +8,7 @@ venv/
 *.pyc
 *.png
 *.wbproj
-log
+*.log
+res/configuration
 # EXCEPTIONS
 !analysis/**/*.dat
