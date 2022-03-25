@@ -31,10 +31,15 @@ def influence(
 
     _, ax_ = plt.subplots()
     for x_, y_, _0, label_, _1 in values:
-        ax_.plot(x_, y_, label=label_)
-    ax_.set(xlabel='Input signal (V)', ylabel='Motor rotation speed (rad/s)')
+        ax_.plot(list(range(len(y_))), y_, label=label_)
+    ax_.set(xlabel='Iteration', ylabel='Motor rotation speed (rad/s)')
     ax_.legend()
+    ax_ = ax_.twinx()
+    ax_.plot(x_, color='tab:red', linestyle=(0, (1, 10)), linewidth=2.5)
+    ax_.set_ylabel('Voltage (V)', color='tab:red')
+    ax_.tick_params(axis='y', colors='tab:red')
     plt.suptitle(superior_title)
+    plt.tight_layout()
     plt.show()
 
     def details(detailer_function):
