@@ -1,4 +1,4 @@
-from collections import Callable
+from collections.abc import Callable
 
 from logger import logger
 from optimization.individual import Individual
