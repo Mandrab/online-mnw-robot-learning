@@ -15,3 +15,4 @@ class Task:
     evolution_threshold: float
     creation_sigma: float
     mutation_sigma: float
+    continuous: bool = True

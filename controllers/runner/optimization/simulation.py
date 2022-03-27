@@ -57,7 +57,8 @@ def optimize(instance: Simulation) -> Simulation:
         challenger = evolve(elite, threshold, sigma, evaluator)
 
         # restore simulation to starting point
-        challenger.body.simulationReset()
+        if not task.continuous:
+            challenger.body.simulationReset()
 
         # run the challenger to obtain its fitness
         instance.goal_task.life_manager(challenger, instance.epoch_duration)
