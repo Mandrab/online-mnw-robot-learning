@@ -1,1 +1,0 @@
-{"inputs": {"gs0": 50, "ps0": 77, "ps7": 47}, "outputs": {"left wheel motor": 9, "right wheel motor": 54}, "load": 1000000, "multiplier": {"gs0": 0.7502536169249583, "ps0": 0.8257591255989379, "ps7": 0.687847708906023}}
