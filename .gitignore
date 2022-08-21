@@ -1,6 +1,7 @@
 # FOLDERS
 .idea/
 venv/
+data/
 # FILES
 *.7z
 *.dat
