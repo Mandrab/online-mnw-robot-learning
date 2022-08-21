@@ -7,7 +7,7 @@ import json
 import re
 import sys
 
-_, input_filename, output_filename, *_ = sys.argv
+_, input_filename, output_filename, *_ = [*sys.argv, 'README.md', 'dataset.json']
 
 print(f'Converting {input_filename} to json')
 
