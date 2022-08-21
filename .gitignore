@@ -9,6 +9,7 @@ venv/
 *.png
 *.wbproj
 *.log
+*.json
 res/configuration
 # EXCEPTIONS
 !analysis/**/*.dat
