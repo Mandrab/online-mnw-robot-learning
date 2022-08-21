@@ -11,6 +11,7 @@ data/
 *.wbproj
 *.log
 *.json
+data
 log
 res/configuration
 # EXCEPTIONS
