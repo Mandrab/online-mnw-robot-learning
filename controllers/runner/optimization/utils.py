@@ -54,7 +54,7 @@ def new_simulations(
 def import_simulations(
         robot: EPuck,
         simulation_configuration: Tuple[Task, int, int],
-        folder: str = READING_FOLDER,
+        folder: str = READING_FOLDER
 ) -> Iterable[Simulation]:
     """
     Check if there are simulations files in the given folder.

@@ -35,9 +35,8 @@ class EPuck(Supervisor):
         # create or update the instance
         if cls not in cls._instances:
             cls._instances[cls] = EPuck(cls.__create_key)
-        else:
-            cls._instances[cls].sensors = sensors
-            cls._instances[cls].motors = motors
+        cls._instances[cls].sensors = sensors
+        cls._instances[cls].motors = motors
 
         # initialize sensors
         for sensor in sensors:
