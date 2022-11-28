@@ -1,8 +1,7 @@
 from functools import reduce
 from operator import sub
 from optimization.fitness import Fitness as Base
-from robot.component import grounds
-from robot.component.motor import Motor
+from robot.transducer import grounds
 from utils import adapt
 from world.colors import Colors
 
@@ -29,7 +28,7 @@ class Fitness(Base):
 
     def update(self):
         # get the highest (nearer) proximity measure and make it in range 0-1
-        floor_color = next(iter(grounds(self.robot.sensors))).read()
+        floor_color = next(iter(grounds(self.robot.sensors))).value
 
         # map color to discrete values
         floor_color = Colors.convert(floor_color)
@@ -39,8 +38,7 @@ class Fitness(Base):
             self.fitness -= PENALTY
 
         # get motors velocities and make them in range 0-1
-        speeds = [motor.speed for motor in self.robot.motors]
-        speeds = [adapt(value, in_range=Motor.range()) for value in speeds]
+        speeds = [adapt(motor.value, in_range=motor.range()) for motor in self.robot.motors]
 
         # calculate average speed and direction of the robot
         average_speed = sum(speeds) / 2.0
