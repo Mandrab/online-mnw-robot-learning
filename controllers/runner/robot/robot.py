@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from nanowire_network_simulator import stimulate
 from robot.body import EPuck
 from robot.cortex import Cortex, describe as cortex2str
-from robot.component.motor import Motor
 from robot.fiber import nodes
 from robot.pyramid import Pyramid, describe as pyramid2str
 from robot.thalamus import Thalamus, describe as thalamus2str
@@ -50,7 +49,7 @@ def run(instance: Robot) -> Tuple[Dict[str, float], Dict[str, float]]:
         return dict(), dict()
 
     # get normalized sensors readings (range [0, 1]) and apply multiplier
-    reads = [(s, s.read(normalize=True)) for s in body.sensors]
+    reads = [(s, s.normalized_value) for s in body.sensors]
     reads = [(k, v * thalamus.multiplier.get(k, 1.0)) for k, v in reads]
 
     # adapt to range [0-10] and filter non used sensors
@@ -71,7 +70,7 @@ def run(instance: Robot) -> Tuple[Dict[str, float], Dict[str, float]]:
 
     # set the motors' speed according to its response
     for motor, value in zip(body.motors, map(outs.get, body.motors)):
-        motor.speed = adapt(value, out_range=Motor.range(reverse=True))
+        motor.value = adapt(value, out_range=motor.range(reverse=True))
 
     # return data for reference
     return dict(zip(sensors.keys(), dict(reads).values())), outs

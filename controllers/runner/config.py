@@ -68,7 +68,7 @@ settings = [(*_, random.randint(0, 9999)) for _ in product(densities, loads)]
 simulation_settings = task, epoch_count, epoch_duration
 
 # create the Robot instance
-robot = EPuck(sensors=task.sensors)
+robot = task.executor()
 
 ################################################################################
 # DATA SAVE SETUP
