@@ -37,7 +37,7 @@ class Settings(logging.Logger):
 
     path: str = ''
 
-    log_file: str = 'log'
+    log_file: str = '../../log'
     log_format: str = '[%(asctime)s %(levelname)s]\t %(message)s'
 
     plot_file: str = 'log_plot{idx}.png'
