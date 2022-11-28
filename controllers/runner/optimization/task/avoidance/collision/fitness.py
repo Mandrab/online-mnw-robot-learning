@@ -2,7 +2,6 @@ from functools import reduce
 from math import sqrt
 from operator import sub
 from optimization.fitness import Fitness as Base
-from robot.component.motor import Motor
 from utils import adapt
 
 
@@ -14,11 +13,10 @@ class Fitness(Base):
 
     def update(self):
         # get the highest (nearer) proximity measure and make it in range 0-1
-        max_proximity = max(s.read(normalize=True) for s in self.robot.sensors)
+        max_proximity = max(s.normalized_value for s in self.robot.sensors)
 
         # get motors velocities and make them in range 0-1
-        speeds = [motor.speed for motor in self.robot.motors]
-        speeds = [adapt(value, Motor.range()) for value in speeds]
+        speeds = [adapt(motor.value, in_range=motor.range()) for motor in self.robot.motors]
 
         average_speed = sum(speeds) / 2.0
         directions = 1 - abs(reduce(sub, speeds))
