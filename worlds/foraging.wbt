@@ -1,0 +1,218 @@
+#VRML_SIM R2021b utf8
+WorldInfo {
+  coordinateSystem "NUE"
+}
+Viewpoint {
+  orientation 1 0 0 4.71238898038469
+  position 2.2793707103553856e-10 9.140973824896248 2.8095919689981876e-10
+  follow "e-puck"
+  followType "None"
+}
+Background {
+  skyColor [
+    0.4 0.7 1
+  ]
+}
+DEF evolvable E-puck {
+  translation -0.5996236017104368 0.0009674278017214304 0.03999936673396932
+  rotation 0.000334968596017626 -0.9999998826261474 0.00035006246738165155 1.5951674003917067
+  controller "runner"
+  supervisor TRUE
+  groundSensorsSlot [
+    E-puckGroundSensors {
+      rotation 0 0 1 1.58784
+    }
+  ]
+}
+Floor {
+  appearance PBRAppearance {
+    baseColor 0.5 0.5 0.5
+  }
+}
+DEF fw Solid {
+  translation -1.5 0.0001 0
+  scale 2 2 2
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Plane {
+      }
+    }
+  ]
+  name "fw"
+}
+DEF fb Solid {
+  translation 1.5 0.0001 0
+  scale 2 2 2
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+      }
+      geometry Plane {
+      }
+    }
+  ]
+  name "fb"
+}
+Wall {
+  name "w1"
+  size 0.025 0.1 0.5
+}
+Wall {
+  translation 0 0 -0.75
+  name "w2"
+  size 0.025 0.1 0.5
+}
+Wall {
+  translation 0 0 0.75
+  name "w3"
+  size 0.025 0.1 0.5
+}
+Wall {
+  translation 0.25 0 0.37
+  name "w4"
+  size 0.025 0.1 0.5
+}
+Wall {
+  translation -0.25 0 0.37
+  name "w5"
+  size 0.025 0.1 0.5
+}
+Wall {
+  translation -0.25 0 -0.38
+  name "w6"
+  size 0.025 0.1 0.5
+}
+Wall {
+  translation 0.25 0 -0.38
+  name "w7"
+  size 0.025 0.1 0.5
+}
+Wall {
+  translation 0.752041 0 -0.754764
+  rotation 0 1 0 0.7854003061004253
+  name "wne"
+  size 0.01 0.1 0.7
+  appearance Roughcast {
+    colorOverride 0.7 0.7 0.7
+    textureTransform TextureTransform {
+      scale 1 2.4
+    }
+  }
+}
+Wall {
+  translation 0.759185 0 0.751363
+  rotation 0 1 0 2.3562
+  name "wse"
+  size 0.01 0.1 0.7
+  appearance Roughcast {
+    colorOverride 0.7 0.7 0.7
+    textureTransform TextureTransform {
+      scale 1 2.4
+    }
+  }
+}
+Wall {
+  translation -0.746941 0 0.758444
+  rotation 0 1 0 -2.356185307179586
+  name "wsw"
+  size 0.01 0.1 0.7
+  appearance Roughcast {
+    colorOverride 0.7 0.7 0.7
+    textureTransform TextureTransform {
+      scale 1 2.4
+    }
+  }
+}
+Wall {
+  translation -0.746956 0 -0.754763
+  rotation 0 -1 0 0.785389
+  name "wnw"
+  size 0.01 0.1 0.7
+  appearance Roughcast {
+    colorOverride 0.7 0.7 0.7
+    textureTransform TextureTransform {
+      scale 1 2.4
+    }
+  }
+}
+Wall {
+  translation 0 0 -1
+  rotation 0 1 0 -1.5707853071795865
+  name "wn"
+  size 0.01 0.1 1
+  appearance Roughcast {
+    colorOverride 0.7 0.7 0.7
+    textureTransform TextureTransform {
+      scale 1 2.4
+    }
+  }
+}
+Wall {
+  translation 1 0 0
+  rotation 0 1 0 1.10149e-05
+  name "we"
+  size 0.01 0.1 1
+  appearance Roughcast {
+    colorOverride 0.7 0.7 0.7
+    textureTransform TextureTransform {
+      scale 1 2.4
+    }
+  }
+}
+Wall {
+  translation 0 0 1
+  rotation 0 1 0 -1.5707853071795865
+  name "ws"
+  size 0.01 0.1 1
+  appearance Roughcast {
+    colorOverride 0.7 0.7 0.7
+    textureTransform TextureTransform {
+      scale 1 2.4
+    }
+  }
+}
+Wall {
+  translation -1 0 0
+  rotation 0 1 0 1.10149e-05
+  name "ww"
+  size 0.01 0.1 1
+  appearance Roughcast {
+    colorOverride 0.7 0.7 0.7
+    textureTransform TextureTransform {
+      scale 1 2.4
+    }
+  }
+}
+DEF box0 SolidBox {
+  translation 0.7 0.08 -0.43
+  name "b0"
+  size 0.1 0.1 0.1
+}
+DEF box1 SolidBox {
+  translation 0.85 0.08 0.47
+  name "b1"
+  size 0.1 0.1 0.1
+}
+DEF box2 SolidBox {
+  translation 0.65 0.08 -0.03
+  name "b2"
+  size 0.1 0.1 0.1
+}
+DEF box3 SolidBox {
+  translation 0.82 0.08 -0.21
+  name "b3"
+  size 0.1 0.1 0.1
+}
+DEF box4 SolidBox {
+  translation 0.71 0.08 0.24
+  name "b4"
+  size 0.1 0.1 0.1
+}
+DEF box5 SolidBox {
+  translation 0.56 0.08 0.67
+  name "b5"
+  size 0.1 0.1 0.1
+}
