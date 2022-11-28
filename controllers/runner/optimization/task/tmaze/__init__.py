@@ -1,7 +1,10 @@
 from optimization.task.task import Task
 from optimization.task.tmaze.fitness import Fitness
 from optimization.task.tmaze.simulations import live
+from robot.body import EPuck
+from robot.transducer import IRSensor, GroundSensor
 
-sensors = tuple([f'gs{_}' for _ in range(1)] + [f'ps{_}' for _ in [0, 7]])
+# define the set of sensors needed in the task
+sensors = [GroundSensor('gs0')] + [IRSensor(f'ps{_}') for _ in [0, 7]]
 
-task_description = Task(live, Fitness, sensors, 40.0, .3, .1, continuous=False)
+task_description = Task(lambda: EPuck.including(sensors), live, Fitness, 40.0, .3, .1, continuous=False)

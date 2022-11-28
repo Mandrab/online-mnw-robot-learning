@@ -1,5 +1,5 @@
 from optimization.fitness import Fitness as Base
-from robot.component import grounds
+from robot.transducer import grounds
 from utils import adapt
 from world.colors import Colors
 
@@ -30,7 +30,7 @@ class Fitness(Base):
         self.counter += 1
 
         # get first ground-sensor reading
-        floor_level = next(iter(grounds(self.robot.sensors))).read()
+        floor_level = next(iter(grounds(self.robot.sensors))).value
 
         # map reading to discrete values
         floor_level = Colors.convert(floor_level)
