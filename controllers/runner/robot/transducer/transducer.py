@@ -9,7 +9,7 @@ T = TypeVar("T")
 class Transducer(ABC, Generic[T]):
     """
     Represents a component of the robot that can be set or read.
-    In case of readable (i.e., a sensor), the value may belong
+    In case of readable (often a sensor), the value may belong
     to a given range.
     """
 
