@@ -35,7 +35,7 @@ def _facing(robot, obj) -> bool:
     return ns_facing or we_facing
 
 
-class PreySensor(Transducer[bool]):
+class PreySensor(str, Transducer[bool]):
     """Perceive a catchable object in front of the robot."""
 
     def range(self, reverse: bool = False) -> Tuple[bool, bool]: return (True, False) if reverse else (False, True)
@@ -52,7 +52,7 @@ class PreySensor(Transducer[bool]):
     def normalized_value(self): return 1 if self.value else 0
 
 
-class Gripper(Transducer[int]):
+class Gripper(str, Transducer[int]):
     """Opens or closes a gripper to possibly catch a catchable object."""
 
     # state of the robotic gripper. 0 is open, 1 is closed
@@ -109,7 +109,7 @@ class Gripper(Transducer[int]):
         self._state = value
 
 
-sensors = [GroundSensor('gs0'), PreySensor()] + [IRSensor(f'ps{_}') for _ in range(8)]
-motors = [Gripper()] + [Motor(f'{side} wheel motor') for side in ['left', 'right']]
+sensors = [GroundSensor('gs0'), PreySensor('prey-sensor')] + [IRSensor(f'ps{_}') for _ in range(8)]
+motors = [Gripper('gripper')] + [Motor(f'{side} wheel motor') for side in ['left', 'right']]
 
 task_description = Task(lambda: EPuck.including(sensors, motors), live, Fitness, 40.0, 5.0, 2.5)
