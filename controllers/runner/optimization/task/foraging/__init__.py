@@ -58,6 +58,8 @@ class Gripper(Transducer[int]):
     # state of the robotic gripper. 0 is open, 1 is closed
     _state: int = 0
     _prey: Any = None
+    captured: bool = False
+    deposited: bool = False
 
     def range(self, reverse: bool = False) -> Tuple[int, int]:
         return (1, 0) if reverse else (0, 1)
@@ -68,6 +70,8 @@ class Gripper(Transducer[int]):
 
     @value.setter
     def value(self, value: int):
+        self.captured = False
+        self.deposited = False
 
         if self._state == value:
             return
@@ -88,6 +92,7 @@ class Gripper(Transducer[int]):
 
                 # memorize the capture
                 self._prey = obj
+                self.captured = True
 
         # if it opens the grip while it is carrying a catchable
         elif self._state == 1 and value == 0 and self._prey != None:
@@ -98,6 +103,7 @@ class Gripper(Transducer[int]):
 
             # forget about the catchable
             self._prey = None
+            self.deposited = True
 
         self._state = value
 
