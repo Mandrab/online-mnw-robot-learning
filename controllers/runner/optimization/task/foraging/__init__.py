@@ -73,6 +73,7 @@ class Gripper(Transducer[int]):
         self.captured = False
         self.deposited = False
 
+        value = round(value)
         if self._state == value:
             return
 
@@ -111,4 +112,4 @@ class Gripper(Transducer[int]):
 sensors = [GroundSensor('gs0'), PreySensor()] + [IRSensor(f'ps{_}') for _ in range(8)]
 motors = [Gripper()] + [Motor(f'{side} wheel motor') for side in ['left', 'right']]
 
-task_description = Task(lambda: EPuck.including(sensors, motors), live, Fitness, 40.0, .3, .1)  # TODO
+task_description = Task(lambda: EPuck.including(sensors, motors), live, Fitness, 40.0, 5.0, 2.5)
