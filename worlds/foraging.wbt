@@ -1,0 +1,79 @@
+#VRML_SIM R2021b utf8
+WorldInfo {
+  coordinateSystem "NUE"
+}
+Viewpoint {
+  orientation 1 0 0 4.71238898038469
+  position -2.90979888201848e-16 2.597796832223013 5.976045452329587e-16
+  follow "e-puck"
+  followType "None"
+}
+Background {
+  skyColor [
+    0.4 0.7 1
+  ]
+}
+DEF evolvable E-puck {
+  hidden position_0_0 -3.100667367306187e-08
+  hidden position_0_1 -3.10067065356634e-08
+  hidden rotation_1 1 0 0 2.9802322387695313e-08
+  hidden rotation_2 1 0 0 2.9802322387695313e-08
+  translation -0.5996236017559989 -6.396823273251487e-05 0.03999936670328848
+  rotation -2.978011777911436e-06 -0.9999999999913497 2.9037545797162605e-06 1.5951672803600068
+  controller "runner"
+  supervisor TRUE
+  groundSensorsSlot [
+    E-puckGroundSensors {
+      rotation 0 0 1 1.58784
+    }
+  ]
+}
+CircleArena {
+  radius 0.9
+  floorAppearance PBRAppearance {
+    baseColor 0 0 0
+  }
+}
+Solid {
+  translation 0 0.0001 0
+  scale 0.75 0.75 0.75
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Plane {
+      }
+    }
+  ]
+  name "nest"
+}
+DEF box0 SolidBox {
+  translation 0.6 0.05 -0.43
+  name "b0"
+  size 0.1 0.1 0.1
+}
+DEF box1 SolidBox {
+  translation -0.55 0.05 0.47
+  name "b1"
+  size 0.1 0.1 0.1
+}
+DEF box2 SolidBox {
+  translation -0.05 0.05 -0.62
+  name "b2"
+  size 0.1 0.1 0.1
+}
+DEF box3 SolidBox {
+  translation -0.2 0.05 -0.59
+  name "b3"
+  size 0.1 0.1 0.1
+}
+DEF box4 SolidBox {
+  translation 0.71 0.05 0.24
+  name "b4"
+  size 0.1 0.1 0.1
+}
+DEF box5 SolidBox {
+  translation 0.31 0.05 0.56
+  name "b5"
+  size 0.1 0.1 0.1
+}
