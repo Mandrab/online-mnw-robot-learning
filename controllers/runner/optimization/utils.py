@@ -15,8 +15,8 @@ from robot.pyramid import random as random_pyramid, Pyramid
 from robot.thalamus import random as random_thalamus, Thalamus
 from typing import Iterable, Tuple
 
-DEVICE_SIZE = 50
-WIRES_LENGTH = 10.0
+DEVICE_SIZE = 125
+WIRES_LENGTH = 14.0
 READING_FOLDER = 'controllers/'
 
 
@@ -28,7 +28,7 @@ def new_simulations(
 ) -> Iterable[Simulation]:
     """
     Generate a simulations set with each instance using a device with a
-    different nano-wires density, seed and load.
+    different nanowires density, seed and load.
     """
 
     task, epoch_count, epoch_duration = simulation_configuration
@@ -59,8 +59,8 @@ def import_simulations(
     """
     Check if there are simulations files in the given folder.
     Return an iterable with the imported simulations instances.
-    If the folder does not exists or if there are not files, return an empty
-    list.
+    If the folder does not exist or if there are no files, return
+    an empty list.
     """
 
     # check that the folder exists
@@ -73,7 +73,7 @@ def import_simulations(
     # get data files (exclude any other extension file)
     files = list(filter(lambda _: _.endswith('.dat'), files))
 
-    # if the folder does not contains data files, return an empty list
+    # if the folder does not contain data files, return an empty list
     # this is needed to identify lack of instances without import all the graphs
     if not files:
         return []
