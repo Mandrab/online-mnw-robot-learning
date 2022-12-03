@@ -30,22 +30,27 @@ def _f_fitness(sensors, actuator) -> float:
     # get first ground-sensor reading and map to discrete values
     floor_level = Colors.convert(next(iter(grounds(sensors))).value)
 
-    # check if the robot just picked up an object in the black region
-    if actuator.captured and floor_level == Colors.WHITE:
-        logger.info("capture")
-        return PRIZE
+    if actuator.captured:
 
-    # check if the robot deposited an object in the white region
-    if actuator.deposited and floor_level == Colors.BLACK:
-        logger.info("correct deposit")
-        return PRIZE
+        if floor_level == Colors.WHITE:
+            logger.info("correct capture")
+        else:
+            logger.info("wrong capture (no penalty)")
 
-    # give a penalty if the robot deposited the object in a region different from the white one
-    if actuator.deposited and floor_level == Colors.WHITE:
-        logger.info("wrong deposit")
-        return PENALTY
+    if actuator.deposited:
 
-    return 0
+        if floor_level == Colors.BLACK:
+            logger.info("correct deposit")
+        else:
+            logger.info("wrong deposit")
+
+    # check if the robot just picked up an object in the white region
+    result = actuator.captured * (PRIZE * (floor_level == Colors.WHITE))
+
+    # check if the robot deposited an object in the correct region
+    result += actuator.deposited * (PRIZE if floor_level == Colors.BLACK else PENALTY)
+
+    return result
 
 
 class Fitness(Base):
