@@ -3,9 +3,7 @@ from logger import logger
 from math import sqrt
 from operator import sub
 from optimization.fitness import Fitness as Base
-from robot.transducer import grounds
 from utils import adapt
-from world.colors import Colors
 
 PENALTY = -100
 PRIZE = 50
@@ -25,30 +23,35 @@ def _ca_fitness(sensors, motors) -> float:
     return (1 - sqrt(max_proximity)) * directions * average_speed
 
 
-def _f_fitness(sensors, actuator) -> float:
+def _f_fitness(actuator, robot) -> float:
 
-    # get first ground-sensor reading and map to discrete values
-    floor_level = Colors.convert(next(iter(grounds(sensors))).value)
+    # calculate if the robot is on the nest through its position
+    # it resolves some problems of the ground sensor of webots
+    x, _, z = robot.getFromDef('evolvable').getPosition()
+    distance = sqrt(x ** 2 + z ** 2)
+    on_nest = -.475 < distance < .475
 
     if actuator.captured:
 
-        if floor_level == Colors.WHITE:
-            logger.info("correct capture")
-        else:
+        if on_nest:
             logger.info("wrong capture (no penalty)")
+        else:
+            logger.info("correct capture")
 
     if actuator.deposited:
 
-        if floor_level == Colors.BLACK:
+        if on_nest:
             logger.info("correct deposit")
+
+            robot.simulationSetMode(robot.SIMULATION_MODE_PAUSE)
         else:
             logger.info("wrong deposit")
 
     # check if the robot just picked up an object in the white region
-    result = actuator.captured * (PRIZE * (floor_level == Colors.WHITE))
+    result = actuator.captured * (not on_nest) * PRIZE
 
     # check if the robot deposited an object in the correct region
-    result += actuator.deposited * (PRIZE if floor_level == Colors.BLACK else PENALTY)
+    result += actuator.deposited * (PRIZE if on_nest else PENALTY)
 
     return result
 
@@ -63,7 +66,6 @@ class Fitness(Base):
 
         # separate different type of sensors
         irs = filter(lambda sensor: sensor.startswith('ps'), self.robot.sensors)
-        gs = filter(lambda sensor: sensor.startswith('gs'), self.robot.sensors)
 
         # separate gripper and motor actuators
         a = next(filter(lambda actuator: actuator.startswith('gripper'), self.robot.motors))
@@ -73,7 +75,7 @@ class Fitness(Base):
         self.fitness += _ca_fitness(irs, ms)
 
         # calculate the foraging fitness
-        self.fitness += _f_fitness(gs, a)
+        self.fitness += _f_fitness(a, self.robot)
 
         self.counter += 1
 
