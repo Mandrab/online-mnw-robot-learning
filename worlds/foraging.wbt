@@ -4,7 +4,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation 1 0 0 4.71238898038469
-  position 0.11999999999999994 4.487094721216002 3.9297947132911424e-16
+  position 0.11999999999999994 3.57436885747693 5.60644492458173e-16
   follow "e-puck"
   followType "None"
 }
@@ -31,9 +31,12 @@ CircleArena {
   radius 0.9
   floorAppearance PBRAppearance {
   }
+  wallAppearance PBRAppearance {
+  }
 }
 Solid {
   translation 0 0.0001 0
+  scale 0.45 0.45 0.45
   children [
     Shape {
       appearance PBRAppearance {
@@ -41,7 +44,6 @@ Solid {
       }
       geometry Cylinder {
         height 0.001
-        radius 0.45
       }
     }
   ]
