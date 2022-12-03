@@ -1,4 +1,5 @@
 from functools import reduce
+from logger import logger
 from math import sqrt
 from operator import sub
 from optimization.fitness import Fitness as Base
@@ -31,17 +32,17 @@ def _f_fitness(sensors, actuator) -> float:
 
     # check if the robot just picked up an object in the black region
     if actuator.captured and floor_level == Colors.WHITE:
-        print("capture")
+        logger.info("capture")
         return PRIZE
 
     # check if the robot deposited an object in the white region
     if actuator.deposited and floor_level == Colors.BLACK:
-        print("correct deposit")
+        logger.info("correct deposit")
         return PRIZE
 
     # give a penalty if the robot deposited the object in a region different from the white one
     if actuator.deposited and floor_level == Colors.WHITE:
-        print("wrong deposit")
+        logger.info("wrong deposit")
         return PENALTY
 
     return 0
