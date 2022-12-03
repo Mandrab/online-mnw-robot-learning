@@ -41,5 +41,7 @@ def describe(instance: Cortex):
     area = data.Lx * data.Ly
     d = data.wires_count * data.mean_length ** 2 / area
     cc_d = graph.number_of_nodes() * data.mean_length ** 2 / area
+    wc = graph.number_of_nodes()
+    jc = instance.network.number_of_edges()
 
-    return str(f'Device density: {d}, Connected component density: {cc_d}')
+    return str(f'Device density: {d}, CC density: {cc_d}, CC #wires: {wc}, CC #junctions: {jc}')
