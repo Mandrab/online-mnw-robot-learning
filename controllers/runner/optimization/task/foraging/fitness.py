@@ -42,8 +42,6 @@ def _f_fitness(actuator, robot) -> float:
 
         if on_nest:
             logger.info("correct deposit")
-
-            robot.simulationSetMode(robot.SIMULATION_MODE_PAUSE)
         else:
             logger.info("wrong deposit")
 
