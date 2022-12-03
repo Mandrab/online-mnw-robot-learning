@@ -43,7 +43,7 @@ class PreySensor(str, Transducer[bool]):
     @property
     def value(self) -> bool:
         # find the catchable objects (hardcoded)
-        objects = [self._robot.getFromDef(f'box{i}') for i in range(6)]
+        objects = [self._robot.getFromDef(f'c{i}') for i in range(13)]
 
         # return the true if any object is faced by the robot, false otherwise
         return next(filter(bool, map(lambda _: _facing(self._robot, _), objects)), False)
@@ -61,6 +61,12 @@ class Gripper(str, Transducer[int]):
     captured: bool = False
     deposited: bool = False
 
+    def reset(self):
+        self._state = 0
+        self._prey = None
+        self.captured = False
+        self.deposited = False
+
     def range(self, reverse: bool = False) -> Tuple[int, int]:
         return (1, 0) if reverse else (0, 1)
 
@@ -73,7 +79,7 @@ class Gripper(str, Transducer[int]):
         self.captured = False
         self.deposited = False
 
-        value = round(value)
+        value = 1 if value > .75 else 0
         if self._state == value:
             return
 
@@ -81,7 +87,7 @@ class Gripper(str, Transducer[int]):
         if self._state == 0 and value == 1:
 
             # find the catchable objects (hardcoded)
-            objects = [self._robot.getFromDef(f'box{i}') for i in range(6)]
+            objects = [self._robot.getFromDef(f'c{i}') for i in range(13)]
 
             # get the possibly first element that the robot faces
             obj = next(filter(lambda _: _facing(self._robot, _), objects), None)
@@ -96,7 +102,7 @@ class Gripper(str, Transducer[int]):
                 self.captured = True
 
         # if it opens the grip while it is carrying a catchable
-        elif self._state == 1 and value == 0 and self._prey != None:
+        elif self._state == 1 and value == 0 and self._prey is not None:
 
             # get actual position and free the catchable there
             x, y, z = self._robot.getFromDef('evolvable').getPosition()
@@ -112,4 +118,4 @@ class Gripper(str, Transducer[int]):
 sensors = [GroundSensor('gs0'), PreySensor('prey-sensor')] + [IRSensor(f'ps{_}') for _ in range(8)]
 motors = [Gripper('gripper')] + [Motor(f'{side} wheel motor') for side in ['left', 'right']]
 
-task_description = Task(lambda: EPuck.including(sensors, motors), live, Fitness, 40.0, 5.0, 2.5)
+task_description = Task(lambda: EPuck.including(sensors, motors), live, Fitness, 70.0, 5.0, 2.5)
