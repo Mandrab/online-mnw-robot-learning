@@ -52,3 +52,14 @@ class EPuck(Supervisor):
         """Only internally callable constructor."""
         assert create_key == EPuck.__create_key, "Private constructor. Use `new` method to get an instance."
         Supervisor.__init__(self)
+
+    def simulationReset(self):
+        Supervisor.simulationReset(self)
+
+        # notify the reset of the simulation to the sensors
+        for s in self.sensors:
+            s.reset()
+
+        # notify the reset of the simulation to the motors
+        for m in self.motors:
+            m.reset()
