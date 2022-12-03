@@ -1,4 +1,4 @@
-from math import atan2, cos, isclose, sin
+from math import atan2, cos, isclose, pi, sin
 from optimization.task.task import Task
 from optimization.task.foraging.fitness import Fitness
 from optimization.task.foraging.simulations import live
@@ -55,64 +55,68 @@ class PreySensor(str, Transducer[bool]):
 class Gripper(str, Transducer[int]):
     """Opens or closes a gripper to possibly catch a catchable object."""
 
-    # state of the robotic gripper. 0 is open, 1 is closed
-    _state: int = 0
-    _prey: Any = None
-    captured: bool = False
-    deposited: bool = False
+    _close: bool = False            # state of the robotic gripper
+    _prey: Any = None               # reference to the caught prey
+    captured: bool = False          # true if the object was caught the previous step
+    deposited: bool = False         # true if the object was deposited the previous step
 
     def reset(self):
-        self._state = 0
+        self._close = False
         self._prey = None
         self.captured = False
         self.deposited = False
 
-    def range(self, reverse: bool = False) -> Tuple[int, int]:
-        return (1, 0) if reverse else (0, 1)
+    def range(self, reverse: bool = False) -> Tuple[int, int]: return (1, 0) if reverse else (0, 1)
 
     @property
-    def value(self) -> int:
-        return self._state
+    def value(self) -> int: return int(self._close)
 
     @value.setter
     def value(self, value: int):
         self.captured = False
         self.deposited = False
 
-        value = 1 if value > .75 else 0
-        if self._state == value:
+        # if we already are in this state, ignore the command
+        if self._close == bool(1 if value > .75 else 0):
             return
 
-        # if it closes the grip check if there is something to catch
-        if self._state == 0 and value == 1:
+        # if the state is not close, close the gripper and check if it caught something
+        if not self._close:
 
-            # find the catchable objects (hardcoded)
+            # find the catchable objects (hardcoded quantity)
             objects = [self._robot.getFromDef(f'c{i}') for i in range(13)]
 
             # get the possibly first element that the robot faces
-            obj = next(filter(lambda _: _facing(self._robot, _), objects), None)
+            prey = next(filter(lambda _: _facing(self._robot, _), objects), None)
 
-            if obj is not None:
+            if prey is not None:
 
                 # temporary remove the object from the environment (captured)
-                obj.getField('translation').setSFVec3f([0, -100, 0])
+                prey.getField('translation').setSFVec3f([0, -100, 0])
 
                 # memorize the capture
-                self._prey = obj
+                self._prey = prey
                 self.captured = True
 
-        # if it opens the grip while it is carrying a catchable
-        elif self._state == 1 and value == 0 and self._prey is not None:
+        # if it opens the grip while it is carrying a catchable, release it
+        elif self._prey is not None:
 
-            # get actual position and free the catchable there
+            # get actual position and rotation of the robot
             x, y, z = self._robot.getFromDef('evolvable').getPosition()
-            self._prey.getField('translation').setSFVec3f([x + 0.1, y, z + 0.1])
+            _, multiplier, _, robot_angle = self._robot.getFromDef('evolvable').getField('rotation').getSFRotation()
+
+            # calculate the position immediately behind the robot
+            x += -.075 if multiplier < 0 else .075
+            z += -.075 if robot_angle > pi / 2 else .075
+
+            # free the prey in the given position
+            self._prey.getField('translation').setSFVec3f([x, y, z])
 
             # forget about the catchable
             self._prey = None
             self.deposited = True
 
-        self._state = value
+        self._close = not self._close
 
 
 sensors = [GroundSensor('gs0'), PreySensor('prey-sensor')] + [IRSensor(f'ps{_}') for _ in range(8)]
