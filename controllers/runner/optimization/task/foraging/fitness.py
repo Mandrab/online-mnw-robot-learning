@@ -1,7 +1,7 @@
 from functools import reduce
 from math import sqrt
 from operator import sub
-from optimization.task.avoidance.collision import Fitness as Base
+from optimization.fitness import Fitness as Base
 from robot.transducer import grounds
 from utils import adapt
 from world.colors import Colors
@@ -30,17 +30,17 @@ def _f_fitness(sensors, actuator) -> float:
     floor_level = Colors.convert(next(iter(grounds(sensors))).value)
 
     # check if the robot just picked up an object in the black region
-    if actuator.captured and floor_level == Colors.BLACK:
+    if actuator.captured and floor_level == Colors.WHITE:
         print("capture")
         return PRIZE
 
     # check if the robot deposited an object in the white region
-    if actuator.deposited and floor_level == Colors.WHITE:
+    if actuator.deposited and floor_level == Colors.BLACK:
         print("correct deposit")
         return PRIZE
 
     # give a penalty if the robot deposited the object in a region different from the white one
-    if actuator.deposited and floor_level == Colors.BLACK:
+    if actuator.deposited and floor_level == Colors.WHITE:
         print("wrong deposit")
         return PENALTY
 
@@ -49,6 +49,9 @@ def _f_fitness(sensors, actuator) -> float:
 
 class Fitness(Base):
     """Calculate the fitness depending on collision avoidance capabilities together with the foraging behavior."""
+
+    fitness: float = 0.0
+    counter: int = 0
 
     def update(self):
 
