@@ -21,6 +21,10 @@ class Transducer(ABC, Generic[T]):
 
         self._robot = robot
 
+    def reset(self):
+        """Receive the information that the simulation has been reset."""
+        pass
+
     @abstractmethod
     def range(self, reverse: bool = False) -> Tuple[T, T]:
         """Returns the transducer working range."""
