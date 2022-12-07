@@ -49,7 +49,7 @@ def _f_fitness(actuator, robot) -> float:
     result = actuator.captured * (not on_nest) * PRIZE
 
     # check if the robot deposited an object in the correct region
-    result += actuator.deposited * (PRIZE if on_nest else PENALTY)
+    result += actuator.deposited * (2 * PRIZE if on_nest else PENALTY)
 
     return result
 
