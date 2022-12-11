@@ -3,11 +3,11 @@ from optimization.task.task import Task
 from optimization.task.foraging.fitness import Fitness
 from optimization.task.foraging.simulations import live
 from robot.body import EPuck
-from robot.robot import Robot
 from robot.transducer import GroundSensor, IRSensor
 from robot.transducer.motor import Motor
 from robot.transducer.transducer import Transducer
 from typing import Tuple, Any
+from utils import adapt
 
 
 def _facing(robot, obj) -> bool:
@@ -124,15 +124,15 @@ class ReverseGroundSensor(GroundSensor):
     """Ground sensor that returns 4095 if the floor is black and 0 if it is white."""
 
     @property
-    def value(self) -> float: return 4095 - self._robot.getDevice(self).getValue()
+    def value(self) -> float: return adapt(self._robot.getDevice(self).getValue(), self.range(), self.range(reversed))
 
 
 sensors = [
     GroundSensor('gs0'), ReverseGroundSensor('gs2'),
     PreySensor('prey-sensor')
 ] + [
-    IRSensor(f'ps{_}') for _ in range(8)
+    IRSensor(f'ps{_}') for _ in [0, 1, 6, 7]
 ]
 motors = [Gripper('gripper')] + [Motor(f'{side} wheel motor') for side in ['left', 'right']]
 
-task_description = Task(lambda: EPuck.including(sensors, motors), live, Fitness, 70.0, 5.0, 2.5)
+task_description = Task(lambda: EPuck.including(sensors, motors), live, Fitness, 70.0, 1.0, 1.5)
