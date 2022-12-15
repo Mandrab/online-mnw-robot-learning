@@ -1,0 +1,393 @@
+#VRML_SIM R2021b utf8
+WorldInfo {
+  coordinateSystem "NUE"
+}
+Viewpoint {
+  orientation 1 0 0 4.71238898038469
+  position -6.26834461752925e-17 4.516818317397534 2.5073378470117e-16
+  follow "e-puck"
+  followType "None"
+}
+Background {
+  skyColor [
+    0.4 0.7 1
+  ]
+}
+DEF evolvable E-puck {
+  hidden position_0_0 -3.100667367306187e-08
+  hidden position_0_1 -3.10067065356634e-08
+  hidden rotation_1 1 0 0 2.9802322387695313e-08
+  hidden rotation_2 1 0 0 2.9802322387695313e-08
+  rotation -2.978011777911436e-06 -0.9999999999913497 2.9037545797162605e-06 1.5951672803600068
+  controller "runner"
+  supervisor TRUE
+  groundSensorsSlot [
+    E-puckGroundSensors {
+      rotation 0 0 1 1.58784
+    }
+  ]
+}
+CircleArena {
+  radius 0.9
+  floorAppearance PBRAppearance {
+  }
+  wallAppearance PBRAppearance {
+  }
+}
+Wall {
+  translation 0 0 -0.45
+  name "wall north"
+  size 0.5 0.1 0.05
+  appearance Roughcast {
+    colorOverride 0 0 0.75
+    textureTransform TextureTransform {
+      scale 1 2.4
+    }
+  }
+}
+Wall {
+  translation 0 0 0.45
+  name "wall south"
+  size 0.5 0.1 0.05
+  appearance Roughcast {
+    colorOverride 0 0 0.75
+    textureTransform TextureTransform {
+      scale 1 2.4
+    }
+  }
+}
+Wall {
+  translation 0.45 0 0
+  name "wall east"
+  size 0.05 0.1 0.5
+  appearance Roughcast {
+    colorOverride 0 0 0.75
+    textureTransform TextureTransform {
+      scale 1 2.4
+    }
+  }
+}
+Wall {
+  translation -0.45 0 0
+  name "wall west"
+  size 0.05 0.1 0.5
+  appearance Roughcast {
+    colorOverride 0 0 0.75
+    textureTransform TextureTransform {
+      scale 1 2.4
+    }
+  }
+}
+Wall {
+  translation -0.45 0 -0.45
+  rotation 0 1 0 -0.785395307179586
+  name "wall north-west"
+  size 0.05 0.1 0.2
+  appearance Roughcast {
+    colorOverride 0 0 0.75
+    textureTransform TextureTransform {
+      scale 1 2.4
+    }
+  }
+}
+Wall {
+  translation 0.45 0 -0.45
+  rotation 0 1 0 0.785401
+  name "wall north-east"
+  size 0.05 0.1 0.2
+  appearance Roughcast {
+    colorOverride 0 0 0.75
+    textureTransform TextureTransform {
+      scale 1 2.4
+    }
+  }
+}
+Wall {
+  translation 0.45 0 0.45
+  rotation 0 1 0 2.3562
+  name "wall south-east"
+  size 0.05 0.1 0.2
+  appearance Roughcast {
+    colorOverride 0 0 0.75
+    textureTransform TextureTransform {
+      scale 1 2.4
+    }
+  }
+}
+Wall {
+  translation -0.45 0 0.45
+  rotation 0 1 0 -2.356185307179586
+  name "wall south-east(1)"
+  size 0.05 0.1 0.2
+  appearance Roughcast {
+    colorOverride 0 0 0.75
+    textureTransform TextureTransform {
+      scale 1 2.4
+    }
+  }
+}
+Solid {
+  translation 0 0.0001 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+      }
+      geometry Cylinder {
+        height 0.001
+        radius 0.45
+      }
+      castShadows FALSE
+      isPickable FALSE
+    }
+  ]
+  name "nest"
+  locked TRUE
+}
+DEF c0 Solid {
+  translation 0.52 0.04 -0.67
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 1 0
+      }
+      geometry Cylinder {
+        height 0.08
+        radius 0.05
+      }
+    }
+  ]
+  name "c0"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.05
+  }
+}
+DEF c1 Solid {
+  translation -0.37 0.04 -0.59
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 1 0
+      }
+      geometry Cylinder {
+        height 0.08
+        radius 0.05
+      }
+    }
+  ]
+  name "c1"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.05
+  }
+}
+DEF c2 Solid {
+  translation 0.75 0.04 -0.23
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 1 0
+      }
+      geometry Cylinder {
+        height 0.08
+        radius 0.05
+      }
+    }
+  ]
+  name "c2"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.05
+  }
+}
+DEF c3 Solid {
+  translation 0.33 0.04 0.56
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 1 0
+      }
+      geometry Cylinder {
+        height 0.08
+        radius 0.05
+      }
+    }
+  ]
+  name "c3"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.05
+  }
+}
+DEF c4 Solid {
+  translation 0.63 0.04 0.43
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 1 0
+      }
+      geometry Cylinder {
+        height 0.08
+        radius 0.05
+      }
+    }
+  ]
+  name "c4"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.05
+  }
+}
+DEF c5 Solid {
+  translation -0.25 0.04 -0.77
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 1 0
+      }
+      geometry Cylinder {
+        height 0.08
+        radius 0.05
+      }
+    }
+  ]
+  name "c5"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.05
+  }
+}
+DEF c6 Solid {
+  translation -0.52 0.04 -0.63
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 1 0
+      }
+      geometry Cylinder {
+        height 0.08
+        radius 0.05
+      }
+    }
+  ]
+  name "c6"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.05
+  }
+}
+DEF c7 Solid {
+  translation -0.72 0.04 0.16
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 1 0
+      }
+      geometry Cylinder {
+        height 0.08
+        radius 0.05
+      }
+    }
+  ]
+  name "c7"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.05
+  }
+}
+DEF c8 Solid {
+  translation 0.54 0.04 -0.09
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 1 0
+      }
+      geometry Cylinder {
+        height 0.08
+        radius 0.05
+      }
+    }
+  ]
+  name "c8"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.05
+  }
+}
+DEF c9 Solid {
+  translation -0.24 0.04 0.64
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 1 0
+      }
+      geometry Cylinder {
+        height 0.08
+        radius 0.05
+      }
+    }
+  ]
+  name "c9"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.05
+  }
+}
+DEF c10 Solid {
+  translation -0.54 0.04 0.63
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 1 0
+      }
+      geometry Cylinder {
+        height 0.08
+        radius 0.05
+      }
+    }
+  ]
+  name "c10"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.05
+  }
+}
+DEF c11 Solid {
+  translation 0.28 0.04 -0.56
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 1 0
+      }
+      geometry Cylinder {
+        height 0.08
+        radius 0.05
+      }
+    }
+  ]
+  name "c11"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.05
+  }
+}
+DEF c12 Solid {
+  translation -0.58 0.04 -0.26
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 1 0
+      }
+      geometry Cylinder {
+        height 0.08
+        radius 0.05
+      }
+    }
+  ]
+  name "c12"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.05
+  }
+}
