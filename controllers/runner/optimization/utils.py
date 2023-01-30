@@ -1,4 +1,5 @@
 import json
+import random
 
 from nanowire_network_simulator import backup
 from nanowire_network_simulator.model.device.datasheet import factory as ds
@@ -38,6 +39,8 @@ def new_simulations(
 
         density, load, seed = setting
         datasheet = ds.from_density(density, size, wires_length, seed)
+
+        random.seed(datasheet.seed)
 
         cortex = new_cortex(datasheet)
         pyramid = random_pyramid(robot, cortex, load)
