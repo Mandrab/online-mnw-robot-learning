@@ -14,7 +14,7 @@ print(f'Converting {input_filename} to json')
 json_objects = list()
 
 expression = 'Device density: ([0-9|\.]*), '
-expression += 'Connected component density: ([0-9|\.]*), '
+expression += 'CC density: ([0-9|\.]*), '
 expression += 'Motor load: ([0-9|e\+]*), '
 expression += 'Average sensor signal multiplication: ([0-9|\.]*)%'
 
