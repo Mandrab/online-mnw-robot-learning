@@ -19,4 +19,3 @@ for index, individual in enumerate(map(optimize, simulations)):
 
 # end of the simulation
 logger.info('Simulation complete')
-robot.simulationQuit(0)
