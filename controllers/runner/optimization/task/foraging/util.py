@@ -24,3 +24,19 @@ def is_facing(robot, obj) -> bool:
     we_facing = isclose(sc, sr, abs_tol=0.5) and cr * cc > 0
 
     return ns_facing or we_facing
+
+
+def on_nest(robot):
+
+    pgs = next(filter(lambda sensor: sensor.startswith('gs0'), robot.sensors))
+    ngs = next(filter(lambda sensor: sensor.startswith('gs2'), robot.sensors))
+
+    return pgs.value < 700 and ngs.value > 300
+
+
+def on_plate(robot):
+
+    pgs = next(filter(lambda sensor: sensor.startswith('gs0'), robot.sensors))
+    ngs = next(filter(lambda sensor: sensor.startswith('gs2'), robot.sensors))
+
+    return pgs.value > 900 and ngs.value < 100
