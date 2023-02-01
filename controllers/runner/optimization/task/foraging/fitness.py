@@ -1,59 +1,40 @@
 from logger import logger
 from optimization.fitness import Fitness as Base
+from optimization.task.foraging.util import on_nest, on_plate
 
 PENALTY = -50
 PRIZE = 50
-
-
-def _fitness(gripper, prey_sensor, ground_sensor) -> float:
-
-    # no state change correspond to 0 fitness
-    if not gripper.state_changed:
-        return .0
-
-    # calculate if the robot is on the nest
-    on_nest = ground_sensor.value < 500
-
-    # if the gripper closes with a prey in front, prize it
-    if gripper.close and prey_sensor.value:
-
-        logger.info("capture")
-        return PRIZE
-
-    # 'prey is not None' cannot be evaluated by the robot directly.
-    # It represents the perception of the object in front of the robot after the gripper opening.
-    # However, due to the actual structure of the experiment, it cannot be evaluated
-    # and a trick is therefore needed.
-    if not gripper.close and gripper.prey is not None:
-
-        if on_nest:
-            logger.info("correct deposit")
-            return PRIZE
-        else:
-            logger.info("wrong deposit")
-            return PENALTY
-
-    return 0
 
 
 class Fitness(Base):
     """Calculate the fitness depending on collision avoidance capabilities together with the foraging behavior."""
 
     fitness: float = 0.0
-    counter: int = 0
 
     def update(self):
+        gripper = next(filter(lambda actuator: actuator.startswith('gripper'), self.robot.motors))
 
-        # separate different type of sensors
-        ps = next(filter(lambda sensor: sensor.startswith('prey-sensor'), self.robot.sensors))
-        gs = next(filter(lambda sensor: sensor.startswith('gs0'), self.robot.sensors))
+        # no state change correspond to 0 fitness
+        if not gripper.state_changed:
+            return
 
-        # separate gripper and motor actuators
-        a = next(filter(lambda actuator: actuator.startswith('gripper'), self.robot.motors))
+        # if the gripper closes with a prey in front, prize it
+        if gripper.close and on_plate(self.robot):
+            logger.info("capture")
+            self.fitness += PRIZE
 
-        # calculate the foraging fitness
-        self.fitness += _fitness(a, ps, gs)
+# 2 40 00 00
+        # 'prey is not None' cannot be evaluated by the robot directly.
+        # It represents the perception of the object in front of the robot after the gripper opening.
+        # However, due to the actual structure of the experiment, it cannot be evaluated
+        # and a trick is therefore needed.
+        elif not gripper.close and gripper.prey is not None:
 
-        self.counter += 1
+            if on_nest(self.robot):
+                logger.info("correct deposit")
+                self.fitness += 2 * PRIZE
+            else:
+                logger.info("wrong deposit")
+                self.fitness += PENALTY
 
     def value(self) -> float: return self.fitness
