@@ -4,7 +4,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation 1 0 0 4.71238898038469
-  position -3.2591111093179077e-12 4.934317361365658 2.270518283534738e-12
+  position -2.909309698448317e-17 3.835396537033931 6.564607845100062e-17
   follow "e-puck"
   followType "None"
 }
@@ -33,7 +33,7 @@ DEF evolvable Robot {
         }
       ]
       endPoint DEF EPUCK_LEFT_WHEEL Solid {
-        translation -0.026 0.02 0
+        translation -0.025999999999999992 0.02 0
         rotation -1 0 0 0
         children [
           DEF EPUCK_WHEEL Transform {
@@ -184,7 +184,7 @@ DEF evolvable Robot {
         }
       ]
       endPoint DEF EPUCK_RIGHT_WHEEL Solid {
-        translation 0.026 0.02 0
+        translation 0.025999999999999992 0.02 0
         rotation -1 0 0 0
         children [
           Transform {
@@ -1690,12 +1690,35 @@ DEF evolvable Robot {
 }
 CircleArena {
   floorAppearance PBRAppearance {
+    baseColor 0.3 0.3 0.3
+    emissiveColor 0.3 0.3 0.3
   }
   wallAppearance PBRAppearance {
+    baseColor 0.3 0.3 0.3
+    emissiveColor 0.3 0.3 0.3
   }
 }
 Solid {
-  translation 0 0.0001 0
+  translation 0 0.0005 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.3 0.3 0.3
+        emissiveColor 0.3 0.3 0.3
+      }
+      geometry Cylinder {
+        height 0.001
+        radius 1.05
+      }
+      castShadows FALSE
+      isPickable FALSE
+    }
+  ]
+  name "floor"
+  locked TRUE
+}
+Solid {
+  translation 0 0.001 0
   children [
     Shape {
       appearance PBRAppearance {
@@ -1716,483 +1739,435 @@ PointLight {
   attenuation 0 0 0.1
   location 0 0.25 0
 }
-DEF c0 Solid {
-  translation 0 0.04 -0.75
+DEF P0 Solid {
+  translation 0 0.001 -0.75
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c0"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 0"
+  locked TRUE
 }
-DEF c1 Solid {
-  translation 0.195 0.04 -0.725
+DEF P1 Solid {
+  translation 0.195 0.001 -0.725
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c1"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 1"
+  locked TRUE
 }
-DEF c2 Solid {
-  translation 0.375 0.04 -0.65
+DEF P2 Solid {
+  translation 0.375 0.001 -0.65
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c2"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 2"
+  locked TRUE
 }
-DEF c3 Solid {
-  translation 0.53 0.04 -0.53
+DEF P3 Solid {
+  translation 0.53 0.001 -0.53
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c3"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 3"
+  locked TRUE
 }
-DEF c4 Solid {
-  translation 0.65 0.04 -0.375
+DEF P4 Solid {
+  translation 0.65 0.001 -0.375
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c4"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 4"
+  locked TRUE
 }
-DEF c5 Solid {
-  translation 0.725 0.04 -0.19
+DEF P5 Solid {
+  translation 0.725 0.001 -0.19
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c5"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 5"
+  locked TRUE
 }
-DEF c6 Solid {
-  translation 0.75 0.04 0
+DEF P6 Solid {
+  translation 0.75 0.001 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c6"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 6"
+  locked TRUE
 }
-DEF c7 Solid {
-  translation 0.725 0.04 0.195
+DEF P7 Solid {
+  translation 0.725 0.001 0.195
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c7"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 7"
+  locked TRUE
 }
-DEF c8 Solid {
-  translation 0.65 0.04 0.375
+DEF P8 Solid {
+  translation 0.65 0.001 0.375
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c8"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 8"
+  locked TRUE
 }
-DEF c9 Solid {
-  translation 0.53 0.04 0.53
+DEF P9 Solid {
+  translation 0.53 0.001 0.53
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c9"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 9"
+  locked TRUE
 }
-DEF c10 Solid {
-  translation 0.375 0.04 0.65
+DEF P10 Solid {
+  translation 0.375 0.001 0.65
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c10"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 10"
+  locked TRUE
 }
-DEF c11 Solid {
-  translation 0.195 0.04 0.725
+DEF P11 Solid {
+  translation 0.195 0.001 0.725
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c11"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 11"
+  locked TRUE
 }
-DEF c12 Solid {
-  translation 0 0.04 0.75
+DEF P12 Solid {
+  translation 0 0.001 0.75
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c12"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 12"
+  locked TRUE
 }
-DEF c13 Solid {
-  translation -0.195 0.04 0.725
+DEF P13 Solid {
+  translation -0.195 0.001 0.725
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c13"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 13"
+  locked TRUE
 }
-DEF c14 Solid {
-  translation -0.375 0.04 0.65
+DEF P14 Solid {
+  translation -0.375 0.001 0.65
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c14"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 14"
+  locked TRUE
 }
-DEF c15 Solid {
-  translation -0.53 0.04 0.53
+DEF P15 Solid {
+  translation -0.53 0.001 0.53
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c15"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 15"
+  locked TRUE
 }
-DEF c16 Solid {
-  translation -0.65 0.04 0.375
+DEF P16 Solid {
+  translation -0.65 0.001 0.375
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c16"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 16"
+  locked TRUE
 }
-DEF c17 Solid {
-  translation -0.725 0.04 0.195
+DEF P17 Solid {
+  translation -0.725 0.001 0.195
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c17"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 17"
+  locked TRUE
 }
-DEF c18 Solid {
-  translation -0.75 0.04 0
+DEF P18 Solid {
+  translation -0.75 0.001 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c18"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 18"
+  locked TRUE
 }
-DEF c19 Solid {
-  translation -0.725 0.04 -0.195
+DEF P19 Solid {
+  translation -0.725 0.001 -0.195
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c19"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 19"
+  locked TRUE
 }
-DEF c20 Solid {
-  translation -0.65 0.04 -0.375
+DEF P20 Solid {
+  translation -0.65 0.001 -0.375
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c20"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 20"
+  locked TRUE
 }
-DEF c21 Solid {
-  translation -0.53 0.04 -0.53
+DEF P21 Solid {
+  translation -0.53 0.001 -0.53
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c21"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 21"
+  locked TRUE
 }
-DEF c22 Solid {
-  translation -0.375 0.04 -0.65
+DEF P22 Solid {
+  translation -0.375 0.001 -0.65
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c22"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 22"
+  locked TRUE
 }
-DEF c23 Solid {
-  translation -0.195 0.04 -0.725
+DEF P23 Solid {
+  translation -0.195 0.001 -0.725
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0 1 0
+        emissiveColor 1 1 1
       }
       geometry Cylinder {
-        height 0.08
-        radius 0.05
+        height 0.001
+        radius 0.075
       }
+      castShadows FALSE
+      isPickable FALSE
     }
   ]
-  name "c23"
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-    subdivision 16
-  }
+  name "plate 23"
+  locked TRUE
 }
