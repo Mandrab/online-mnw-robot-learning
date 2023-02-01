@@ -16,10 +16,7 @@ class ReverseGroundSensor(GroundSensor):
     def value(self) -> float: return adapt(self._robot.getDevice(self).getValue(), self.range(), self.range(reversed))
 
 
-sensors = [
-    GroundSensor('gs0'), ReverseGroundSensor('gs2'),
-    PreySensor('prey-sensor')
-] + [
+sensors = [GroundSensor('gs0'), ReverseGroundSensor('gs2')] + [
     IRSensor(f'ls{_}') for _ in range(8)
 ]
 motors = [Gripper('gripper'), Motor('left wheel motor'), Motor('right wheel motor')]
