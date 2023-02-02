@@ -4,7 +4,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation 1 0 0 4.71238898038469
-  position -2.909309698448317e-17 3.835396537033931 6.564607845100062e-17
+  position -2.909309698448317e-17 2.7588858971683003 2.633978748549276e-16
   follow "e-puck"
   followType "None"
 }
@@ -1548,7 +1548,6 @@ DEF evolvable Robot {
       rotation 0 0 1 0
     }
     DEF GROUND_SENSOR_SLOT Transform {
-      translation 0 0.0003 -0.03
       rotation 0 0 1 -1.57
       children [
         Transform {
@@ -1695,6 +1694,7 @@ CircleArena {
   }
   wallAppearance PBRAppearance {
     baseColor 0.3 0.3 0.3
+    transparency 1
     emissiveColor 0.3 0.3 0.3
   }
 }
