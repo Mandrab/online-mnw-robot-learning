@@ -7,12 +7,12 @@ class Gripper(str, Transducer[int]):
 
     close: bool = False            # state of the robotic gripper
     state_changed: bool = False    # if the state changed in the last update
-    prey = None                    # pointer to the caught prey
+    prey_index = -1                # index of the caught prey
 
     def reset(self):
         self.close = False
         self.state_changed = False
-        self.prey = None
+        self.prey_index = -1
 
     def range(self, reverse: bool = False) -> Tuple[int, int]: return (1, 0) if reverse else (0, 1)
 

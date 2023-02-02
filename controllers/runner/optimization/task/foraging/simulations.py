@@ -12,6 +12,9 @@ def live(instance: Individual, duration: int):
     Runs the robot and collect the resulting score of the step.
     """
 
+    # save the starting position of the objects to be able to restore them once deposited
+    starting_positions = [instance.body.getFromDef(f'P{i}').getField('translation').getSFVec3f() for i in range(24)]
+
     # iterate for the epoch duration
     for counter in range(duration):
 
@@ -22,7 +25,7 @@ def live(instance: Individual, duration: int):
         instance.biography.evaluator.update()
 
         # correct world state
-        update_world(instance.body)
+        update_world(instance.body, starting_positions)
 
         # save the biography for the step
         instance.biography.stimulus.append(stimulus)
@@ -33,7 +36,7 @@ def live(instance: Individual, duration: int):
     logger.info('fitness: ' + str(instance.biography.evaluator.value()))
 
 
-def update_world(robot):
+def update_world(robot, starting_positions):
 
     # find the gripper between the actuators and check if its state changed
     gripper = next(filter(lambda _: isinstance(_, Gripper), robot.motors))
@@ -41,35 +44,34 @@ def update_world(robot):
     if not gripper.state_changed:
         return
 
+    objects = [robot.getFromDef(f'P{i}') for i in range(24)]
+
     # if the gripper just closed, check if it caught something
     if gripper.close and on_plate(robot):
 
         # find the catchable objects (hardcoded quantity) and get the possibly first element that the robot faces
-        objects = [robot.getFromDef(f'P{i}') for i in range(24)]
-        prey = next(filter(lambda _: is_above(robot, _), objects), None)
+        prey_index = next((i for i in range(24) if is_above(robot, objects[i])), -1)
 
-        if prey is None:
+        if prey_index == -1:
             return
 
         # temporary remove the object from the environment (captured)
-        position = prey.getField('translation').getSFVec3f()
-        prey.getField('translation').setSFVec3f([0, -100, 0])
+        objects[prey_index].getField('translation').setSFVec3f([0, -100, 0])
 
         # memorize the capture
-        gripper.prey = (prey, position)
+        gripper.prey_index = prey_index
 
     # if it opens the grip while it is carrying a catchable, release it
-    elif gripper.prey is not None:
+    if not gripper.close and gripper.prey_index >= 0:
 
         # if robot is on the nest, reset the object position to its origin
         # otherwise, free the prey in the robot position
-        prey, original_position = gripper.prey
         rx, _, ry = robot.getFromDef('evolvable').getPosition()
 
-        position = original_position if on_nest(robot) else [rx, 0.001, ry]
-        prey.getField('translation').setSFVec3f(position)
+        position = starting_positions[gripper.prey_index] if on_nest(robot) else [rx, 0.001, ry]
+        objects[gripper.prey_index].getField('translation').setSFVec3f(position)
 
-        gripper.prey = None
+        gripper.prey_index = -1
 
 
 def is_above(robot, obj) -> bool:
