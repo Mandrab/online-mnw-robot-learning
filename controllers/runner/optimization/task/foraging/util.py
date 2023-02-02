@@ -31,7 +31,7 @@ def on_nest(robot):
     pgs = next(filter(lambda sensor: sensor.startswith('gs0'), robot.sensors))
     ngs = next(filter(lambda sensor: sensor.startswith('gs2'), robot.sensors))
 
-    return pgs.value < 700 and ngs.value > 300
+    return pgs.value < 800 and ngs.value > 200
 
 
 def on_plate(robot):
