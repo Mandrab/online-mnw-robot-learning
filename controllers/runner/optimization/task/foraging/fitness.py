@@ -23,12 +23,11 @@ class Fitness(Base):
             logger.info("capture")
             self.fitness += PRIZE
 
-# 2 40 00 00
         # 'prey is not None' cannot be evaluated by the robot directly.
         # It represents the perception of the object in front of the robot after the gripper opening.
         # However, due to the actual structure of the experiment, it cannot be evaluated
         # and a trick is therefore needed.
-        elif not gripper.close and gripper.prey is not None:
+        if not gripper.close and gripper.prey_index >= 0:
 
             if on_nest(self.robot):
                 logger.info("correct deposit")
