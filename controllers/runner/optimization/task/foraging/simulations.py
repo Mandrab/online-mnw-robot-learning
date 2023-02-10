@@ -13,8 +13,8 @@ def live(instance: Individual, duration: int):
     """
 
     # save the starting position of the objects to be able to restore them once deposited
-    objects = [instance.body.getFromDef(f'P{i}') for i in range(24)]
-    starting_positions = [o.getField('translation').getSFVec3f() for o in objects]
+    objects = tuple(instance.body.getFromDef(f'P{i}') for i in range(24))
+    starting_positions = tuple(o.getField('translation').getSFVec3f() for o in objects)
 
     # iterate for the epoch duration
     for counter in range(duration):
@@ -37,6 +37,9 @@ def live(instance: Individual, duration: int):
 
         logger.cortex_plot(instance)
 
+    for obj, pos in zip(objects, starting_positions):
+        obj.getField('translation').setSFVec3f(pos)
+
     logger.info('fitness: ' + str(instance.biography.evaluator.value()))
 
 
@@ -51,7 +54,7 @@ def check_capture(robot, objects):
         return
 
     # temporary remove the object from the environment (captured)
-    objects[prey_index].getField('translation').setSFVec3f([0, -100, 0])
+    objects[prey_index].getField('translation').setSFVec3f([0, 1e5, 0])
 
     # memorize the capture
     gripper.prey_index = prey_index
