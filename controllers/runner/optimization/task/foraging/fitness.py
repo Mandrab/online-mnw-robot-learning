@@ -15,11 +15,12 @@ class Fitness(Base):
         gripper = next(filter(lambda actuator: actuator.startswith('gripper'), self.robot.motors))
 
         # no state change correspond to 0 fitness
-        if not gripper.state_changed:
+        # no interaction with a prey correspond to 0 fitness
+        if not gripper.state_changed or gripper.prey_index < 0:
             return
 
-        # if the gripper closes with a prey in front, prize it
-        if gripper.close and on_plate(self.robot):
+        # if the gripper closes with a prey under it, prize it
+        if gripper.close:
             logger.info("capture")
             self.fitness += PRIZE
 
@@ -27,13 +28,8 @@ class Fitness(Base):
         # It represents the perception of the object in front of the robot after the gripper opening.
         # However, due to the actual structure of the experiment, it cannot be evaluated
         # and a trick is therefore needed.
-        if not gripper.close and gripper.prey_index >= 0:
-
-            if on_nest(self.robot):
-                logger.info("correct deposit")
-                self.fitness += 2 * PRIZE
-            else:
-                logger.info("wrong deposit")
-                self.fitness += PENALTY
+        else:
+            logger.info(f"{'correct' if on_nest(self.robot) else 'wrong'} deposit")
+            self.fitness += (2 * PRIZE) if on_nest(self.robot) else PENALTY
 
     def value(self) -> float: return self.fitness
