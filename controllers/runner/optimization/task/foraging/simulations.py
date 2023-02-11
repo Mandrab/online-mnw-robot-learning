@@ -14,7 +14,7 @@ def live(instance: Individual, duration: int):
 
     # save the starting position of the objects to be able to restore them once deposited
     objects = tuple(instance.body.getFromDef(f'P{i}') for i in range(24))
-    starting_positions = tuple(o.getField('translation').getSFVec3f() for o in objects)
+    starting_positions = tuple(list(map(float, o.getField('description').getSFString().split())) for o in objects)
 
     # iterate for the epoch duration
     for counter in range(duration):
@@ -36,9 +36,6 @@ def live(instance: Individual, duration: int):
         instance.biography.response.append(response)
 
         logger.cortex_plot(instance)
-
-    for obj, pos in zip(objects, starting_positions):
-        obj.getField('translation').setSFVec3f(pos)
 
     logger.info('fitness: ' + str(instance.biography.evaluator.value()))
 

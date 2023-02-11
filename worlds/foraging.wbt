@@ -1755,6 +1755,7 @@ DEF P0 Solid {
     }
   ]
   name "plate 0"
+  description "0 0.001 -0.75"
   locked TRUE
 }
 DEF P1 Solid {
@@ -1773,6 +1774,7 @@ DEF P1 Solid {
     }
   ]
   name "plate 1"
+  description "0.195 0.001 -0.725"
   locked TRUE
 }
 DEF P2 Solid {
@@ -1791,6 +1793,7 @@ DEF P2 Solid {
     }
   ]
   name "plate 2"
+  description "0.375 0.001 -0.65"
   locked TRUE
 }
 DEF P3 Solid {
@@ -1809,6 +1812,7 @@ DEF P3 Solid {
     }
   ]
   name "plate 3"
+  description "0.53 0.001 -0.53"
   locked TRUE
 }
 DEF P4 Solid {
@@ -1827,6 +1831,7 @@ DEF P4 Solid {
     }
   ]
   name "plate 4"
+  description "0.65 0.001 -0.375"
   locked TRUE
 }
 DEF P5 Solid {
@@ -1845,6 +1850,7 @@ DEF P5 Solid {
     }
   ]
   name "plate 5"
+  description "0.725 0.001 -0.19"
   locked TRUE
 }
 DEF P6 Solid {
@@ -1863,6 +1869,7 @@ DEF P6 Solid {
     }
   ]
   name "plate 6"
+  description "0.75 0.001 0"
   locked TRUE
 }
 DEF P7 Solid {
@@ -1881,6 +1888,7 @@ DEF P7 Solid {
     }
   ]
   name "plate 7"
+  description "0.725 0.001 0.195"
   locked TRUE
 }
 DEF P8 Solid {
@@ -1899,6 +1907,7 @@ DEF P8 Solid {
     }
   ]
   name "plate 8"
+  description "0.65 0.001 0.375"
   locked TRUE
 }
 DEF P9 Solid {
@@ -1917,6 +1926,7 @@ DEF P9 Solid {
     }
   ]
   name "plate 9"
+  description "0.53 0.001 0.53"
   locked TRUE
 }
 DEF P10 Solid {
@@ -1935,6 +1945,7 @@ DEF P10 Solid {
     }
   ]
   name "plate 10"
+  description "0.375 0.001 0.65"
   locked TRUE
 }
 DEF P11 Solid {
@@ -1953,6 +1964,7 @@ DEF P11 Solid {
     }
   ]
   name "plate 11"
+  description "0.195 0.001 0.725"
   locked TRUE
 }
 DEF P12 Solid {
@@ -1971,6 +1983,7 @@ DEF P12 Solid {
     }
   ]
   name "plate 12"
+  description "0 0.001 0.75"
   locked TRUE
 }
 DEF P13 Solid {
@@ -1989,6 +2002,7 @@ DEF P13 Solid {
     }
   ]
   name "plate 13"
+  description "-0.195 0.001 0.725"
   locked TRUE
 }
 DEF P14 Solid {
@@ -2007,6 +2021,7 @@ DEF P14 Solid {
     }
   ]
   name "plate 14"
+  description "-0.375 0.001 0.65"
   locked TRUE
 }
 DEF P15 Solid {
@@ -2025,6 +2040,7 @@ DEF P15 Solid {
     }
   ]
   name "plate 15"
+  description "-0.53 0.001 0.53"
   locked TRUE
 }
 DEF P16 Solid {
@@ -2043,6 +2059,7 @@ DEF P16 Solid {
     }
   ]
   name "plate 16"
+  description "-0.65 0.001 0.375"
   locked TRUE
 }
 DEF P17 Solid {
@@ -2061,6 +2078,7 @@ DEF P17 Solid {
     }
   ]
   name "plate 17"
+  description "-0.725 0.001 0.195"
   locked TRUE
 }
 DEF P18 Solid {
@@ -2079,6 +2097,7 @@ DEF P18 Solid {
     }
   ]
   name "plate 18"
+  description "-0.75 0.001 0"
   locked TRUE
 }
 DEF P19 Solid {
@@ -2097,6 +2116,7 @@ DEF P19 Solid {
     }
   ]
   name "plate 19"
+  description "-0.725 0.001 -0.195"
   locked TRUE
 }
 DEF P20 Solid {
@@ -2115,6 +2135,7 @@ DEF P20 Solid {
     }
   ]
   name "plate 20"
+  description "-0.65 0.001 -0.375"
   locked TRUE
 }
 DEF P21 Solid {
@@ -2133,6 +2154,7 @@ DEF P21 Solid {
     }
   ]
   name "plate 21"
+  description "-0.53 0.001 -0.53"
   locked TRUE
 }
 DEF P22 Solid {
@@ -2151,6 +2173,7 @@ DEF P22 Solid {
     }
   ]
   name "plate 22"
+  description "-0.375 0.001 -0.65"
   locked TRUE
 }
 DEF P23 Solid {
@@ -2169,5 +2192,6 @@ DEF P23 Solid {
     }
   ]
   name "plate 23"
+  description "-0.195 0.001 -0.725"
   locked TRUE
 }
