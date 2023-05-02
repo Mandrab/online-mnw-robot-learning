@@ -44,6 +44,10 @@ def live(instance: Individual, duration: int):
 
             # (re)set initial color of evaluator utils
             instance.biography.evaluator.initial_color = starting_color
+            instance.biography.evaluator.reach_flag = False
+
+            # ensure that changes take place
+            world_manager.commit()
 
         # run the individual and save the biography for the step
         stimulus, response = run(instance)

@@ -1,3 +1,4 @@
+from logger import logger
 from optimization.fitness import Fitness as Base
 from robot.transducer import grounds
 from utils import adapt
@@ -24,6 +25,7 @@ class Fitness(Base):
 
     fitness: float = 0.0
     counter: int = 0
+    reach_flag: bool = False
 
     def update(self):
         # increment iteration counter
@@ -43,6 +45,10 @@ class Fitness(Base):
         # consider 3 color) increase fitness, otherwise decrease it
         if floor_level != self.initial_color:
             self.fitness += 2
+
+            if not self.reach_flag:
+                self.reach_flag = True
+                logger.info('On correct end-point')
         else:
             self.fitness -= 1
 
