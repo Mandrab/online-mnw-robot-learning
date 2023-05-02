@@ -1,10 +1,16 @@
 #VRML_SIM R2021b utf8
 WorldInfo {
   coordinateSystem "NUE"
+  contactProperties [
+    ContactProperties {
+      bounce 0
+      bounceVelocity 0
+    }
+  ]
 }
 Viewpoint {
   orientation 1 0 0 4.71238898038469
-  position 0.008109990088866093 2.403874633540555 0.23577270070046175
+  position 0.008109990088866093 2.1209928020108513 0.23577270070046175
   follow "e-puck"
   followType "None"
 }
@@ -14,12 +20,13 @@ Background {
   ]
 }
 DEF evolvable E-puck {
-  translation 0 2e-05 0.8
+  translation 0 3e-05 0.8
   rotation 0 -1 0 0
   controller "runner"
   supervisor TRUE
   groundSensorsSlot [
     E-puckGroundSensors {
+      translation 0 0 0.03
       rotation 0 0 1 1.58784
     }
   ]
@@ -97,43 +104,123 @@ Wall {
   translation -0.3 0 -0.25
   name "orizontal left wall"
   size 0.4 0.1 0.01
+  appearance Appearance {
+    material Material {
+      ambientIntensity 1
+      diffuseColor 1 1 1
+      emissiveColor 1 1 1
+      shininess 1
+      specularColor 1 1 1
+      transparency 1
+    }
+  }
 }
 Wall {
   translation -0.5 0 -0.38
   rotation 0 1 0 1.5708
   name " left"
   size 0.25 0.1 0.01
+  appearance Appearance {
+    material Material {
+      ambientIntensity 1
+      diffuseColor 1 1 1
+      emissiveColor 1 1 1
+      shininess 1
+      specularColor 1 1 1
+      transparency 1
+    }
+  }
 }
 Wall {
   translation 0.5 0 -0.38
   rotation 0 1 0 1.5708
   name "right"
   size 0.25 0.1 0.01
+  appearance Appearance {
+    material Material {
+      ambientIntensity 1
+      diffuseColor 1 1 1
+      emissiveColor 1 1 1
+      shininess 1
+      specularColor 1 1 1
+      transparency 1
+    }
+  }
 }
 Wall {
   translation 0 0 -0.51
   name "north wall"
   size 1 0.1 0.01
+  appearance Appearance {
+    material Material {
+      ambientIntensity 1
+      diffuseColor 1 1 1
+      emissiveColor 1 1 1
+      shininess 1
+      specularColor 1 1 1
+      transparency 1
+    }
+  }
 }
 Wall {
   translation 0 0 0.9
   name "south wall"
   size 0.22 0.1 0.01
+  appearance Appearance {
+    material Material {
+      ambientIntensity 1
+      diffuseColor 1 1 1
+      emissiveColor 1 1 1
+      shininess 1
+      specularColor 1 1 1
+      transparency 1
+    }
+  }
 }
 Wall {
   translation -0.105 0 0.325
   rotation 0 1 0 1.5708
   name "vertical left wall"
   size 1.15 0.1 0.01
+  appearance Appearance {
+    material Material {
+      ambientIntensity 1
+      diffuseColor 1 1 1
+      emissiveColor 1 1 1
+      shininess 1
+      specularColor 1 1 1
+      transparency 1
+    }
+  }
 }
 Wall {
   translation 0.105 0 0.325
   rotation 0 1 0 1.5708
   name "vertical right wall"
   size 1.15 0.1 0.01
+  appearance Appearance {
+    material Material {
+      ambientIntensity 1
+      diffuseColor 1 1 1
+      emissiveColor 1 1 1
+      shininess 1
+      specularColor 1 1 1
+      transparency 1
+    }
+  }
 }
 Wall {
   translation 0.3 0 -0.25
   name "orizontal right wall"
   size 0.4 0.1 0.01
+  appearance Appearance {
+    material Material {
+      ambientIntensity 1
+      diffuseColor 1 1 1
+      emissiveColor 1 1 1
+      shininess 1
+      specularColor 1 1 1
+      transparency 1
+    }
+  }
 }
