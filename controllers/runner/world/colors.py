@@ -18,11 +18,11 @@ class Colors(Enum):
     def convert(value: Number) -> Enum:
         """Map a value to discrete colors."""
 
-        if Colors.WHITE <= value:
+        if (Colors.WHITE + Colors.GRAY) / 2 <= value:
             return Colors.WHITE
-        elif Colors.BLACK >= value:
-            return Colors.BLACK
-        return Colors.GRAY
+        elif (Colors.BLACK + Colors.GRAY) / 2 <= value:
+            return Colors.GRAY
+        return Colors.BLACK
 
     def __eq__(self, other: Any) -> bool:
         other_value = other.value if isinstance(other, Colors) else other
@@ -35,3 +35,5 @@ class Colors(Enum):
     def __le__(self, other: Any) -> bool:
         other_value = other.value if isinstance(other, Colors) else other
         return self.value <= other_value + 50
+
+    def __add__(self, other) -> float: return self.value + other.value
