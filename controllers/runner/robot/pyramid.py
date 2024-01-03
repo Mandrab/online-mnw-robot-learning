@@ -1,6 +1,5 @@
 from dataclasses import dataclass, field
-from nanowire_network_simulator import random_nodes
-from random import gauss
+from random import gauss, sample
 from robot.body import EPuck
 from robot.cortex import Cortex
 from robot.fiber import Fiber
@@ -28,7 +27,8 @@ class Pyramid:
 def random(body: EPuck, cortex: Cortex, sensitivity: float) -> Pyramid:
     """Instantiate a random pyramid to connect the robot body to the brain."""
 
-    motors = random_nodes(cortex.network, set(), len(body.motors))
+    motors = sample(range(cortex.component.ws_count), len(body.motors))
+    motors = map(lambda v: v + cortex.component.ws_skip, motors)
     return Pyramid(dict(zip(body.motors, motors)), sensitivity)
 
 
