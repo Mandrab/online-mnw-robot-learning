@@ -52,7 +52,7 @@ def random(
         if component.ws_skip <= m < component.ws_skip + component.ws_count
     }
     legal_nodes = minimum_distance_selection(component, motors, 2)
-    legal_nodes = [component.ws_skip + idx for idx in legal_nodes]
+    legal_nodes = set(component.ws_skip + idx for idx in legal_nodes)
 
     # select some nodes to be used as sensor inputs
     sensors = sample(legal_nodes, len(body.sensors))
@@ -100,7 +100,7 @@ def evolve_connections(
         if component.ws_skip <= m < component.ws_skip + component.ws_count
     }
     legal_nodes = minimum_distance_selection(component, motors, 2)
-    legal_nodes = [component.ws_skip + idx for idx in legal_nodes]
+    legal_nodes = set(component.ws_skip + idx for idx in legal_nodes)
 
     # reconnect each sensor to a different node
     def reconnect(pair): return pair[0], choice(list(legal_nodes - {pair[1]}))
