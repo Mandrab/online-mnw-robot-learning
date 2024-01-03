@@ -14,7 +14,7 @@ class EPuck(Supervisor):
     """
 
     # update/working time for robot modules
-    run_frequency = Frequency(hz_value=10)
+    run_frequency = Frequency(hz_value=20)
 
     __create_key = object()     # allows the constructor to be called only internally
     _instances = {}             # used to create a singleton class
