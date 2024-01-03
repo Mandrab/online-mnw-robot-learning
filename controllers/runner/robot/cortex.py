@@ -1,10 +1,7 @@
-from dataclasses import dataclass, field
-from nanowire_network_simulator import minimum_viable_network
-from nanowire_network_simulator import initialize_graph_attributes
-from nanowire_network_simulator import voltage_initialization
-from nanowire_network_simulator.model.device import Datasheet
-from networkx import Graph
-from typing import Dict, Tuple
+from dataclasses import dataclass
+from ctypes import byref, c_int
+from nnspy import connected_component, datasheet, network_state, network_topology, nns
+from typing import Tuple
 
 
 @dataclass(frozen=True)
@@ -17,31 +14,32 @@ class Cortex:
     """
 
     # graphs information and instance
-    network: Graph
-    datasheet: Datasheet
-    wires: Dict = field(default_factory=dict)
+    datasheet: datasheet
+    topology: network_topology
+    state: network_state
+    component: connected_component
 
     # accepted stimulus range of the network
-    working_range: Tuple[float, float] = (0.0, 10.0)
+    working_range: Tuple[float, float] = (0.0, 3.3)
 
 
-def new(datasheet: Datasheet) -> Cortex:
+def new(ds: datasheet) -> Cortex:
     """Get a device represented by the given datasheet and initialize it."""
 
-    graph, wires = minimum_viable_network(datasheet)
-    initialize_graph_attributes(graph, set(), set(), datasheet.Y_min)
-    voltage_initialization(graph, {next(iter(graph.nodes))}, set())
-    return Cortex(graph, datasheet, wires)
+    cc_count, n2c = c_int(0), (c_int * ds.wires_count)()
+    nt = nns.create_network(ds, n2c, byref(cc_count))
+    ns = nns.construe_circuit(ds, nt)
+    ccs = nns.split_components(ds, nt, n2c, cc_count)[:cc_count.value]
+    cc = max(ccs, key=lambda x: int(x.ws_count))
+
+    return Cortex(ds, nt, ns, cc)
 
 
 def describe(instance: Cortex):
     """Return a custom string representation of the object."""
 
-    graph, data = instance.network, instance.datasheet
-    area = data.Lx * data.Ly
-    d = data.wires_count * data.mean_length ** 2 / area
-    cc_d = graph.number_of_nodes() * data.mean_length ** 2 / area
-    wc = graph.number_of_nodes()
-    jc = instance.network.number_of_edges()
+    ds, cc = instance.datasheet, instance.component
+    area = ds.package_size ** 2
+    d = ds.wires_count * ds.length_mean ** 2 / area
 
-    return str(f'Device density: {d}, CC density: {cc_d}, CC #wires: {wc}, CC #junctions: {jc}')
+    return str(f'Device density: {d}, CC #wires: {cc.ws_count}, CC #junctions: {cc.js_count}')
