@@ -1,12 +1,12 @@
 from dataclasses import dataclass, field
-from nanowire_network_simulator import minimum_distance_selection
-from nanowire_network_simulator import mutate, random_nodes
-from random import gauss
+from math import ceil
+from random import gauss, sample, randrange, choice
 from robot.cortex import Cortex
 from robot.body import EPuck
 from robot.fiber import Fiber, nodes
 from robot.pyramid import Pyramid
 from typing import Dict
+from util.evolutor import minimum_distance_selection
 
 
 @dataclass(frozen=True)
@@ -26,7 +26,7 @@ class Thalamus:
     # of pre-processing. In the given system, this elaboration is represented as
     # a multiplication of the input signal.
     # A value of 1 means that the signal is directly forwarded to the node of
-    # the network. An higher value cause the input signal to be increased in its
+    # the network. A higher value cause the input signal to be increased in its
     # intensity. The minimum value is 0, for which the signal is inhibited.
     multiplier: Dict[str, float] = field(default_factory=dict)
 
@@ -44,10 +44,18 @@ def random(
     while ~2.5 for area avoidance (it needs the sensor to highly stimulate).
     """
 
-    # select sensors nodes from the available ones
-    network, motors = cortex.network, set(nodes(pyramid.mapping))
-    illegal = minimum_distance_selection(motors, 2, True)(network, [], -1)
-    sensors = list(random_nodes(network, illegal, len(body.sensors)))
+    # select the nodes that are at least 2 junctions far from the motor nodes
+    component, motors = cortex.component, set(nodes(pyramid.mapping))
+    motors = {
+        m - component.ws_skip
+        for m in motors
+        if component.ws_skip <= m < component.ws_skip + component.ws_count
+    }
+    legal_nodes = minimum_distance_selection(component, motors, 2)
+    legal_nodes = [component.ws_skip + idx for idx in legal_nodes]
+
+    # select some nodes to be used as sensor inputs
+    sensors = sample(legal_nodes, len(body.sensors))
     multiplier = {s: abs(gauss(1, sigma)) for s in body.sensors}
 
     # map nodes and transducers
@@ -75,18 +83,30 @@ def evolve_connections(
 ) -> Thalamus:
     """
     Evolve the given thalamus to a new one originated from it, changing its
-    sensor-to-node connections.
+    sensor-to-node connections. The function reconnects a minimum of 1 node
+    to a maximum of 50% of the nodes.
     """
 
-    # obtain the new sensors
-    selector = minimum_distance_selection({*nodes(pyramid.mapping)}, distance=2)
-    mapping = dict(zip(parent.mapping, mutate(
-        cortex.network,
-        list(nodes(parent.mapping)), ground=-1,
-        probability=0.3, minimum_mutants=1, maximum_mutants=4,
-        viable_node_selection=selector
-    )))
-    return Thalamus(mapping, parent.multiplier)
+    # select the nodes to reconnect
+    sensors_count = len(parent.mapping)
+    reconnections_count = randrange(1, ceil(sensors_count * 0.5))
+    connections = sample(parent.mapping.items(), reconnections_count)
+
+    # select the nodes that are at least 2 junctions far from the motor nodes
+    component, motors = cortex.component, set(nodes(pyramid.mapping))
+    motors = {
+        m - component.ws_skip
+        for m in motors
+        if component.ws_skip <= m < component.ws_skip + component.ws_count
+    }
+    legal_nodes = minimum_distance_selection(component, motors, 2)
+    legal_nodes = [component.ws_skip + idx for idx in legal_nodes]
+
+    # reconnect each sensor to a different node
+    def reconnect(pair): return pair[0], choice(list(legal_nodes - {pair[1]}))
+    connections = dict(map(reconnect, connections))
+
+    return Thalamus(parent.mapping | connections, parent.multiplier)
 
 
 def describe(instance: Thalamus) -> str:
