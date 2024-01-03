@@ -1,5 +1,6 @@
+from ctypes import c_double, c_int
 from dataclasses import dataclass
-from nanowire_network_simulator import stimulate
+from nnspy import interface, nns
 from robot.body import EPuck
 from robot.cortex import Cortex, describe as cortex2str
 from robot.fiber import nodes
@@ -41,7 +42,7 @@ def run(instance: Robot) -> Tuple[Dict[str, float], Dict[str, float]]:
     """
 
     body, cortex, pyramid, thalamus = unroll(instance)
-    network, datasheet = cortex.network, cortex.datasheet
+    ds, ns, cc = cortex.datasheet, cortex.state, cortex.component
     sensors, motors = thalamus.mapping, pyramid.mapping
 
     # webots has stopped/paused the simulation
@@ -59,13 +60,33 @@ def run(instance: Robot) -> Tuple[Dict[str, float], Dict[str, float]]:
     # define the pin-resistance/load pairs for the motors
     loads = [(pin, pyramid.sensitivity) for pin in nodes(motors)]
 
+    it = interface()
+    it.sources_count = len(reads)
+    it.sources_index = (c_int * it.sources_count)()
+    it.grounds_count = 0
+    it.grounds_index = (c_int * it.grounds_count)()
+    it.loads_count = len(loads)
+    it.loads_index = (c_int * it.loads_count)()
+    it.loads_weight = (c_double * it.loads_count)()
+
+    ios = (c_double * it.sources_count)()
+
+    for i, (pin, weight) in enumerate(loads):
+        it.loads_index[i] = pin
+        it.loads_weight[i] = weight
+
+    for i, (pin, value) in enumerate(reads):
+        it.sources_index[i] = pin
+        ios[i] = value
+
     # stimulate the network with the sensors inputs
-    stimulate(network, datasheet, body.run_frequency.s, reads, loads, set())
+    nns.update_conductance(ns, cc)
+    nns.voltage_stimulation(ns, cc, it, ios)
 
     # extract outputs from network and remap output values from 0, 10 to:
     #   -6.28, 6.28 for distance: 10 = far -> 6.28 = move straight
     #   6.28, -6.28 for proximity: 10 = near -> -6.28 = go away
-    outs = [(motor, network.nodes[pin]['V']) for motor, pin in motors.items()]
+    outs = [(motor, ns.Vs[pin]) for motor, pin in motors.items()]
     outs = {k: adapt(v, in_range=cortex.working_range) for k, v in outs}
 
     # set the motors' speed according to its response
