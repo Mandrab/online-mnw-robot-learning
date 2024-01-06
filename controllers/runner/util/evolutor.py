@@ -12,15 +12,21 @@ def minimum_distance_selection(
     """
     Select nodes 'distance' step distant from the outputs (i.e. loads and grounds).
     If 'negate' is True, the function is `negated` and the returned nodes are the
-    grounds, outputs and their neighbors. The nodes have to be numbered according to the
-    connected component index, e.g.: node 10 in the NN may be the node 1 in the CC.
-    The returned legal nodes are indexed according to the connected component.
+    grounds, outputs and their neighbors. The returned legal nodes are indexed according
+    to the whole nanowire network.
     """
 
     # get the index of connected nodes
     def decompose(idx: int) -> Tuple[int, int]: return idx / component.ws_count, idx % component.ws_count
     coupled_nodes = component.Is[:component.js_count]
     coupled_nodes = map(decompose, coupled_nodes)
+
+    # re-index the output nodes from the NN indexing to the CC indexing
+    outputs = set(
+        pin - component.ws_skip
+        for pin in outputs
+        if component.ws_skip <= pin < component.ws_skip + component.ws_count
+    )
 
     # find the nodes nearer than 'distance' steps from the starting nodes
     def neighbours(group: Set[int], decreased_distance: int) -> Set[int]:
@@ -52,4 +58,4 @@ def minimum_distance_selection(
     viable_nodes = range(component.ws_count)
     viable_nodes = set(viable_nodes) - neighbors
 
-    return viable_nodes
+    return set(component.ws_skip + pin for pin in viable_nodes)
