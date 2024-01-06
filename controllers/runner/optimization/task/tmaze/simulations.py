@@ -7,7 +7,7 @@ from world.manager import Manager
 
 DURATION = 250
 
-INITIAL_POSITION = [0, 3e-5, 0.8]
+INITIAL_POSITION = [0, 0, 0.8]
 INITIAL_ROTATION = [0, -1, 0, 0]
 
 STARTS = cycle([
@@ -48,6 +48,12 @@ def live(instance: Individual, duration: int):
 
             # ensure that changes take place
             world_manager.commit()
+
+            # wait for the physic system to stabilize
+            instance.body.motors[0].value = 0
+            instance.body.motors[1].value = 0
+            for _ in range(100):
+                instance.body.step(1)
 
         # run the individual and save the biography for the step
         stimulus, response = run(instance)
