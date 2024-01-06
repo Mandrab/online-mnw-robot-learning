@@ -57,23 +57,20 @@ def run(instance: Robot) -> Tuple[Dict[str, float], Dict[str, float]]:
     reads = [(k, adapt(v, out_range=cortex.working_range)) for k, v in reads]
     reads = [(sensors[k], v) for k, v in reads if k in sensors]
 
-    # define the pin-resistance/load pairs for the motors
-    loads = [(pin, pyramid.sensitivity) for pin in nodes(motors)]
-
     it = interface()
     it.sources_count = len(reads)
     it.sources_index = (c_int * it.sources_count)()
     it.grounds_count = 0
     it.grounds_index = (c_int * it.grounds_count)()
-    it.loads_count = len(loads)
+    it.loads_count = len(motors)
     it.loads_index = (c_int * it.loads_count)()
     it.loads_weight = (c_double * it.loads_count)()
 
     ios = (c_double * it.sources_count)()
 
-    for i, (pin, weight) in enumerate(loads):
+    for i, pin in enumerate(nodes(motors)):
         it.loads_index[i] = pin
-        it.loads_weight[i] = weight
+        it.loads_weight[i] = pyramid.sensitivity
 
     for i, (pin, value) in enumerate(reads):
         it.sources_index[i] = pin
