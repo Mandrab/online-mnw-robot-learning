@@ -5,7 +5,7 @@ from robot.robot import run
 from world.colors import Colors
 from world.manager import Manager
 
-DURATION = 250
+DURATION = 500
 
 INITIAL_POSITION = [0, 0, 0.8]
 INITIAL_ROTATION = [0, -1, 0, 0]
