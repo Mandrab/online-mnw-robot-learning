@@ -46,13 +46,7 @@ def random(
 
     # select the nodes that are at least 2 junctions far from the motor nodes
     component, motors = cortex.component, set(nodes(pyramid.mapping))
-    motors = {
-        m - component.ws_skip
-        for m in motors
-        if component.ws_skip <= m < component.ws_skip + component.ws_count
-    }
     legal_nodes = minimum_distance_selection(component, motors, 2)
-    legal_nodes = set(component.ws_skip + idx for idx in legal_nodes)
 
     # select some nodes to be used as sensor inputs
     sensors = sample(legal_nodes, len(body.sensors))
@@ -94,13 +88,8 @@ def evolve_connections(
 
     # select the nodes that are at least 2 junctions far from the motor nodes
     component, motors = cortex.component, set(nodes(pyramid.mapping))
-    motors = {
-        m - component.ws_skip
-        for m in motors
-        if component.ws_skip <= m < component.ws_skip + component.ws_count
-    }
     legal_nodes = minimum_distance_selection(component, motors, 2)
-    legal_nodes = set(component.ws_skip + idx for idx in legal_nodes)
+    legal_nodes -= set(nodes(parent.mapping))
 
     # reconnect each sensor to a different node
     def reconnect(pair): return pair[0], choice(list(legal_nodes - {pair[1]}))
