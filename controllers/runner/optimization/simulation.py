@@ -3,10 +3,11 @@ import random
 from dataclasses import dataclass
 from functools import reduce
 from logger import logger
-from optimization.individual import Individual, evolve
+from optimization.individual import Individual, evolve, copy
 from optimization.task.task import Task
+from optimization.tsetlin import Tsetlin
 from robot.robot import describe
-from typing import Any
+from typing import Any, Tuple
 
 
 @dataclass(frozen=True)
@@ -23,6 +24,7 @@ class Simulation:
     goal_task: Task
     epochs_count: int
     epoch_duration: int
+    tsetlin: Tsetlin
 
 
 def optimize(instance: Simulation) -> Simulation:
@@ -36,7 +38,7 @@ def optimize(instance: Simulation) -> Simulation:
     logger.info(describe(instance.elite))
 
     # set controller random seed
-    random.seed(instance.elite.cortex.datasheet.seed)
+    random.seed(instance.elite.cortex.datasheet.generation_seed)
 
     # restore simulation to starting point
     instance.elite.body.simulationReset()
@@ -44,17 +46,34 @@ def optimize(instance: Simulation) -> Simulation:
     # run the initial individual to obtain its fitness
     instance.goal_task.life_manager(instance.elite, instance.epoch_duration)
 
-    def strategy(elite: Individual, _: Any) -> Individual:
+    def strategy(individuals: Tuple[Individual, Individual], _: Any) -> Tuple[Individual, Individual]:
         """
-        Reduction strategy. Given an individual, it compares it with another one
-        that may or not be its evolution. Select the one with the highest score.
+        Reduction strategy. Given the best individual and the previously tested
+        one, generate an adapted version of the controller and compare it with
+        the previous best known one. The new controller can be adapted from the
+        best one, or from the last tested if in exploration mode. Keep the one
+        with the highest score. If the tsetlin machine is in operation state,
+        the best controller is used without being adapted.
         """
+
+        elite, challenger = individuals
 
         # get the challenger individual (may or not be an evolution of elite)
         task = instance.goal_task
         evaluator = task.evaluator(elite.body)
         threshold, sigma = task.evolution_threshold, task.mutation_sigma
-        challenger = evolve(elite, threshold, sigma, evaluator)
+
+        instance.tsetlin.update_state(challenger.biography.evaluator)
+
+        # adaptation mode
+        if instance.tsetlin.state >= 6:
+            challenger = evolve(elite, threshold, sigma, evaluator)
+        # exploration mode
+        elif instance.tsetlin.state < 3:
+            challenger = evolve(challenger, threshold, sigma, evaluator)
+        # operation mode
+        else:
+            challenger = copy(elite, evaluator)
 
         # restore simulation to starting point
         if not task.continuous:
@@ -63,10 +82,10 @@ def optimize(instance: Simulation) -> Simulation:
         # run the challenger to obtain its fitness
         instance.goal_task.life_manager(challenger, instance.epoch_duration)
 
-        return challenger if challenger.fitness >= elite.fitness else elite
+        return (challenger if challenger.fitness >= elite.fitness else elite), challenger
 
     # find the best configuration in the given task and world
-    winner = reduce(strategy, range(instance.epochs_count), instance.elite)
+    winner = reduce(strategy, range(instance.epochs_count), (instance.elite, instance.elite))[0]
     return update_elite(winner, instance)
 
 
@@ -77,5 +96,6 @@ def update_elite(elite: Individual, instance: Simulation) -> Simulation:
         elite,
         instance.goal_task,
         instance.epochs_count,
-        instance.epoch_duration
+        instance.epoch_duration,
+        instance.tsetlin
     )
