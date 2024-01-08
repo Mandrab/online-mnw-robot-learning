@@ -1,3 +1,4 @@
+from logger import logger
 from optimization.fitness import Fitness
 
 EXPLORATION_STATE = 3
@@ -64,16 +65,16 @@ class Tsetlin:
         elif fitness.value() > self.best_performance:
             self.best_performance = fitness.value()
 
-        print(fitness.value(), self.best_performance)
-        print(self.state, end=" -> ")
         # state change in Tsetlin machine
+        old_state = self.state
         if fitness.value() < ALPHA_MULTIPLIER * self.best_performance:
             self.penalty()
         elif abs(fitness.value() - self.best_performance) < SIMILARITY_TOLERANCE:
             self.penalty(stagnation=True)
         else:
             self.reward()
-        print(self.state)
+        logger.info(f"updated performance: {self.best_performance}")
+        logger.info(f"state transition: {old_state} -> {self.state}")
 
         # return true if the state is adaptive
         return self.state < EXPLORATION_STATE or self.state >= EXPLORATION_STATE + OPERATIVE_STATE
