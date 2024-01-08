@@ -52,8 +52,6 @@ def supplier(
             instance.biography.stimulus.append(stimulus)
             instance.biography.response.append(response)
 
-            logger.cortex_plot(instance)
-
         logger.info(f'fitness: {instance.biography.evaluator.value()}')
 
     live.dynamic = dynamic

@@ -61,6 +61,4 @@ def live(instance: Individual, duration: int):
         instance.biography.stimulus.append(stimulus)
         instance.biography.response.append(response)
 
-        logger.cortex_plot(instance)
-
     logger.info('fitness: ' + str(instance.biography.evaluator.value()))
