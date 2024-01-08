@@ -1,6 +1,6 @@
 from optimization.task.task import Task
 from optimization.task.connected_coverage.fitness import Fitness
-from optimization.task.connected_coverage.simulations import live
+from optimization.task.connected_coverage.world import live
 from robot.body import EPuck
 from robot.transducer.sensor import USSensor
 from robot.transducer.motor import Motor

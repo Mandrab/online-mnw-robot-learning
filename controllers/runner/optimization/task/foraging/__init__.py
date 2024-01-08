@@ -1,6 +1,6 @@
 from optimization.task.task import Task
 from optimization.task.foraging.fitness import Fitness
-from optimization.task.foraging.simulations import live
+from optimization.task.foraging.world import live
 from optimization.task.foraging.gripper import Gripper
 from optimization.task.foraging.sensor import PreySensor
 from robot.body import EPuck

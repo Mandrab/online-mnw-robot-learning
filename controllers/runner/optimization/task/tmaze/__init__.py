@@ -1,6 +1,6 @@
 from optimization.task.task import Task
 from optimization.task.tmaze.fitness import Fitness
-from optimization.task.tmaze.simulations import live
+from optimization.task.tmaze.world import live
 from robot.body import EPuck
 from robot.transducer import IRSensor, GroundSensor
 

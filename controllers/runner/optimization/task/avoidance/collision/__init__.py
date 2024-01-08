@@ -1,5 +1,5 @@
 from optimization.task.task import Task
-from optimization.task.avoidance.simulations import supplier
+from optimization.task.avoidance.world import supplier
 from optimization.task.avoidance.collision.fitness import Fitness
 from robot.body import EPuck
 from robot.transducer import IRSensor
