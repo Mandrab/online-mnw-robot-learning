@@ -3,7 +3,7 @@ from logger import logger
 from optimization.fitness import Fitness
 from optimization.biography import Biography
 from robot.robot import Robot, run, unroll
-from robot.thalamus import evolve_connections, evolve_multiplier, random
+from robot.thalamus import evolve_connections, evolve_multiplier, random, Thalamus
 
 
 @dataclass(frozen=True)
@@ -26,7 +26,6 @@ def live(individual: Individual, duration: int):
 
     # iterate for the epoch duration
     for _ in range(duration):
-
         # run the individual and save the biography for the step
         stimulus, response = run(individual)
         individual.biography.evaluator.update()
@@ -56,3 +55,13 @@ def evolve(
     else:
         thalamus = random(body, cortex, pyramid, mutation_sigma)
     return Individual(body, cortex, pyramid, thalamus, Biography(evaluator))
+
+
+def copy(individual: Individual, evaluator: Fitness):
+    return Individual(
+        individual.body,
+        individual.cortex,
+        individual.pyramid,
+        Thalamus(individual.thalamus.mapping.copy(), individual.thalamus.multiplier.copy()),
+        Biography(evaluator)
+    )
