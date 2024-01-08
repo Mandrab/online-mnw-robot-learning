@@ -4,7 +4,6 @@
 # configurations files
 CONFIGS="controllers/runner/config.py"
 ROBOT="controllers/runner/robot/body.py"
-SENSOR="controllers/runner/robot/component/infrared.py"
 UTILS="controllers/runner/optimization/utils.py"
 
 # get fields from configs
@@ -20,7 +19,6 @@ FREQUENCY=$(awk -F 'hz_value=' '$2{sub(")", ""); print $2}' $ROBOT)
 LENGTH=$(awk -F 'WIRES_LENGTH = ' '$2{print $2}' $UTILS)
 SIZE=$(awk -F 'DEVICE_SIZE = ' '$2{print $2}' $UTILS)
 GIT_HASH=$(git rev-parse HEAD)
-SENSOR_RANGE=$(awk -F 'return ' '$2{print $2}' $SENSOR)
 
 # data from log file
 START_DATE=$(grep -F '[' "$1" | head -n 1 | awk -F '[|[[:space:]]' '{print $2}')
@@ -50,8 +48,6 @@ Configuration:
       - minimum fitness to evolve: $FITNESS
   3. robot characteristics:
       - epuck freq: $FREQUENCY Hz
-      - sensors range: [$SENSOR_RANGE]
-      - motor range:
       - actuators resistances: $LOADS
   4. network:
       - network range: [0.0, 10.0]
