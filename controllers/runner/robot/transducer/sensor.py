@@ -44,3 +44,8 @@ class GroundSensor(IRSensor):
     """Represents a robot ground sensor"""
 
     def range(self, reverse: bool = False) -> Tuple[float, float]: return (0, 1000) if not reverse else (1000, 0)
+
+class LightSensor(Sensor):
+    """Represents a robot IR (proximity) sensor"""
+
+    def range(self, reverse: bool = False) -> Tuple[float, float]: return (0, 4095) if not reverse else (4095, 0)
