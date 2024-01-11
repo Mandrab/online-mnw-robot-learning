@@ -23,9 +23,9 @@ class State:
         self.transition = {}
 
 
-def str2state(s: str):
-    if s == "performance-increase":
-        return State.Transition.PERFORMANCE_INCREASE
-    elif s == "performance-stagnation":
-        return State.Transition.PERFORMANCE_STAGNATION
-    return State.Transition.PERFORMANCE_DECREASE
+def str2phase(s: str) -> State.Type:
+    if s == "exploration":
+        return State.Type.EXPLORATION
+    elif s == "operation":
+        return State.Type.OPERATION
+    return State.Type.ADAPTATION
