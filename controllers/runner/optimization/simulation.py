@@ -5,7 +5,8 @@ from functools import reduce
 from logger import logger
 from optimization.individual import Individual, evolve, copy
 from optimization.task.task import Task
-from optimization.tsetlin import Tsetlin
+from optimization.tsetlin.state import State
+from optimization.tsetlin.tsetlin import Tsetlin
 from robot.robot import describe
 from typing import Any, Tuple
 
@@ -52,7 +53,7 @@ def optimize(instance: Simulation) -> Simulation:
         one, generate an adapted version of the controller and compare it with
         the previous best known one. The new controller can be adapted from the
         best one, or from the last tested if in exploration mode. Keep the one
-        with the highest score. If the tsetlin machine is in operation state,
+        with the highest score. If the tsetlin machine is in operation mode,
         the best controller is used without being adapted.
         """
 
@@ -63,13 +64,13 @@ def optimize(instance: Simulation) -> Simulation:
         evaluator = task.evaluator(elite.body)
         threshold, sigma = task.evolution_threshold, task.mutation_sigma
 
-        instance.tsetlin.update_state(challenger.biography.evaluator)
+        instance.tsetlin.transit(challenger.biography.evaluator.value(), elite.biography.evaluator.value())
 
         # adaptation mode
-        if instance.tsetlin.state >= 6:
+        if instance.tsetlin.state == State.Type.ADAPTATION:
             challenger = evolve(elite, threshold, sigma, evaluator)
         # exploration mode
-        elif instance.tsetlin.state < 3:
+        elif instance.tsetlin.state == State.Type.EXPLORATION:
             challenger = evolve(challenger, threshold, sigma, evaluator)
         # operation mode
         else:
