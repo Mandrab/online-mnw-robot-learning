@@ -6,7 +6,7 @@ from optimization.biography import Biography
 from optimization.individual import Individual
 from optimization.simulation import Simulation
 from optimization.task import Task
-from optimization.tsetlin import Tsetlin
+from optimization.tsetlin import tsetlin
 from robot.body import EPuck
 from robot.cortex import new as new_cortex
 from robot.pyramid import random as random_pyramid
@@ -51,7 +51,7 @@ def new_simulations(
         biography = Biography(task.evaluator(robot))
         elite = Individual(robot, cortex, pyramid, thalamus, biography)
 
-        return Simulation(elite, task, epoch_count, epoch_duration, Tsetlin())
+        return Simulation(elite, task, epoch_count, epoch_duration, tsetlin.reset())
 
     # lazily generate a simulation for each setting and return them
     return map(generate, device_configurations)
