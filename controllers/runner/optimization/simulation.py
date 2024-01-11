@@ -67,10 +67,10 @@ def optimize(instance: Simulation) -> Simulation:
         instance.tsetlin.transit(challenger.biography.evaluator.value(), elite.biography.evaluator.value())
 
         # adaptation mode
-        if instance.tsetlin.state == State.Type.ADAPTATION:
+        if instance.tsetlin.state.type == State.Type.ADAPTATION:
             challenger = evolve(elite, threshold, sigma, evaluator)
         # exploration mode
-        elif instance.tsetlin.state == State.Type.EXPLORATION:
+        elif instance.tsetlin.state.type == State.Type.EXPLORATION:
             challenger = evolve(challenger, threshold, sigma, evaluator)
         # operation mode
         else:
