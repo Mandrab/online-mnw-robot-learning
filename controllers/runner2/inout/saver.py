@@ -42,6 +42,6 @@ def save(data: History):
     # save the control information
     ds, nt = data.initial_controller.ds, data.initial_controller.nt
     ns, cc = data.initial_controller.ns, data.initial_controller.cc
-    nns.serialize_network(ds, nt, ".".encode('utf-8'), data.controller_index)
-    nns.serialize_state(ds, nt, ns, ".".encode('utf-8'), data.controller_index, 0)
-    nns.serialize_component(cc, ".".encode('utf-8'), data.controller_index, 0)
+    nns.serialize_network(ds, nt, OUTPUT_DIRECTORY.encode('utf-8'), data.controller_index)
+    nns.serialize_state(ds, nt, ns, OUTPUT_DIRECTORY.encode('utf-8'), data.controller_index, 0)
+    nns.serialize_component(cc, OUTPUT_DIRECTORY.encode('utf-8'), data.controller_index, 0)
