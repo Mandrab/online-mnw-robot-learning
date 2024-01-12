@@ -27,12 +27,11 @@ class Tsetlin:
         self.start_idx = self.state_idx = tsetlin_configs["main_state"]
         self.stagnation_tolerance = tsetlin_configs["stagnation_tolerance"]
 
-        # maintain only the states information
-        del tsetlin_configs["main_state"]
-        del tsetlin_configs["stagnation_tolerance"]
-
         # set up the Tsetlin states
-        for phase, states in tsetlin_configs.items():
+        for phase, states in filter(
+                lambda x: x[0] in ["exploration", "operation", "adaptation"],
+                tsetlin_configs.items()
+        ):
             for state in states:
                 self.states[state["id"]].type = str2phase(phase)
                 self.states[state["id"]].transition = {
