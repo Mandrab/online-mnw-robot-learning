@@ -1,4 +1,4 @@
-from nnspy import interface
+from nnspy import interface, nns
 from typing import Dict
 
 
@@ -14,3 +14,12 @@ class Interface(interface):
             "loads weight: " + ", ".join(map(str, self.loads_weight[:self.loads_count])) + "\n" + \
             "mapping: " + self.mapping.__str__() + "\n" + \
             "multipliers: " + self.multipliers.__str__()
+
+    def copy(self):
+        new = nns.copy_interface(self)
+        return Interface(
+            sources_count=new.sources_count, sources_index=new.sources_index,
+            grounds_count=new.grounds_count, grounds_index=new.grounds_index,
+            loads_count=new.loads_count, loads_index=new.loads_index, loads_weight=new.loads_weight,
+            mapping=self.mapping.copy(), multipliers=self.multipliers.copy()
+        )

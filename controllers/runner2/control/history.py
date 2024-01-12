@@ -26,11 +26,4 @@ class History:
         self.state_collection.append(state)
 
     def save_interface(self, interface: Interface):
-        new = nns.copy_interface(interface)
-        new = Interface(
-            sources_count=new.sources_count, sources_index=new.sources_index,
-            grounds_count=new.grounds_count, grounds_index=new.grounds_index,
-            loads_count=new.loads_count, loads_index=new.loads_index, loads_weight=new.loads_weight,
-            mapping=interface.mapping.copy(), multipliers=interface.multipliers.copy()
-        )
-        self.interface_collection.append(new)
+        self.interface_collection.append(interface.copy())
