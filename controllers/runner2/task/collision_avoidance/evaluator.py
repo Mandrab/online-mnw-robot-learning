@@ -2,8 +2,8 @@ from functools import reduce
 from inout.loader import configs
 from math import sqrt
 from operator import sub
-from replica import range2range
-from robot import get_actuators, get_sensors, robot
+from simulation.replica import range2range
+from webots.robot import get_actuators, get_sensors, robot
 
 MAX_INPUT = configs["max_input"]
 MAX_OUTPUT = configs["max_output"]

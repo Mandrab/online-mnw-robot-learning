@@ -1,7 +1,7 @@
 from controller import Device, Robot
 from inout.loader import configs
-from supervisor import supervisor
 from typing import Dict
+from webots.supervisor import supervisor
 
 ACTIVE_SENSORS = configs["active_sensors"]
 ACTIVE_ACTUATORS = configs["active_actuators"]
