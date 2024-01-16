@@ -49,12 +49,12 @@ class Tsetlin:
         # calculate the difference between the last and the best performance
         performance_delta = best_performance - last_performance
 
-        # if the last performance is greater than the best, it is an improvement
-        if performance_delta < 0:
-            self.state_idx = self.state.transition[State.Transition.PERFORMANCE_INCREASE]
         # if the performance is stagnating performs a stagnation transition
-        elif abs(performance_delta) < self.stagnation_tolerance:
+        if abs(performance_delta) < self.stagnation_tolerance:
             self.state_idx = self.state.transition[State.Transition.PERFORMANCE_STAGNATION]
+        # if the last performance is greater than the best, it is an improvement
+        elif performance_delta < 0:
+            self.state_idx = self.state.transition[State.Transition.PERFORMANCE_INCREASE]
         # if the performance is decreasing performs a decrease transition
         else:
             self.state_idx = self.state.transition[State.Transition.PERFORMANCE_DECREASE]
