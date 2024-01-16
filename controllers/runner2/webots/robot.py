@@ -3,9 +3,9 @@ from inout.loader import configs
 from typing import Dict
 from webots.supervisor import supervisor
 
-ACTIVE_SENSORS = configs["active_sensors"]
-ACTIVE_ACTUATORS = configs["active_actuators"]
-TIME_STEP = configs["time_step_ms"]
+ACTIVE_SENSORS = configs["sensors"]["active"]
+ACTIVE_ACTUATORS = configs["actuators"]["active"]
+TIME_STEP = configs["task"]["time_step_ms"]
 
 # create an alias for the supervisor
 robot = supervisor

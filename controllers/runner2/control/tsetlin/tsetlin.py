@@ -61,3 +61,6 @@ class Tsetlin:
 
         # log the new reached state
         logger.info(f"new phase: {self.state.type} (idx: {self.state_idx})")
+
+
+__all__ = "Tsetlin",

@@ -36,3 +36,6 @@ def random_coupling(network: Network) -> Coupling:
         mapping[key] = mapping[key][0], MOTOR_LOAD
 
     return Coupling(Interface(mapping.items()))
+
+
+__all_ = "Coupling", "random_coupling"

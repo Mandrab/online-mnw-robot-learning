@@ -29,3 +29,6 @@ def str2phase(s: str) -> State.Type:
     elif s == "adaptation":
         return State.Type.ADAPTATION
     return State.Type.OPERATION
+
+
+__all__ = "State", "str2phase"

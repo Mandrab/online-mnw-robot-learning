@@ -44,3 +44,6 @@ def save(enumerated_replica: Tuple[int, Replica]):
     nns.serialize_network(ds, nt, OUTPUT_DIRECTORY.encode('utf-8'), index)
     nns.serialize_state(ds, nt, ns, OUTPUT_DIRECTORY.encode('utf-8'), index, 0)
     nns.serialize_component(cc, OUTPUT_DIRECTORY.encode('utf-8'), index, 0)
+
+
+__all__ = "save",

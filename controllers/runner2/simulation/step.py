@@ -12,3 +12,6 @@ def step(replica: Replica, _: int) -> Replica:
 
     # returns the replica with the updated performance evaluation
     return replica
+
+
+__all__ = "step",

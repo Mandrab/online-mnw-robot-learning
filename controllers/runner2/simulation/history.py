@@ -18,3 +18,6 @@ class History(List[Adaptation]):
     def __init__(self, configuration: Coupling):
         super().__init__()
         self.best_configuration = configuration
+
+
+__all__ = "Adaptation", "History"

@@ -21,3 +21,6 @@ def evaluate():
     directions = 1 - abs(reduce(sub, speeds))
 
     return (1 - sqrt(max_proximity)) * directions * average_speed
+
+
+__all__ = "evaluate",

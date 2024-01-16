@@ -44,3 +44,6 @@ def random_network(seed: int):
     cc = max(ccs, key=lambda x: int(x.ws_count))
 
     return Network(ds, nt, ns, cc)
+
+
+__all__ = "Network", "random_network"
