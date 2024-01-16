@@ -3,17 +3,18 @@ from inout.loader import configs
 from inout.saver import save
 from logger import logger
 from simulation.epoch import run_epoch
-from replica import Replica
+from simulation.replica import Replica, random_replica
 
+STARTING_SEED = configs["task"]["starting_seed"]
 REPLICAS_COUNT = configs["replicas_count"]
 EPOCHS_COUNT = configs["epochs_count"]
 
 # generate new replicas, each with its own control (they have different seeds)
-replicas = map(Replica, range(REPLICAS_COUNT))
+replicas = map(random_replica, range(STARTING_SEED, STARTING_SEED + REPLICAS_COUNT))
 
 
 def describe(replica: Replica) -> Replica:
-    logger.info(replica.ctrl)
+    logger.info(replica.network)
     return replica
 
 
