@@ -1,5 +1,5 @@
 from simulation.replica import Replica, run
-from task import evaluate
+from task.collision_avoidance.evaluator import evaluate
 
 
 def step(replica: Replica, _: int) -> Replica:
