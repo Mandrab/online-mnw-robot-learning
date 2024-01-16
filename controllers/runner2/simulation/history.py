@@ -1,29 +1,20 @@
-from control.controller import Controller
-from control.interface import Interface
+from control.coupling import Coupling
 from control.tsetlin.state import State
 from dataclasses import dataclass
 from typing import List
 
 
 @dataclass(frozen=True)
-class History:
-
-    # arrays where to memorize the control, the interface, the performance and state values
-    initial_controller: Controller
-    controller_index: int
-    performance_collection: List[float]
-    state_collection: List[State.Type]
-    interface_collection: List[Interface]
-
-    def save_performance(self, performance: float):
-        self.performance_collection.append(performance)
-
-    def save_state(self, state: State.Type):
-        self.state_collection.append(state)
-
-    def save_interface(self, interface: Interface):
-        self.interface_collection.append(interface.copy())
+class Adaptation:
+    configuration: Coupling     # a tested control configuration
+    tsetlin_state: State.Type   # the tsetlin state when the configuration was created
+    tsetlin_index: int          # memorize the index of the tsetlin state
 
 
-def history(controller: Controller, index: int):
-    return History(controller, index, [], [], [])
+class History(List[Adaptation]):
+
+    best_configuration: Coupling
+
+    def __init__(self, configuration: Coupling):
+        super().__init__()
+        self.best_configuration = configuration
