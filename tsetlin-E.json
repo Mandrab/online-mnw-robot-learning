@@ -1,0 +1,17 @@
+{
+  "main_state":                 0,
+  "stagnation_tolerance":       0.5,
+
+  "exploration": [
+     {
+      "id":                     0,
+      "performance-increase":   0,
+      "performance-stagnation": 0,
+      "performance-decrease":   0
+    }
+  ],
+
+  "operation": [],
+
+  "adaptation": []
+}

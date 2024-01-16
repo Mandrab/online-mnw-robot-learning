@@ -15,6 +15,7 @@ replicas = map(random_replica, range(STARTING_SEED, STARTING_SEED + REPLICAS_COU
 
 def describe(replica: Replica) -> Replica:
     logger.info(replica.network)
+    logger.info(f"new phase: {replica.tsetlin.state.type} (idx: {replica.tsetlin.state_idx})")
     return replica
 
 
