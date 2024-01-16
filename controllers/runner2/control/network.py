@@ -5,13 +5,13 @@ from dataclasses import dataclass
 from inout.loader import configs
 from nnspy import connected_component, datasheet, network_state, network_topology, nns
 
-NETWORK_DENSITY: float = configs["network_density"]
-PACKAGE_SIZE: int = configs["package_size"]
-WIRES_LENGTH: float = configs["wires_length"]
+NETWORK_DENSITY: float = configs["nn network"]["density"]
+PACKAGE_SIZE: int = configs["nn network"]["package_size"]
+WIRES_LENGTH: float = configs["nn network"]["wires_length"]
 
 
 @dataclass(frozen=True)
-class Controller:
+class Network:
 
     ds: datasheet
     nt: network_topology
@@ -22,7 +22,7 @@ class Controller:
         return f"Wires count: {self.ds.wires_count}, Junctions count: {self.nt.js_count}"
 
 
-def controller(seed: int):
+def random_network(seed: int):
 
     # create the datasheet of a network with the desired density
     ds = datasheet(
@@ -43,4 +43,4 @@ def controller(seed: int):
     ccs = nns.split_components(ds, nt, n2c, cc_count)[:cc_count.value]
     cc = max(ccs, key=lambda x: int(x.ws_count))
 
-    return Controller(ds, nt, ns, cc)
+    return Network(ds, nt, ns, cc)
