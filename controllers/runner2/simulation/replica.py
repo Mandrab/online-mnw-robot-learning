@@ -66,7 +66,7 @@ def run(replica: Replica):
     # set the motors' speed according to the network output
     for motor, value in outs.items():
         motor.setPosition(float('inf'))
-        motor.setVelocity(range2range(value, (0, MAX_V), (MAX_OUTPUT, 0)))
+        motor.setVelocity(range2range(value, (0, MAX_V), (MAX_OUTPUT, -MAX_OUTPUT)))
 
 
 def range2range(value: float, in_range: Tuple[float, float] = (0, 1), out_range: Tuple[float, float] = (0, 1)) -> float:
