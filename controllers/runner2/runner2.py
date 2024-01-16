@@ -1,7 +1,7 @@
 from functools import reduce
 from inout.loader import configs
+from inout.logger import logger
 from inout.saver import save
-from logger import logger
 from simulation.epoch import run_epoch
 from simulation.replica import Replica, random_replica
 
@@ -25,7 +25,7 @@ replicas = map(describe, replicas)
 replicas = map(lambda x: reduce(run_epoch, range(EPOCHS_COUNT), x), replicas)
 
 # commit the save of each replica results
-list(map(lambda x: save(x.history), replicas))
+list(map(save, enumerate(replicas)))
 
 # end of the simulation
 logger.info('Simulation complete')
