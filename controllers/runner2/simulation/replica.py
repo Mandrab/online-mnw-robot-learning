@@ -12,10 +12,10 @@ from simulation.history import History
 from typing import Tuple
 from webots.robot import get_actuators, get_sensors, robot
 
-TIME_STEP = configs["time_step_ms"]
-MAX_INPUT = configs["max_input"]
-MAX_OUTPUT = configs["max_output"]
-MAX_V = configs["nn network"]["max_stimulation_v"]
+TIME_STEP = configs["task"]["time_step_ms"]
+MAX_INPUT = configs["sensors"]["max_input"]
+MAX_OUTPUT = configs["actuators"]["max_output"]
+MAX_V = configs["nn_network"]["max_stimulation_v"]
 
 
 @dataclass

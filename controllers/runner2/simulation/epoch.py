@@ -8,9 +8,9 @@ from simulation.replica import Replica
 from simulation.step import step
 from webots.supervisor import supervisor
 
-CONTINUOUS_EXPERIMENT: bool = configs["continuous_experiment"]
-EPOCHS_DURATION: int = configs["epochs_duration"]
-HISTORY_WEIGHT: float = configs["history_weight"]
+CONTINUOUS_EXPERIMENT: bool = configs["task"]["continuous"]
+EPOCHS_DURATION: int = configs["task"]["epochs_duration"]
+HISTORY_WEIGHT: float = configs["task"]["history_weight"]
 
 
 def run_epoch(replica: Replica, _: int) -> Replica:

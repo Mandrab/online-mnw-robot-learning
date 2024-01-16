@@ -5,8 +5,8 @@ from operator import sub
 from simulation.replica import range2range
 from webots.robot import get_actuators, get_sensors, robot
 
-MAX_INPUT = configs["max_input"]
-MAX_OUTPUT = configs["max_output"]
+MAX_INPUT = configs["sensors"]["max_input"]
+MAX_OUTPUT = configs["actuators"]["max_output"]
 
 
 def evaluate():

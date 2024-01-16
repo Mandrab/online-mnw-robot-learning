@@ -6,8 +6,8 @@ from simulation.epoch import run_epoch
 from simulation.replica import Replica, random_replica
 
 STARTING_SEED = configs["task"]["starting_seed"]
-REPLICAS_COUNT = configs["replicas_count"]
-EPOCHS_COUNT = configs["epochs_count"]
+REPLICAS_COUNT = configs["task"]["replicas_count"]
+EPOCHS_COUNT = configs["task"]["epochs_count"]
 
 # generate new replicas, each with its own control (they have different seeds)
 replicas = map(random_replica, range(STARTING_SEED, STARTING_SEED + REPLICAS_COUNT))

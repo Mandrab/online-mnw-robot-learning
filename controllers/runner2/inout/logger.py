@@ -6,8 +6,8 @@ from inout.loader import configs
 
 LOGGER_NAME: str = "online-mnw-robot-learning"
 LOG_FORMAT: str = "[%(asctime)s %(levelname)s]\t %(message)s"
-LOG_PATH: str = configs["output_directory"]
-LOG_FILE: str = configs["log_file"]
+LOG_PATH: str = configs["output"]["path"]
+LOG_FILE: str = configs["output"]["log_file"]
 
 # obtain the logger instance
 logger = logging.getLogger(LOGGER_NAME)

@@ -5,9 +5,9 @@ from dataclasses import dataclass
 from inout.loader import configs
 from nnspy import connected_component, datasheet, network_state, network_topology, nns
 
-NETWORK_DENSITY: float = configs["nn network"]["density"]
-PACKAGE_SIZE: int = configs["nn network"]["package_size"]
-WIRES_LENGTH: float = configs["nn network"]["wires_length"]
+NETWORK_DENSITY: float = configs["nn_network"]["density"]
+PACKAGE_SIZE: int = configs["nn_network"]["package_size"]
+WIRES_LENGTH: float = configs["nn_network"]["wires_length"]
 
 
 @dataclass(frozen=True)
