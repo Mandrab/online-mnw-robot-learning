@@ -1,7 +1,7 @@
 from __future__ import annotations
+from control.tsetlin.state import State, str2phase
 from inout.logger import logger
 from inout.loader import tsetlin_configs
-from control.tsetlin.state import State, str2phase
 from typing import List
 
 
@@ -45,10 +45,19 @@ class Tsetlin:
         return self.states[self.state_idx]
 
     def transit(self, last_performance: float, best_performance: float):
-        if best_performance < last_performance:
+
+        # calculate the difference between the last and the best performance
+        performance_delta = best_performance - last_performance
+
+        # if the last performance is greater than the best, it is an improvement
+        if performance_delta < 0:
             self.state_idx = self.state.transition[State.Transition.PERFORMANCE_INCREASE]
-        elif abs(best_performance - last_performance) < self.stagnation_tolerance:
+        # if the performance is stagnating performs a stagnation transition
+        elif abs(performance_delta) < self.stagnation_tolerance:
             self.state_idx = self.state.transition[State.Transition.PERFORMANCE_STAGNATION]
+        # if the performance is decreasing performs a decrease transition
         else:
             self.state_idx = self.state.transition[State.Transition.PERFORMANCE_DECREASE]
-        logger.info(f"new phase: {self.state.type}")
+
+        # log the new reached state
+        logger.info(f"new phase: {self.state.type} (idx: {self.state_idx})")
