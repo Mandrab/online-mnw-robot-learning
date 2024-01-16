@@ -3,6 +3,7 @@
 .idea/
 venv/
 data/
+device_*/
 dist/
 # FILES
 *.7z
