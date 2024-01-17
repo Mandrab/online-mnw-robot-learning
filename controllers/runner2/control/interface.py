@@ -52,6 +52,10 @@ class Interface:
         return self.__internal.items()
 
     @property
+    def indexes(self) -> Dict[str, int]:
+        return {k: v[2] for k, v in self.__internal.items()}
+
+    @property
     def multipliers(self) -> Dict[str, float]:
         return {k: v[1] for k, v in self.__internal.items() if v[1] is not None}
 
