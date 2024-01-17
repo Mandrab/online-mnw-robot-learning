@@ -1,6 +1,10 @@
+from inout.loader import configs
 from inout.logger import logger
 from task.tmaze.colors import Colors
 from webots.robot import get_sensors, robot
+
+MAX_PRIZE = configs["task"]["max_step_prize"]
+MAX_PENALTY = configs["task"]["max_step_penalty"]
 
 
 def evaluate():
@@ -23,8 +27,8 @@ def evaluate():
             evaluate.__dict__["reach_flag"] = True
             logger.info('On correct end-point')
 
-        return 2
-    return -1
+        return MAX_PRIZE
+    return MAX_PENALTY
 
 
 __all__ = "evaluate",
