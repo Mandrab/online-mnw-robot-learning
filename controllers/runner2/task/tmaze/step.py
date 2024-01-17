@@ -8,9 +8,6 @@ from world.colors import Colors
 
 EPOCH_DURATION = configs["task"]["epochs_duration"]
 
-INITIAL_POSITION = [0, 0, 0.8]
-INITIAL_ROTATION = [0, -1, 0, 0]
-
 STARTS = cycle([
     (Colors.BLACK, [0, 2e-5, 0.4], [0, -1, 0.4]),   # black start
     (Colors.WHITE, [0, -1, 0.4],   [0, 2e-5, 0.4])  # white start
@@ -20,9 +17,9 @@ STARTS = cycle([
 def step(replica: Replica, index: int) -> Replica:
     if index % int(EPOCH_DURATION / 4) == 0:
 
-        # reset webots to start position
-        supervisor.getFromDef("evolvable").getField("translation").setSFVec3f(INITIAL_POSITION)
-        supervisor.getFromDef("evolvable").getField("rotation").setSFRotation(INITIAL_ROTATION)
+        # restore simulation to starting condition
+        supervisor.simulationReset()
+        supervisor.step(1)
 
         # randomly set a floor as starting one (basically, hide the other)
         starting_color, black_position, white_position = next(STARTS)
