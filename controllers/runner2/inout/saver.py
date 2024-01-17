@@ -32,7 +32,7 @@ def save(enumerated_replica: Tuple[int, Replica]):
 
     # save the interface used in each simulation epoch
     for idx, it in enumerate([conf.configuration.interface for conf in replica.history]):
-        nns.serialize_interface(it.c_interface, OUTPUT_DIRECTORY.encode('utf-8'), index, idx)
+        nns.serialize_interface(it.c_interface, OUTPUT_DIRECTORY.encode("utf-8"), index, idx)
 
         # save the dictionary with the pin and load/multiplier to file
         with open(couplings_path, "a") as file:
@@ -41,9 +41,9 @@ def save(enumerated_replica: Tuple[int, Replica]):
     # save the control information
     ds, nt = replica.network.ds, replica.network.nt
     ns, cc = replica.network.ns, replica.network.cc
-    nns.serialize_network(ds, nt, OUTPUT_DIRECTORY.encode('utf-8'), index)
-    nns.serialize_state(ds, nt, ns, OUTPUT_DIRECTORY.encode('utf-8'), index, 0)
-    nns.serialize_component(cc, OUTPUT_DIRECTORY.encode('utf-8'), index, 0)
+    nns.serialize_network(ds, nt, OUTPUT_DIRECTORY.encode("utf-8"), index)
+    nns.serialize_state(ds, nt, ns, OUTPUT_DIRECTORY.encode("utf-8"), index, 0)
+    nns.serialize_component(cc, OUTPUT_DIRECTORY.encode("utf-8"), index, 0)
 
 
 __all__ = "save",

@@ -25,7 +25,7 @@ def evaluate():
 
         if not evaluate.__dict__["reach_flag"]:
             evaluate.__dict__["reach_flag"] = True
-            logger.info('On correct end-point')
+            logger.info("On correct end-point")
 
         return MAX_PRIZE
     return MAX_PENALTY

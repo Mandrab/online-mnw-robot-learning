@@ -25,7 +25,7 @@ for _, sensor in get_sensors(robot).items():
 
 # set the motor speed to 0
 for _, actuator in filter(lambda x: "motor" in x[0], get_actuators(robot).items()):
-    actuator.setPosition(float('inf'))
+    actuator.setPosition(float("inf"))
     actuator.setVelocity(0.0)
 
 __all__ = "get_actuators", "get_sensors", "robot"
