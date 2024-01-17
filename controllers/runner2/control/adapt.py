@@ -20,7 +20,7 @@ def adapt(replica: Replica) -> Coupling:
 
     # adapt the best interface known if in ADAPTATION STATE
     if replica.tsetlin.state.type == State.Type.ADAPTATION:
-        interface = modify_connections(replica.history.best_configuration.interface.copy(), replica.network.cc)
+        interface = modify_connections(replica.history.best_configuration.interface, replica.network.cc)
         interface = modify_multiplier(interface)
     # adapt the last interface if in EXPLORATION STATE
     elif replica.tsetlin.state.type == State.Type.EXPLORATION:
