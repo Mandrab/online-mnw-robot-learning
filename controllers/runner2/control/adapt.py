@@ -42,7 +42,7 @@ def modify_multiplier(interface: Interface):
     couplings = sample(couplings.items(), reweight_count)
 
     # reweight the sensor signal multiplier
-    def reweight(pair): return pair[0], (pair[1][0], max(0.0, pair[1][1] + gauss(MU, SIGMA)))
+    def reweight(pair): return pair[0], (pair[1][0], max(0.0, pair[1][1] + gauss(MU, SIGMA)), pair[1][2])
     return Interface(dict(interface.items) | dict(map(reweight, couplings)))
 
 
@@ -59,7 +59,7 @@ def modify_connections(interface: Interface, component: connected_component) -> 
     legal_nodes -= set(map(interface.pins.get, get_sensors(robot)))
 
     # reconnect the sensor to a different node by randomly sampling the available ones
-    def reconnect(pair): return pair[0], (choice(list(legal_nodes - {pair[1][0]})), pair[1][1])
+    def reconnect(pair): return pair[0], (choice(list(legal_nodes - {pair[1][0]})), pair[1][1], pair[1][2])
     return Interface(dict(interface.items) | dict(map(reconnect, couplings)))
 
 
