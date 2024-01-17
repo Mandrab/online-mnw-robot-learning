@@ -22,18 +22,29 @@ def random_coupling(network: Network) -> Coupling:
     sensors_count = len(get_sensors(robot))
     actuators_count = len(get_actuators(robot))
 
-    mapping: Dict[str, Tuple[int, float]] = dict(zip(
-        (get_actuators(robot) | get_sensors(robot)).keys(),
+    # select the nodes to which connect the sensors/actuators
+    nodes = sample(range(network.cc.ws_skip, network.cc.ws_skip + network.cc.ws_count), sensors_count + actuators_count)
+
+    mapping = dict(zip(
+        get_actuators(robot).keys(),
         zip(
-            sample(
-                range(network.cc.ws_skip, network.cc.ws_skip + network.cc.ws_count),
-                sensors_count + actuators_count
-            ),
-            map(lambda _: max(0.0, gauss(MU, SIGMA)), range(sensors_count + actuators_count))
+            nodes[:actuators_count],            # the index of the node to which the actuator connects to
+            [MOTOR_LOAD] * actuators_count,     # the load of the actuator
+            range(actuators_count)              # the index of the actuator in the c-interface
         )
     ))
-    for key in get_actuators(robot).keys():
-        mapping[key] = mapping[key][0], MOTOR_LOAD
+
+    # generate the initial signals multipliers
+    multipliers = map(lambda _: max(0.0, gauss(MU, SIGMA)), range(sensors_count))
+
+    mapping |= dict(zip(
+        get_sensors(robot).keys(),
+        zip(
+            nodes[actuators_count:],            # the index of the node to which the sensor connects to
+            multipliers,                        # the multiplier of the sensor signal
+            range(sensors_count)                # the index of the sensor in the c-interface
+        )
+    ))
 
     return Coupling(Interface(mapping.items()))
 
