@@ -4,15 +4,15 @@ from nnspy import interface as nns_interface
 from typing import Dict, Tuple, Iterable
 from webots.robot import get_actuators, get_sensors, robot
 
-Device, NodeIndex, Multiplier, Load = str, int, float, float
+Device, NodeIndex, Multiplier, Load, ArrayIndex = str, int, float, float, int
 
 
 class Interface:
 
-    __internal: Dict[Device, Tuple[NodeIndex, Multiplier]]
+    __internal: Dict[Device, Tuple[NodeIndex, Multiplier | Load, ArrayIndex]]
     __nns_interface: nns_interface
 
-    def __init__(self, sequence: Iterable[Tuple[str, Tuple[NodeIndex, Multiplier | Load]]]):
+    def __init__(self, sequence: Iterable[Tuple[str, Tuple[NodeIndex, Multiplier | Load, ArrayIndex]]]):
 
         self.__internal = dict(sequence)
         self.__nns_interface = nns_interface()
@@ -31,16 +31,16 @@ class Interface:
 
             # if the object is an actuator, change the connection pin
             if key in get_actuators(robot):
-                index = list(get_actuators(robot).keys()).index(key)    # TODO
-                self.__nns_interface.loads_index[index] = value[0]
-                self.__nns_interface.loads_weight[index] = value[1]
+                array_index = self.__internal[key][2]
+                self.__nns_interface.loads_index[array_index] = value[0]
+                self.__nns_interface.loads_weight[array_index] = value[1]
 
             # if the object is a sensor, change the connection pin and its multiplier
             if key in get_sensors(robot):
-                index = list(get_sensors(robot).keys()).index(key)  # TODO
-                self.__nns_interface.sources_index[index] = value[0]
+                array_index = self.__internal[key][2]
+                self.__nns_interface.sources_index[array_index] = value[0]
 
-    def __getitem__(self, key: str) -> Tuple[NodeIndex, Multiplier]:
+    def __getitem__(self, key: str) -> Tuple[NodeIndex, Multiplier | Load, ArrayIndex]:
         return self.__internal[key]
 
     @property
