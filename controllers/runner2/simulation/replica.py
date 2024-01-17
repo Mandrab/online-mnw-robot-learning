@@ -52,8 +52,8 @@ def run(replica: Replica):
     ios = (c_double * interface.c_interface.sources_count)()
 
     # set the voltages of the ios array according to the readings
-    for i, (_, value) in enumerate(reads):
-        ios[i] = value
+    for key, value in reads:
+        ios[interface.indexes[key]] = value
 
     # stimulate the network with the sensors inputs
     nns.update_conductance(replica.network.ns, replica.network.cc)
