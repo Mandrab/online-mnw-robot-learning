@@ -4,13 +4,15 @@ from functools import reduce
 from inout.loader import configs
 from inout.logger import logger
 from simulation.history import Adaptation
-from simulation.replica import Replica
-from simulation.step import step
+from simulation.replica import Replica, range2range
+from task import step
 from webots.supervisor import supervisor
 
 CONTINUOUS_EXPERIMENT: bool = configs["task"]["continuous"]
 EPOCHS_DURATION: int = configs["task"]["epochs_duration"]
 HISTORY_WEIGHT: float = configs["task"]["history_weight"]
+MAX_PRIZE = configs["task"]["max_step_prize"]
+MAX_PENALTY = configs["task"]["max_step_penalty"]
 
 
 def run_epoch(replica: Replica, _: int) -> Replica:
@@ -24,6 +26,9 @@ def run_epoch(replica: Replica, _: int) -> Replica:
 
     # calculate the average performance per step
     replica.configuration.performance /= EPOCHS_DURATION
+
+    # put the performance in range 0-1
+    replica.configuration.performance = range2range(replica.configuration.performance, (MAX_PENALTY, MAX_PRIZE))
 
     # log the performance to console and to file
     logger.info(f"performance: {replica.configuration.performance}")
