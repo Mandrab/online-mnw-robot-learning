@@ -8,22 +8,22 @@ import sys
 _0, world_name, *_1 = *sys.argv, None
 
 # define world file location and use default file if none is specified
-__WORLD_FILE = f'worlds/{world_name or "main_world"}.wbt'
+__WORLD_FILE = f"worlds/{world_name or 'main_world'}.wbt"
 
 ################################################################################
 # START OF SIMULATION
 
-print(f'Running simulation in {__WORLD_FILE}')
+print(f"Running simulation in {__WORLD_FILE}")
 
 # start a simulation subprocess
 subprocess.run([
-    'webots ' +
-    '--mode=fast ' +        # fast running
-    '--no-rendering ' +     # disable rendering
-    '--minimize ' +         # minimize the window on startup
-    '--batch ' +            # does not create blocking pop-ups
-    '--stdout ' +           # redirect robot out to stdout
-    '--stderr ' +           # redirect robot errors to stderr
-    '--log-performance=stdout ' +   # measure the performance
+    "webots " +
+    "--mode=fast " +        # fast running
+    "--no-rendering " +     # disable rendering
+    "--minimize " +         # minimize the window on startup
+    "--batch " +            # does not create blocking pop-ups
+    "--stdout " +           # redirect webots out to stdout
+    "--stderr " +           # redirect webots errors to stderr
+    "--log-performance=stdout " +   # measure the performance
     __WORLD_FILE
 ], shell=True, check=True)
