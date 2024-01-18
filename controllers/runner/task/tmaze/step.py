@@ -1,10 +1,10 @@
 from inout.loader import configs
 from itertools import cycle
 from simulation.replica import Replica, run
+from task.tmaze.colors import Colors
 from task.tmaze.evaluator import evaluate
 from webots.robot import get_actuators
 from webots.supervisor import supervisor
-from world.colors import Colors
 
 EPOCH_DURATION = configs["task"]["epochs_duration"]
 
