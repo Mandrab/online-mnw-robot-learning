@@ -1446,7 +1446,7 @@ DEF evolvable Robot {
           }
         }
       ]
-      name "led9"
+      name "gripper"
       color [
         1 0.3 0
       ]
