@@ -29,4 +29,4 @@ replicas = map(lambda x: reduce(run_epoch, range(EPOCHS_COUNT), x), replicas)
 list(map(save, enumerate(replicas)))
 
 # end of the simulation
-logger.info('Simulation complete')
+logger.info("Simulation complete")
