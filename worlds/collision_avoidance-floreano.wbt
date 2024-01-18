@@ -1,0 +1,120 @@
+#VRML_SIM R2021b utf8
+WorldInfo {
+  coordinateSystem "NUE"
+}
+Viewpoint {
+  orientation 1 0 0 4.71238898038469
+  position 0.000472594586549431 3.5466199530317803 0.07501473585988205
+  follow "e-puck"
+  followType "None"
+}
+Background {
+  skyColor [
+    0.4 0.7 1
+  ]
+}
+RectangleArena {
+  translation 0 0 0.075
+  floorSize 1.25 1
+}
+SolidBox {
+  translation 0.018 0.05 -0.355
+  name "upper wall"
+  size 0.78 0.1 0.1
+  appearance PBRAppearance {
+    metalness 0
+  }
+}
+SolidBox {
+  translation -0.17 0.05 0.5
+  name "bottom wall"
+  size 0.9 0.1 0.1
+  appearance PBRAppearance {
+    roughness 0.5
+    metalness 0
+  }
+}
+SolidBox {
+  translation -0.46 0.05 0.058
+  rotation 0 1 0 1.3
+  name "left wall"
+  size 0.93 0.1 0.1
+  appearance PBRAppearance {
+    roughness 0.5
+    metalness 0
+  }
+}
+SolidBox {
+  translation 0.5 0.05 -0.25
+  rotation 0 1 0 -0.75
+  name "upper right wall"
+  size 0.35 0.1 0.1
+  appearance PBRAppearance {
+    roughness 0.5
+    metalness 0
+  }
+}
+SolidBox {
+  translation 0.435 0.05 0.17
+  rotation 0 1 0 1.056
+  name "lower right wall"
+  size 0.81 0.1 0.1
+  appearance PBRAppearance {
+    roughness 0.5
+    metalness 0
+  }
+}
+SolidBox {
+  translation -0.005 0.05 0
+  name "central wall"
+  size 0.3 0.1 0.1
+  appearance PBRAppearance {
+    roughness 0.5
+    metalness 0
+  }
+}
+SolidBox {
+  translation -0.145 0.05 0.06
+  rotation 0 1 0 1.2
+  name "central left wall"
+  size 0.2 0.1 0.1
+  appearance PBRAppearance {
+    roughness 0.5
+    metalness 0
+  }
+}
+SolidBox {
+  translation 0.16 0.05 -0.052
+  rotation 0 1 0 0.95
+  name "central right wall"
+  size 0.18 0.1 0.1
+  appearance PBRAppearance {
+    roughness 0.5
+    metalness 0
+  }
+}
+SolidBox {
+  translation 0.185 0.05 0.3
+  name "bottom upper wall"
+  size 0.4 0.1 0.1
+  appearance PBRAppearance {
+    roughness 0.5
+    metalness 0
+  }
+}
+SolidBox {
+  translation -0.044 0.05 0.39
+  rotation 0 1 0 1
+  name "bottom left wall"
+  size 0.26 0.1 0.1
+  appearance PBRAppearance {
+    roughness 0.5
+    metalness 0
+  }
+}
+DEF evolvable E-puck {
+  translation -1.64702e-08 0 -0.17
+  rotation 0 1 0 -1.5707953071795862
+  controller "runner"
+  supervisor TRUE
+}
