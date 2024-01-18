@@ -1,12 +1,12 @@
 from control.coupling import Coupling
 from control.interface import Interface
 from control.tsetlin.state import State
+from control.util import minimum_distance_selection
 from inout.loader import configs
 from math import ceil
 from nnspy import connected_component
 from random import gauss, randrange, sample, choice
 from simulation.replica import Replica
-from util.evolutor import minimum_distance_selection
 from webots.robot import get_actuators, robot, get_sensors
 
 MU = configs["sensors"]["multipliers"]["modification_mu"]
