@@ -1,0 +1,49 @@
+{
+    "output":               {
+        "path":                 "../../ca/",
+        "log_file":             "log",
+        "performance_file":     "performance.dat",
+        "state_file":           "state.dat",
+        "coupling_file":        "coupling.dat"
+    },
+
+    "task":                 {
+        "type":                 "COLLISION_AVOIDANCE",
+        "continuous":           true,
+        "starting_seed":        1,
+
+        "replicas_count":       100,
+        "epochs_count":         500,
+        "epochs_duration":      2000,
+        "time_step_ms":         50,
+
+        "history_weight":       0.7,
+
+        "max_step_prize":       1,
+        "max_step_penalty":     0
+    },
+
+    "nn_network":           {
+        "density":              5.5,
+        "package_size":         150,
+        "wires_length":         14.0,
+        "max_stimulation_v":    3.3
+    },
+
+    "actuators":            {
+        "active":               [ "left wheel motor", "right wheel motor" ],
+        "max_output":           6.28,
+        "loads":                1e-3
+    },
+
+    "sensors":              {
+        "active":               [ "ps0", "ps1", "ps2", "ps3", "ps4", "ps5", "ps6", "ps7" ],
+        "max_input":            4095,
+        "multipliers":          {
+            "creation_mu":            1.0,
+            "creation_sigma":         0.0,
+            "modification_mu":        0.0,
+            "modification_sigma":     0.5
+        }
+    }
+}

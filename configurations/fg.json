@@ -1,0 +1,49 @@
+{
+    "output":               {
+        "path":                 "../../fg/",
+        "log_file":             "log",
+        "performance_file":     "performance.dat",
+        "state_file":           "state.dat",
+        "coupling_file":        "coupling.dat"
+    },
+
+    "task":                 {
+        "type":                 "FORAGING",
+        "continuous":           true,
+        "starting_seed":        1,
+
+        "replicas_count":       100,
+        "epochs_count":         500,
+        "epochs_duration":      2000,
+        "time_step_ms":         50,
+
+        "history_weight":       0.7,
+
+        "max_step_prize":       50,
+        "max_step_penalty":     -50
+    },
+
+    "nn_network":           {
+        "density":              5.5,
+        "package_size":         150,
+        "wires_length":         14.0,
+        "max_stimulation_v":    3.3
+    },
+
+    "actuators":            {
+        "active":               [ "left wheel motor", "right wheel motor", "gripper" ],
+        "max_output":           6.28,
+        "loads":                1e-3
+    },
+
+    "sensors":              {
+        "active":               [ "ls0", "ls1", "ls2", "ls3", "ls4", "ls5", "ls6", "ls7", "gs0", "gs2" ],
+        "max_input":            4095,
+        "multipliers":          {
+            "creation_mu":          1.0,
+            "creation_sigma":       0.0,
+            "modification_mu":      0.0,
+            "modification_sigma":   0.5
+        }
+    }
+}
