@@ -1,12 +1,16 @@
+from inout.loader import configs
 from simulation.replica import Replica, run
 from task.foraging.evaluator import evaluate
 from task.foraging.util import is_above, on_nest
 from webots.robot import get_actuators
 from webots.supervisor import supervisor
 
-# save the starting position of the objects to be able to restore them once deposited
-objects = tuple(supervisor.getFromDef(f"P{i}") for i in range(24))
-starting_positions = tuple(list(map(float, o.getField("description").getSFString().split())) for o in objects)
+TASK_TYPE = configs["task"]["type"]
+
+if TASK_TYPE == "FORAGING":
+    # save the starting position of the objects to be able to restore them once deposited
+    objects = tuple(supervisor.getFromDef(f"P{i}") for i in range(24))
+    starting_positions = tuple(list(map(float, o.getField("description").getSFString().split())) for o in objects)
 
 
 def step(replica: Replica, _: int) -> Replica:
