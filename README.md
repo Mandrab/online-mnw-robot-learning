@@ -25,7 +25,7 @@ Following, an example of use with the collision avoidance task and a E3O3A1 Tset
 ```
 $ cp configurations/ca.json config.json                             # copy the default configuration for the task
 $ cp machines/tsetlin-E3O3A.json tsetlin.json                       # copy the E3O3A1 Tsetlin machine
-$ ./start_headless.sh main.py collision_avoidance-classic.wbt       # start the experiment in detached mode
+$ ./start_headless.sh main.py collision_avoidance-classic           # start the experiment in detached mode
 $ mv config.json tsetlin.json ca                                    # move the configuration files to have a reference of the experiment details
 $ git rev-parse HEAD > ca/git-hash                                  # save the hash of the currently used commit
 $ git diff > ca/git-diffs                                           # save the differences from the commit
