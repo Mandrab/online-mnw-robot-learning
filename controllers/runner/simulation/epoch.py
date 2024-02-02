@@ -28,11 +28,17 @@ def run_epoch(replica: Replica, _: int) -> Replica:
     # save the information relative to the current epoch
     replica.history.append(Adaptation(replica.configuration, replica.tsetlin.state.type, replica.tsetlin.state_idx))
 
-    # if the best known configuration is in use, update its overall evaluation
-    if replica.tsetlin.state.type == State.Type.OPERATION:
+    # backup the current Tsetlin state
+    state = replica.tsetlin.state.type
+
+    # decide the working strategy at the next epoch according to the previous best and current performance
+    replica.tsetlin.transit(replica.configuration.performance, replica.history.best_configuration.performance)
+
+    # if the best known configuration was used, update its overall evaluation
+    if state == State.Type.OPERATION:
         replica.history.best_configuration.performance *= HISTORY_WEIGHT
         replica.history.best_configuration.performance += (1 - HISTORY_WEIGHT) * replica.configuration.performance
-    # if a new configuration is in use and its performance is higher than the best known one, set it as the new best
+    # if a new configuration was used and its performance is higher than the best known one, set it as the new best
     elif replica.configuration.performance > replica.history.best_configuration.performance:
         replica.history.best_configuration = replica.configuration
 

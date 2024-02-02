@@ -15,9 +15,6 @@ SIGMA = configs["sensors"]["multipliers"]["modification_sigma"]
 
 def adapt(replica: Replica) -> Coupling:
 
-    # decide which coupling will be used at the next epoch
-    replica.tsetlin.transit(replica.configuration.performance, replica.history.best_configuration.performance)
-
     # adapt the best interface known if in ADAPTATION STATE
     if replica.tsetlin.state.type == State.Type.ADAPTATION:
         interface = modify_connections(replica.history.best_configuration.interface, replica.network.cc)
