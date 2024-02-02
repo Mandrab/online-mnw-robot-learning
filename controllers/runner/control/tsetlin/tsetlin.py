@@ -25,7 +25,8 @@ class Tsetlin:
 
         # set up the tsetlin main state, current state and its stagnation tolerance
         self.start_idx = self.state_idx = tsetlin_configs["main_state"]
-        self.stagnation_tolerance = tsetlin_configs["stagnation_tolerance"]
+        self.stagnation_tolerance_bottom = tsetlin_configs["stagnation_tolerance_bottom"]
+        self.stagnation_tolerance_up = tsetlin_configs["stagnation_tolerance_up"]
 
         # set up the Tsetlin states
         for phase, states in filter(
@@ -46,14 +47,15 @@ class Tsetlin:
 
     def transit(self, last_performance: float, best_performance: float):
 
-        # calculate the difference between the last and the best performance
-        performance_delta = best_performance - last_performance
+        # calculate the upper and lower bound for stagnation
+        lower_stagnation = best_performance - self.stagnation_tolerance_bottom
+        upper_stagnation = best_performance + self.stagnation_tolerance_up
 
         # if the performance is stagnating performs a stagnation transition
-        if abs(performance_delta) < self.stagnation_tolerance:
+        if lower_stagnation <= last_performance <= upper_stagnation:
             self.state_idx = self.state.transition[State.Transition.PERFORMANCE_STAGNATION]
         # if the last performance is greater than the best, it is an improvement
-        elif performance_delta < 0:
+        elif last_performance > best_performance:
             self.state_idx = self.state.transition[State.Transition.PERFORMANCE_INCREASE]
         # if the performance is decreasing performs a decrease transition
         else:
