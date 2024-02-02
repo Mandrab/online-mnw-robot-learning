@@ -1,6 +1,7 @@
 {
   "main_state":                 4,
-  "stagnation_tolerance":       0.5,
+  "stagnation_tolerance_bottom":0,
+  "stagnation_tolerance_up":    0,
 
   "exploration": [
     {
