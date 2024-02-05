@@ -45,19 +45,23 @@ def modify_multiplier(interface: Interface):
 
 def modify_connections(interface: Interface, component: connected_component) -> Interface:
 
+    # copy the current sensor-node coupling
+    couplings = {n: i for n, i in interface.items if n in get_sensors(robot)}
+
     # select the sensor-to-node couplings to re-connect (min 1, max half) from the interface mapping
     reconnections_count = randrange(1, ceil(max(interface.c_interface.sources_count * 0.5, 2)))
-    couplings = {n: i for n, i in interface.items if n in get_sensors(robot)}
-    couplings = sample(couplings.items(), reconnections_count)
+    sampled_couplings = sample(couplings.items(), reconnections_count)
 
     # select the nodes that are at least 2 junctions far from the motor nodes
-    # and discard the ones already connected to the sensors
     legal_nodes = minimum_distance_selection(component, set(map(interface.pins.get, get_actuators(robot))), 2)
-    legal_nodes -= set(map(interface.pins.get, get_sensors(robot)))
 
     # reconnect the sensor to a different node by randomly sampling the available ones
-    def reconnect(pair): return pair[0], (choice(list(legal_nodes - {pair[1][0]})), pair[1][1], pair[1][2])
-    return Interface(dict(interface.items) | dict(map(reconnect, couplings)))
+    for name, (pin, multiplier, index) in sampled_couplings:
+        used_pins = set(v for _, (v, _, _) in couplings.items())
+        pin = choice(list(legal_nodes - used_pins - {pin}))
+        couplings[name] = pin, multiplier, index
+
+    return Interface(dict(interface.items) | couplings)
 
 
 __all__ = "adapt",
