@@ -1,5 +1,4 @@
 from control.adapt import adapt
-from control.tsetlin.state import State
 from functools import reduce
 from inout.loader import configs
 from inout.logger import logger
@@ -34,12 +33,8 @@ def run_epoch(replica: Replica, _: int) -> Replica:
     # decide the working strategy at the next epoch according to the previous best and current performance
     replica.tsetlin.transit(replica.configuration.performance, replica.history.best_configuration.performance)
 
-    # if the best known configuration was used, update its overall evaluation
-    if state == State.Type.OPERATION:
-        replica.history.best_configuration.performance *= HISTORY_WEIGHT
-        replica.history.best_configuration.performance += (1 - HISTORY_WEIGHT) * replica.configuration.performance
-    # if a new configuration was used and its performance is higher than the best known one, set it as the new best
-    elif replica.configuration.performance > replica.history.best_configuration.performance:
+    # if the last configuration had better performance than the best known one, set it as the new best
+    if replica.configuration.performance > replica.history.best_configuration.performance:
         replica.history.best_configuration = replica.configuration
 
     # adapt the control configuration of the replica
