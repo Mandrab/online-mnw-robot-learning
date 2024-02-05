@@ -1,0 +1,22 @@
+@startuml
+hide empty description
+
+[*]  -->   O3
+
+O3   -[#blue]->   O3 : <math> f_c >= f_b </math>
+
+O3   -[#red]->    O2 : <math> f_c < f_b </math>
+O2   -[#red]->    O1 : <math> f_c < f_b </math>
+O1   -[#red]->    A1 : <math> f_c < f_b </math>
+A1   -[#blue]->   A2 : <math> f_c >= f_b </math>
+A2   -[#blue]->   A3 : <math> f_c >= f_b </math>
+
+A3   -[#red]->    A2 : <math> f_c < f_b </math>
+A2   -[#red]->    A1 : <math> f_c < f_b </math>
+A1   -[#red]->    O1 : <math> f_c < f_b </math>
+O1   -[#blue]->   O2 : <math> f_c >= f_b </math>
+O2   -[#blue]->   O3 : <math> f_c >= f_b </math>
+
+A3   -[#blue]->   A3 : <math> f_c >= f_b </math>
+
+@enduml

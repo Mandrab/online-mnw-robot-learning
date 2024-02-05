@@ -1,0 +1,13 @@
+@startuml
+hide empty description
+
+[*] --> O
+
+O   -[#blue]->   O : <math> f_c >= f_b </math>
+
+O   -[#red]->    A : <math> f_c < f_b </math>
+A   -[#red]->    O : <math> f_c < f_b </math>
+
+A   -[#blue]->   A : <math> f_c >= f_b </math>
+
+@enduml

@@ -1,0 +1,49 @@
+{
+  "main_state":                 4,
+  "stagnation_tolerance_bottom":0,
+  "stagnation_tolerance_up":    0,
+
+  "exploration": [
+    {
+      "id":                     0,
+      "performance-increase":   0,
+      "performance-stagnation": 0,
+      "performance-decrease":   1
+    },
+    {
+      "id":                     1,
+      "performance-increase":   0,
+      "performance-stagnation": 0,
+      "performance-decrease":   2
+    },
+    {
+      "id":                     2,
+      "performance-increase":   1,
+      "performance-stagnation": 1,
+      "performance-decrease":   3
+    }
+  ],
+
+  "operation": [
+    {
+      "id":                     3,
+      "performance-increase":   4,
+      "performance-stagnation": 4,
+      "performance-decrease":   2
+    },
+    {
+      "id":                     4,
+      "performance-increase":   5,
+      "performance-stagnation": 5,
+      "performance-decrease":   3
+    },
+    {
+      "id":                     5,
+      "performance-increase":   5,
+      "performance-stagnation": 5,
+      "performance-decrease":   4
+    }
+  ],
+
+  "adaptation": []
+}
