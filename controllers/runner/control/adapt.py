@@ -36,7 +36,7 @@ def modify_multiplier(interface: Interface):
     # select the sensor-to-node couplings to re-weight (min 1, max half) from the interface mapping
     reweight_count = randrange(1, ceil(max(interface.c_interface.sources_count * 0.5, 2)))
     couplings = {n: i for n, i in interface.items if n in get_sensors(robot)}
-    couplings = sample(couplings.items(), reweight_count)
+    couplings = sample(list(couplings.items()), reweight_count)
 
     # reweight the sensor signal multiplier
     def reweight(pair): return pair[0], (pair[1][0], max(0.0, pair[1][1] + gauss(MU, SIGMA)), pair[1][2])
@@ -50,7 +50,7 @@ def modify_connections(interface: Interface, component: connected_component) -> 
 
     # select the sensor-to-node couplings to re-connect (min 1, max half) from the interface mapping
     reconnections_count = randrange(1, ceil(max(interface.c_interface.sources_count * 0.5, 2)))
-    sampled_couplings = sample(couplings.items(), reconnections_count)
+    sampled_couplings = sample(list(couplings.items()), reconnections_count)
 
     # select the nodes that are at least 2 junctions far from the motor nodes
     legal_nodes = minimum_distance_selection(component, set(map(interface.pins.get, get_actuators(robot))), 2)
@@ -61,7 +61,7 @@ def modify_connections(interface: Interface, component: connected_component) -> 
         pin = choice(list(legal_nodes - used_pins - {pin}))
         couplings[name] = pin, multiplier, index
 
-    return Interface(dict(interface.items) | couplings)
+    return Interface(dict(list(interface.items)) | couplings)
 
 
 __all__ = "adapt",
