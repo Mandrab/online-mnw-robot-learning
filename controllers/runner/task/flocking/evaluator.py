@@ -1,8 +1,4 @@
-from inout.loader import configs
 from webots.robot import get_sensors, robot
-
-MAX_INPUT = configs["sensors"]["max_input"]
-MAX_OUTPUT = configs["actuators"]["max_output"]
 
 
 def evaluate():
