@@ -13,7 +13,7 @@ Background {
   ]
 }
 CircleArena {
-  radius 0.75
+  radius 0.5
   floorAppearance PBRAppearance {
     baseColor 0 0 0
   }
@@ -21,7 +21,7 @@ CircleArena {
   }
 }
 Robot {
-  translation -0.17 0 0
+  translation -0.26 0 0.15588
   rotation 0 1 0 1.0472
   children [
     DistanceSensor {
@@ -909,7 +909,7 @@ Robot {
   controller "runner"
 }
 Robot {
-  translation 0.055 0 -0.117
+  translation 0.15 0 -0.281543
   rotation 0 1 0 1.0472
   children [
     DistanceSensor {
@@ -1797,7 +1797,7 @@ Robot {
   controller "runner"
 }
 Robot {
-  translation 0.074769 0 -0.315938
+  translation -0.203437 0 -0.234078
   rotation 0 1 0 1.0472
   children [
     DistanceSensor {
@@ -2685,7 +2685,7 @@ Robot {
   controller "runner"
 }
 Robot {
-  translation 0.25499970000000005 0 0.08349300000000001
+  translation 0.298302 0 0.108493
   rotation 0 1 0 1.0472
   children [
     DistanceSensor {
@@ -3573,7 +3573,7 @@ Robot {
   controller "runner"
 }
 Robot {
-  translation -0.0313639 0 0.287013
+  translation -0.041364 0 0.304333
   rotation 0 1 0 1.0472
   children [
     DistanceSensor {
