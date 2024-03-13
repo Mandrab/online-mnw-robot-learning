@@ -12,6 +12,7 @@ from simulation.history import History
 from typing import Tuple
 from webots.robot import get_actuators, get_sensors, robot
 
+REPLICAS_COUNT = configs["task"]["replicas_count"]
 TIME_STEP = configs["task"]["time_step_ms"]
 MAX_INPUT = configs["sensors"]["max_input"]
 MAX_OUTPUT = configs["actuators"]["max_output"]
@@ -28,6 +29,12 @@ class Replica:
 
 
 def random_replica(seed: int):
+
+    # used in heterogeneous swarms to give each robot a unique seed according to the index in its name
+    name = robot.getName().split(".")[-1]
+    if name.isdigit():
+        seed += int(name) * REPLICAS_COUNT
+
     nw_network = random_network(seed)
     control_configuration = random_coupling(nw_network)
     history = History(Coupling(control_configuration.interface.copy()))
