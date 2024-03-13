@@ -3,7 +3,6 @@ from control.network import Network
 from dataclasses import dataclass
 from inout.loader import configs
 from random import sample, gauss
-from typing import Dict, Tuple
 from webots.robot import get_actuators, get_sensors, robot
 
 MU: float = configs["sensors"]["multipliers"]["creation_mu"]

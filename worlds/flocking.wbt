@@ -20,7 +20,7 @@ CircleArena {
   wallAppearance PBRAppearance {
   }
 }
-Robot {
+DEF Elisa-3_1 Robot {
   translation -0.26 0 0.15588
   rotation 0 1 0 1.0472
   children [
@@ -908,7 +908,7 @@ Robot {
   }
   controller "runner"
 }
-Robot {
+DEF Elisa-3_2 Robot {
   translation 0.15 0 -0.281543
   rotation 0 1 0 1.0472
   children [
@@ -1796,7 +1796,7 @@ Robot {
   }
   controller "runner"
 }
-Robot {
+DEF Elisa-3_3 Robot {
   translation -0.203437 0 -0.234078
   rotation 0 1 0 1.0472
   children [
@@ -2684,7 +2684,7 @@ Robot {
   }
   controller "runner"
 }
-Robot {
+DEF Elisa-3_4 Robot {
   translation 0.298302 0 0.108493
   rotation 0 1 0 1.0472
   children [
@@ -3572,7 +3572,7 @@ Robot {
   }
   controller "runner"
 }
-Robot {
+DEF Elisa-3_5 Robot {
   translation -0.041364 0 0.304333
   rotation 0 1 0 1.0472
   children [
@@ -4459,4 +4459,9 @@ Robot {
     ]
   }
   controller "runner"
+}
+Robot {
+  name "Omniscient observer"
+  controller "observer"
+  supervisor TRUE
 }
