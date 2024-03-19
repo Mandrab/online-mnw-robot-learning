@@ -1,4 +1,4 @@
-from inout.loader import configs
+from .loader import configs
 from pathlib import Path
 
 PATH = configs["output"]["path"]

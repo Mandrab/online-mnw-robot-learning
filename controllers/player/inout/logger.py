@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 
-from inout.loader import configs
+from .loader import configs
 
 LOGGER_NAME: str = "online-mnw-robot-learning"
 LOG_FORMAT: str = "[%(asctime)s %(levelname)s]\t %(message)s"

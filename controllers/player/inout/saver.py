@@ -1,14 +1,25 @@
 import os
 
-from inout.loader import configs
+from .loader import configs
 from nnspy import nns
 from simulation.replica import Replica
 from typing import Tuple
+from webots.robot import robot
+
 
 OUTPUT_DIRECTORY: str = configs["output"]["path"]
 PERFORMANCE_FILE: str = configs["output"]["performance_file"]
 STATE_FILE: str = configs["output"]["state_file"]
 COUPLING_FILE: str = configs["output"]["coupling_file"]
+ROBOTS_COUNT = configs["task"]["robots_count"]
+
+
+# check if there is more than one robot in the simulation; if yes, create a file for this specific one
+name = robot.getName().split(".")[-1] if ROBOTS_COUNT > 1 else ""
+PERFORMANCE_FILE = PERFORMANCE_FILE.format(name)
+STATE_FILE = STATE_FILE.format(name)
+COUPLING_FILE = COUPLING_FILE.format(name)
+
 
 # calculate the performance and state files position
 performance_path: str = os.path.join(OUTPUT_DIRECTORY, PERFORMANCE_FILE)
