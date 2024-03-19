@@ -1681,7 +1681,7 @@ DEF evolvable Robot {
       0 0 0
     ]
   }
-  controller "runner"
+  controller "player"
   supervisor TRUE
   cpuConsumption 1.11
   window "e-puck"

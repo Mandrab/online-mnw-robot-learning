@@ -906,7 +906,7 @@ DEF Elisa-3_1 Robot {
       0 0 0
     ]
   }
-  controller "runner"
+  controller "player"
 }
 DEF Elisa-3_2 Robot {
   translation 0.15 0 -0.281543
@@ -1794,7 +1794,7 @@ DEF Elisa-3_2 Robot {
       0 0 0
     ]
   }
-  controller "runner"
+  controller "player"
 }
 DEF Elisa-3_3 Robot {
   translation -0.203437 0 -0.234078
@@ -2682,7 +2682,7 @@ DEF Elisa-3_3 Robot {
       0 0 0
     ]
   }
-  controller "runner"
+  controller "player"
 }
 DEF Elisa-3_4 Robot {
   translation 0.298302 0 0.108493
@@ -3570,7 +3570,7 @@ DEF Elisa-3_4 Robot {
       0 0 0
     ]
   }
-  controller "runner"
+  controller "player"
 }
 DEF Elisa-3_5 Robot {
   translation -0.041364 0 0.304333
@@ -4458,7 +4458,7 @@ DEF Elisa-3_5 Robot {
       0 0 0
     ]
   }
-  controller "runner"
+  controller "player"
 }
 Robot {
   name "Omniscient observer"

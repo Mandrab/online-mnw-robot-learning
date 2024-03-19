@@ -23,6 +23,6 @@ DEF box_0 SolidBox {
 DEF evolvable E-puck {
   translation -2.20392e-07 0 -0.37
   rotation 0 1 0 -1.5707953071795862
-  controller "runner"
+  controller "player"
   supervisor TRUE
 }

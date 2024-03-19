@@ -22,7 +22,7 @@ Background {
 DEF evolvable E-puck {
   translation 0 3e-05 0.8
   rotation 0 -1 0 0
-  controller "runner"
+  controller "player"
   supervisor TRUE
   groundSensorsSlot [
     E-puckGroundSensors {

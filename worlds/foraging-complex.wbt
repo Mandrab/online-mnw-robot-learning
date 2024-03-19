@@ -16,7 +16,7 @@ Background {
 DEF evolvable E-puck {
   translation -0.5996236017104368 0.0009674278017214304 0.03999936673396932
   rotation 0.000334968596017626 -0.9999998826261474 0.00035006246738165155 1.5951674003917067
-  controller "runner"
+  controller "player"
   supervisor TRUE
   groundSensorsSlot [
     E-puckGroundSensors {

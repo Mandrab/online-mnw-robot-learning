@@ -19,7 +19,7 @@ DEF evolvable E-puck {
   hidden rotation_1 1 0 0 2.9802322387695313e-08
   hidden rotation_2 1 0 0 2.9802322387695313e-08
   rotation -2.978011777911436e-06 -0.9999999999913497 2.9037545797162605e-06 1.5951672803600068
-  controller "runner"
+  controller "player"
   supervisor TRUE
   groundSensorsSlot [
     E-puckGroundSensors {

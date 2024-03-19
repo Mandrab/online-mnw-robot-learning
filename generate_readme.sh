@@ -2,9 +2,9 @@
 # Generate a partial template of the run simulation
 
 # configurations files
-CONFIGS="controllers/runner/config.py"
-ROBOT="controllers/runner/robot/body.py"
-UTILS="controllers/runner/optimization/utils.py"
+CONFIGS="controllers/player/config.py"
+ROBOT="controllers/player/robot/body.py"
+UTILS="controllers/player/optimization/utils.py"
 
 # get fields from configs
 DURATION=$(awk -F 'epoch_duration = ' '$2{print $2}' $CONFIGS)
