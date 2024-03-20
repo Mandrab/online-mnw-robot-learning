@@ -12,11 +12,15 @@ REPLICAS_COUNT = configs["task"]["replicas_count"]
 # evaluate an epoch by evaluating each of its steps (the performance of each step are collected)
 evaluate_epoch = lambda _: reduce(
     # concat the performance of each step
-    lambda acc, val: (acc[0] + val[:1], acc[1] + val[1:]),
+    lambda acc, val: (
+        acc[0] + [val[0]], acc[1] + [val[1]],  # c & s
+        acc[2] + [val[2]], acc[3] + [val[3]],  # x & y
+        acc[4] + [val[4]]                      # map
+    ),
     # evaluate the performance of the group of robots at each step of an epoch
     map(evaluate_step, range(STEPS_COUNT)),
     # the evaluation starts with no information (i.e., performance)
-    ([], [])
+    ([], [], [], [], [])
 )
 
 # evaluate a replica by evaluating each of its epochs and by saving the results

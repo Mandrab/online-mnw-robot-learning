@@ -38,7 +38,9 @@ def evaluate_step(_):
 
     for a in range(ROBOTS_COUNT):
 
+        #
         # calculate the cohesion factor of each robot: the percentage of robots it is near to
+        #
 
         # find the neighbors of each robot
         neighbors = [b for b in range(ROBOTS_COUNT) if a != b and distances[a, b] < PERCEPTION_RANGE]
@@ -50,12 +52,38 @@ def evaluate_step(_):
             Ss[a] = 0
             continue
 
+        #
         # calculate the separation factor of each robot: the percentage of neighbors it touches
+        #
 
         # find pseudo-contacts with other robots
         contacts = [b for b in neighbors if distances[a, b] < COLLISION_RANGE]
 
         # the performance is inverse to the contacts: the less, the better
-        Ss[a] = len(contacts) / ROBOTS_COUNT
+        Ss[a] = len(contacts) / (ROBOTS_COUNT - 1)
 
-    return [Cs.mean(), Ss.mean()]
+    #
+    # calculate group barycenter
+    #
+
+    x, y = np.average(positions, axis=0)
+    x, y = int(x * 1e3), int(y * 1e3)
+
+    #
+    # map the arena occupation to an int 64 bit
+    #
+    representation = 0
+
+    for a in range(ROBOTS_COUNT):
+
+        x, y = positions[a]
+
+        # check in which block multiple of 12,5 cm the robot is
+        x, y = x + 0.5, y + 0.5
+        x, y = int(x / 0.125), int(y / 0.125)
+
+        idx = y * 8 + x
+
+        representation |= int(1) << int(64 - 1 - idx)
+
+    return [Cs.mean(), Ss.mean(), x, y, representation]
